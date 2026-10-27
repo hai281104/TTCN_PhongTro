@@ -58,6 +58,7 @@ Phong cách chủ đạo: **Tối giản (Minimalist), Sang trọng, Hiện đ�
 - **Tiền tệ:** `number_format($soTien, 0, ',', '.') . ' đ'` (Căn phải: `text-right tabular-nums`).
 - **Ngày tháng:** Chuẩn Việt Nam `d/m/Y` (Ví dụ: `27/10/2026`), tháng năm thu phí `m/Y` (Ví dụ: `10/2026`).
 - **Điện / Nước:** `160 kWh`, `28 m³`.
+- Không viết comment khi không cần thiết
 
 ---
 
