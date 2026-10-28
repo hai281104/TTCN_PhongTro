@@ -60,6 +60,13 @@ Phong cách chủ đạo: **Tối giản (Minimalist), Sang trọng, Hiện đ�
 - **Điện / Nước:** `160 kWh`, `28 m³`.
 - Không viết comment khi không cần thiết
 
+### 2.3. Quy tắc mã nguồn Frontend (Tách riêng file CSS & JS)
+- **Tách riêng biệt:** Tuyệt đối không viết CSS nội tuyến (`<style>`) hoặc JavaScript trực tiếp (`<script>`) bên trong file Blade View (ngoại trừ các thẻ `<link rel="stylesheet">` hoặc `<script src="...">` liên kết tệp ngoài).
+- **Thư mục lưu trữ:**
+  - File CSS: Lưu trữ tại thư mục `public/css/` (hoặc `resources/css/`), ví dụ: `public/css/dang-nhap.css`.
+  - File JS: Lưu trữ tại thư mục `public/js/` (hoặc `resources/js/`), ví dụ: `public/js/dang-nhap.js`.
+- **Quy tắc đặt tên (`kebab-case`):** Tên file CSS và JS tương ứng đồng bộ với tên màn hình / view chức năng (Ví dụ: view `xac-thuc/dang-nhap.blade.php` sẽ nạp `public/css/dang-nhap.css` và `public/js/dang-nhap.js`).
+
 ---
 
 ## 3. QUY TẮC NGHIỆP VỤ & RÀNG BUỘC CSDL

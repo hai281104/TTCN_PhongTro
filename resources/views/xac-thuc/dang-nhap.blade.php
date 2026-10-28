@@ -6,22 +6,9 @@
     <title>Đăng nhập - Quản Lý Nhà Trọ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    boxShadow: {
-                        'xs': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="{{ asset('css/dang-nhap.css') }}">
+    <script src="{{ asset('js/dang-nhap.js') }}" defer></script>
 </head>
 <body class="h-full font-sans antialiased text-zinc-900 bg-zinc-50 flex items-center justify-center p-4 selection:bg-zinc-900 selection:text-white">
     <div class="w-full max-w-[420px]">
@@ -132,12 +119,12 @@
                 <span>Tài khoản kiểm thử nhanh (Mật khẩu: 123456)</span>
             </div>
             <div class="grid grid-cols-2 gap-2">
-                <button type="button" onclick="dienTaiKhoan('chutro@example.com', '123456')"
+                <button type="button" data-email="chutro@example.com" data-mat-khau="123456"
                     class="p-2 rounded-lg border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-left transition-colors">
                     <div class="font-medium text-zinc-900">Chủ trọ</div>
                     <div class="text-[11px] text-zinc-500 truncate">chutro@example.com</div>
                 </button>
-                <button type="button" onclick="dienTaiKhoan('nguyenvana@example.com', '123456')"
+                <button type="button" data-email="nguyenvana@example.com" data-mat-khau="123456"
                     class="p-2 rounded-lg border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-left transition-colors">
                     <div class="font-medium text-zinc-900">Khách thuê</div>
                     <div class="text-[11px] text-zinc-500 truncate">nguyenvana@example.com</div>
@@ -145,29 +132,5 @@
             </div>
         </div>
     </div>
-
-    <script>
-        const nutAnHien = document.getElementById('nutAnHienMatKhau');
-        const oMatKhau = document.getElementById('matKhau');
-        const bieuTuongHien = document.getElementById('bieuTuongHien');
-        const bieuTuongAn = document.getElementById('bieuTuongAn');
-
-        nutAnHien.addEventListener('click', function () {
-            if (oMatKhau.type === 'password') {
-                oMatKhau.type = 'text';
-                bieuTuongHien.classList.add('hidden');
-                bieuTuongAn.classList.remove('hidden');
-            } else {
-                oMatKhau.type = 'password';
-                bieuTuongHien.classList.remove('hidden');
-                bieuTuongAn.classList.add('hidden');
-            }
-        });
-
-        function dienTaiKhoan(email, matKhau) {
-            document.getElementById('email').value = email;
-            document.getElementById('matKhau').value = matKhau;
-        }
-    </script>
 </body>
 </html>

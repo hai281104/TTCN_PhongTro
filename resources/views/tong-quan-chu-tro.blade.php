@@ -4,18 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Nhà Trọ - Trang Chủ Trọ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    boxShadow: { 'xs': '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="{{ asset('css/tong-quan.css') }}">
 </head>
 <body class="h-full font-sans antialiased text-zinc-900 bg-zinc-50">
     <div class="min-h-full">
