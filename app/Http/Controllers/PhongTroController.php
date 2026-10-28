@@ -249,3 +249,4 @@ class PhongTroController extends Controller
             ->with('thongBaoThanhCong', $thongDiepThanhCong);
     }
 }
+
