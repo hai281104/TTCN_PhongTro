@@ -2,13 +2,12 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
     /**
-     * A basic test example.
+     * Kiểm tra trang chủ chuyển hướng về trang đăng nhập.
      *
      * @return void
      */
@@ -16,6 +15,6 @@ class ExampleTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        $response->assertRedirect('/dang-nhap');
     }
 }
