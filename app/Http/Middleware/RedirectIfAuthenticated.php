@@ -22,7 +22,11 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+                $nguoiDung = Auth::guard($guard)->user();
+                if ($nguoiDung && method_exists($nguoiDung, 'laChuTro') && $nguoiDung->laChuTro()) {
+                    return redirect('/phong-tro');
+                }
+                return redirect('/khach-thue/phong-cua-toi');
             }
         }
 

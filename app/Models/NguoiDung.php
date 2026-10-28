@@ -74,6 +74,15 @@ class NguoiDung extends Authenticatable
         return $this->matKhau;
     }
 
+    public function getRememberTokenName()
+    {
+        return '';
+    }
+
+    public function setRememberToken($value)
+    {
+    }
+
     /**
      * Kiểm tra người dùng có phải là chủ trọ hay không.
      *
