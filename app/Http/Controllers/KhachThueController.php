@@ -319,3 +319,4 @@ class KhachThueController extends Controller
             ->with('thongBaoThanhCong', $thongDiep);
     }
 }
+
