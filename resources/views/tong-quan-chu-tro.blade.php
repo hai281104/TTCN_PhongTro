@@ -31,6 +31,10 @@
                             class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-colors">
                             Quản lý phòng
                         </a>
+                        <a href="{{ route('khach-thue.danh-sach') }}"
+                            class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-colors">
+                            Khách thuê
+                        </a>
                     </nav>
                 </div>
 
@@ -70,7 +74,7 @@
                 </a>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <a href="{{ route('phong-tro.danh-sach') }}" class="bg-white border border-zinc-200 rounded-xl p-5 shadow-xs hover:border-zinc-300 transition-all block">
                     <div class="text-xs font-medium text-zinc-500 uppercase tracking-wider">Tổng số phòng</div>
                     <div class="text-2xl font-bold text-zinc-900 mt-2 tabular-nums">{{ \App\Models\PhongTro::where('dangHoatDong', 1)->count() }}</div>
@@ -84,6 +88,11 @@
                 <a href="{{ route('phong-tro.danh-sach', ['trangThaiPhong' => 'TRONG']) }}" class="bg-white border border-zinc-200 rounded-xl p-5 shadow-xs hover:border-zinc-300 transition-all block">
                     <div class="text-xs font-medium text-zinc-500 uppercase tracking-wider">Phòng trống</div>
                     <div class="text-2xl font-bold text-emerald-700 mt-2 tabular-nums">{{ \App\Models\PhongTro::where('dangHoatDong', 1)->where('trangThaiPhong', 'TRONG')->count() }}</div>
+                </a>
+
+                <a href="{{ route('khach-thue.danh-sach') }}" class="bg-white border border-zinc-200 rounded-xl p-5 shadow-xs hover:border-zinc-300 transition-all block">
+                    <div class="text-xs font-medium text-zinc-500 uppercase tracking-wider">Khách thuê</div>
+                    <div class="text-2xl font-bold text-zinc-900 mt-2 tabular-nums">{{ \App\Models\KhachThue::where('dangHoatDong', 1)->count() }}</div>
                 </a>
             </div>
         </main>
