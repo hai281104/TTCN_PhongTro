@@ -109,3 +109,36 @@ Viết comment (chú thích) hiệu quả giúp đồng đội và chính bạn 
 - **Code tồi thì đừng chữa bằng comment:** Nếu tên biến/hàm khó hiểu, hãy đổi tên biến/hàm thay vì viết comment giải thích nó làm gì.
 - **Comment lỗi thời (Outdated comments):** Code đã sửa nhưng quên sửa comment sẽ khiến người đọc hiểu sai hoàn toàn. Tuyệt đối cập nhật hoặc xóa comment khi thay đổi logic code.
 - **Comment vô bổ hoặc rác:** Tránh viết những câu đùa cợt vô nghĩa hoặc comment dài dòng chiếm diện tích màn hình.
+
+---
+
+## 5. QUY TRÌNH PHÁT TRIỂN & QUẢN LÝ GIT (GIT WORKFLOW)
+
+### 5.1. Bắt buộc đồng bộ code mới nhất trước khi làm tính năng mới
+- **Nguyên tắc cốt lõi:** Tuyệt đối không bao giờ tạo nhánh mới từ một nhánh cũ chưa được cập nhật. Luôn luôn lấy code mới nhất từ GitHub về máy trước khi bắt đầu bất kỳ chức năng nào.
+- **Quy trình 4 bước bắt buộc khi bắt đầu làm chức năng mới:**
+  ```bash
+  # Bước 1: Chuyển về nhánh cơ sở (main hoặc dev)
+  git checkout main
+
+  # Bước 2: BẮT BUỘC kéo commit mới nhất từ GitHub
+  git pull origin main
+
+  # Bước 3: Tạo nhánh mới cho chức năng từ nền tảng mới nhất
+  git checkout -b feature/<ten-chuc-nang>
+
+  # Bước 4: Viết code, kiểm thử, sau đó commit và đẩy lên GitHub
+  git push -u origin feature/<ten-chuc-nang>
+  ```
+
+### 5.2. Quy tắc đặt tên nhánh (`kebab-case`)
+- Tính năng mới: `feature/<ten-chuc-nang>` (Ví dụ: `feature/dang-nhap`, `feature/quan-ly-phong`, `feature/tinh-hoa-don`).
+- Sửa lỗi: `fix/<ten-loi-can-sua>` (Ví dụ: `fix/tinh-sai-tien-dien`, `fix/loi-khoa-ngoai`).
+- Cập nhật tài liệu: `docs/<noi-dung-cap-nhat>`.
+
+### 5.3. Quy tắc viết thông điệp Commit (Conventional Commits)
+- `feat:` Thêm một tính năng mới (Ví dụ: `feat: Xay dung chuc nang dang nhap va phan quyen`).
+- `fix:` Sửa một lỗi (Ví dụ: `fix: Sua loi dong bo trang thai phong tro khi het hop dong`).
+- `docs:` Thay đổi hoặc bổ sung tài liệu, quy tắc (Ví dụ: `docs: Cap nhat quy tac git workflow`).
+- `refactor:` Tái cấu trúc mã nguồn nhưng không đổi chức năng bên ngoài.
+- `chore:` Các tác vụ phụ trợ, cài đặt package, dọn dẹp file.
