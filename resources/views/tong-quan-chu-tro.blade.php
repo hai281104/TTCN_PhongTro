@@ -11,14 +11,27 @@
     <div class="min-h-full">
         <header class="bg-white border-b border-zinc-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-lg bg-zinc-900 text-white flex items-center justify-center font-bold text-sm">
-                        QL
+                <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-zinc-900 text-white flex items-center justify-center font-bold text-sm">
+                            QL
+                        </div>
+                        <div>
+                            <h1 class="text-base font-semibold text-zinc-900">Quản Lý Nhà Trọ</h1>
+                            <p class="text-xs text-zinc-500">Cổng Quản Trị Chủ Trọ</p>
+                        </div>
                     </div>
-                    <div>
-                        <h1 class="text-base font-semibold text-zinc-900">Quản Lý Nhà Trọ</h1>
-                        <p class="text-xs text-zinc-500">Cổng Quản Trị Chủ Trọ</p>
-                    </div>
+
+                    <nav class="hidden md:flex items-center gap-2 pl-4 border-l border-zinc-200">
+                        <a href="{{ route('tong-quan.chu-tro') }}"
+                            class="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-900 text-white">
+                            Tổng quan
+                        </a>
+                        <a href="{{ route('phong-tro.danh-sach') }}"
+                            class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-colors">
+                            Quản lý phòng
+                        </a>
+                    </nav>
                 </div>
 
                 <div class="flex items-center gap-4">
@@ -46,26 +59,32 @@
         </header>
 
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs mb-6">
-                <h2 class="text-lg font-semibold text-zinc-900 mb-2">Xin chào, Chủ trọ!</h2>
-                <p class="text-sm text-zinc-600">Bạn đã đăng nhập thành công vào hệ thống quản lý nhà trọ với vai trò <strong class="text-zinc-900">CHU_TRO</strong>.</p>
+            <div class="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-semibold text-zinc-900 mb-1">Xin chào, Chủ trọ!</h2>
+                    <p class="text-sm text-zinc-600">Bạn đã đăng nhập thành công vào hệ thống quản lý nhà trọ với vai trò <strong class="text-zinc-900">CHU_TRO</strong>.</p>
+                </div>
+                <a href="{{ route('phong-tro.danh-sach') }}"
+                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors shadow-xs">
+                    <span>Quản lý phòng trọ &rarr;</span>
+                </a>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white border border-zinc-200 rounded-xl p-5 shadow-xs">
+                <a href="{{ route('phong-tro.danh-sach') }}" class="bg-white border border-zinc-200 rounded-xl p-5 shadow-xs hover:border-zinc-300 transition-all block">
                     <div class="text-xs font-medium text-zinc-500 uppercase tracking-wider">Tổng số phòng</div>
-                    <div class="text-2xl font-bold text-zinc-900 mt-2">{{ \App\Models\PhongTro::count() }}</div>
-                </div>
+                    <div class="text-2xl font-bold text-zinc-900 mt-2 tabular-nums">{{ \App\Models\PhongTro::where('dangHoatDong', 1)->count() }}</div>
+                </a>
 
-                <div class="bg-white border border-zinc-200 rounded-xl p-5 shadow-xs">
+                <a href="{{ route('phong-tro.danh-sach', ['trangThaiPhong' => 'DANG_THUE']) }}" class="bg-white border border-zinc-200 rounded-xl p-5 shadow-xs hover:border-zinc-300 transition-all block">
                     <div class="text-xs font-medium text-zinc-500 uppercase tracking-wider">Phòng đang thuê</div>
-                    <div class="text-2xl font-bold text-sky-700 mt-2">{{ \App\Models\PhongTro::where('trangThaiPhong', 'DANG_THUE')->count() }}</div>
-                </div>
+                    <div class="text-2xl font-bold text-sky-700 mt-2 tabular-nums">{{ \App\Models\PhongTro::where('dangHoatDong', 1)->where('trangThaiPhong', 'DANG_THUE')->count() }}</div>
+                </a>
 
-                <div class="bg-white border border-zinc-200 rounded-xl p-5 shadow-xs">
+                <a href="{{ route('phong-tro.danh-sach', ['trangThaiPhong' => 'TRONG']) }}" class="bg-white border border-zinc-200 rounded-xl p-5 shadow-xs hover:border-zinc-300 transition-all block">
                     <div class="text-xs font-medium text-zinc-500 uppercase tracking-wider">Phòng trống</div>
-                    <div class="text-2xl font-bold text-emerald-700 mt-2">{{ \App\Models\PhongTro::where('trangThaiPhong', 'TRONG')->count() }}</div>
-                </div>
+                    <div class="text-2xl font-bold text-emerald-700 mt-2 tabular-nums">{{ \App\Models\PhongTro::where('dangHoatDong', 1)->where('trangThaiPhong', 'TRONG')->count() }}</div>
+                </a>
             </div>
         </main>
     </div>
