@@ -135,11 +135,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     let danhSachNguoiO = '';
                     if (hd.nguoi_o_cung && hd.nguoi_o_cung.length > 0) {
-                        danhSachNguoiO = '<div class="mt-3 pt-3 border-t border-zinc-100"><div class="text-xs font-medium text-zinc-500 mb-2">Người ở cùng:</div><ul class="space-y-1.5 text-xs text-zinc-700">';
+                        danhSachNguoiO = '<div class="mt-3 pt-3 border-t border-zinc-100">' +
+                            '<div class="text-xs font-medium text-zinc-500 mb-2">Danh sách người ở cùng (' + hd.nguoi_o_cung.length + ' người):</div>' +
+                            '<div class="overflow-x-auto rounded-lg border border-zinc-200">' +
+                            '<table class="min-w-full divide-y divide-zinc-200 text-xs">' +
+                            '<thead class="bg-zinc-50 text-zinc-500 font-medium text-left"><tr><th class="px-3 py-1.5">Họ tên</th><th class="px-3 py-1.5">Quan hệ</th><th class="px-3 py-1.5 text-right">SĐT</th></tr></thead>' +
+                            '<tbody class="divide-y divide-zinc-200 bg-white">';
                         hd.nguoi_o_cung.forEach(function (nguoi) {
-                            danhSachNguoiO += '<li class="flex items-center justify-between bg-zinc-50 p-2 rounded border border-zinc-200"><span>' + nguoi.hoTen + ' (' + (nguoi.quanHe || 'Ở cùng') + ')</span><span class="text-zinc-500">' + (nguoi.soDienThoai || '') + '</span></li>';
+                            danhSachNguoiO += '<tr class="hover:bg-zinc-50/50"><td class="px-3 py-1.5 font-medium text-zinc-900">' + nguoi.hoTen + '</td><td class="px-3 py-1.5 text-zinc-600">' + (nguoi.quanHe || 'Ở cùng') + '</td><td class="px-3 py-1.5 text-right tabular-nums text-zinc-700">' + (nguoi.soDienThoai || '—') + '</td></tr>';
                         });
-                        danhSachNguoiO += '</ul></div>';
+                        danhSachNguoiO += '</tbody></table></div></div>';
                     }
 
                     htmlKhach = '<div class="rounded-lg border border-sky-200 bg-sky-50/40 p-4 mb-4">' +
