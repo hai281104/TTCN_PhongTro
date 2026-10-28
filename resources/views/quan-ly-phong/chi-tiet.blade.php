@@ -175,18 +175,27 @@
                         </div>
 
                         @if ($hd->nguoiOCung && $hd->nguoiOCung->count() > 0)
-                            <div class="pt-3 border-t border-sky-100">
-                                <span class="font-medium text-zinc-700 block mb-2">Người ở cùng ({{ $hd->nguoiOCung->count() }} người):</span>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                    @foreach ($hd->nguoiOCung as $nguoi)
-                                        <div class="p-2.5 rounded bg-white border border-sky-200 flex items-center justify-between">
-                                            <div>
-                                                <span class="font-medium text-zinc-900">{{ $nguoi->hoTen }}</span>
-                                                <span class="text-[11px] text-zinc-500 block">Quan hệ: {{ $nguoi->quanHe ?: 'Ở cùng' }}</span>
-                                            </div>
-                                            <span class="text-[11px] text-zinc-600">{{ $nguoi->soDienThoai ?: 'Không có SĐT' }}</span>
-                                        </div>
-                                    @endforeach
+                            <div class="pt-4 border-t border-sky-100">
+                                <span class="font-medium text-zinc-700 block mb-2 text-xs">Danh sách người ở cùng ({{ $hd->nguoiOCung->count() }} người):</span>
+                                <div class="overflow-x-auto rounded-lg border border-sky-200 bg-white">
+                                    <table class="min-w-full divide-y divide-sky-100 text-xs">
+                                        <thead class="bg-sky-50 text-sky-800 font-medium">
+                                            <tr>
+                                                <th scope="col" class="px-3.5 py-2 text-left">Họ và tên</th>
+                                                <th scope="col" class="px-3.5 py-2 text-left">Quan hệ</th>
+                                                <th scope="col" class="px-3.5 py-2 text-right">Số điện thoại</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-sky-100">
+                                            @foreach ($hd->nguoiOCung as $nguoi)
+                                                <tr class="hover:bg-sky-50/50 transition-colors">
+                                                    <td class="px-3.5 py-2 font-medium text-zinc-900">{{ $nguoi->hoTen }}</td>
+                                                    <td class="px-3.5 py-2 text-zinc-600">{{ $nguoi->quanHe ?: 'Ở cùng' }}</td>
+                                                    <td class="px-3.5 py-2 text-right tabular-nums text-zinc-700">{{ $nguoi->soDienThoai ?: '—' }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         @endif
