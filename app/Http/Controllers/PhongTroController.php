@@ -24,11 +24,13 @@ class PhongTroController extends Controller
         }
 
         if ($yeuCau->filled('giaTu')) {
-            $truyVan->where('donGiaMacDinh', '>=', $yeuCau->input('giaTu'));
+            $giaTu = str_replace(['.', ','], '', $yeuCau->input('giaTu'));
+            $truyVan->where('donGiaMacDinh', '>=', $giaTu);
         }
 
         if ($yeuCau->filled('giaDen')) {
-            $truyVan->where('donGiaMacDinh', '<=', $yeuCau->input('giaDen'));
+            $giaDen = str_replace(['.', ','], '', $yeuCau->input('giaDen'));
+            $truyVan->where('donGiaMacDinh', '<=', $giaDen);
         }
 
         $danhSachPhong = $truyVan->with(['hopDongHieuLuc.khachThue', 'hopDongHieuLuc.nguoiOCung'])

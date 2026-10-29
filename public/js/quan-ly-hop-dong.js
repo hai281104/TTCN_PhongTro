@@ -2,6 +2,68 @@
  * Quản lý tương tác giao diện Quản lý hợp đồng
  */
 document.addEventListener('DOMContentLoaded', function () {
+    // Hàm định dạng tiền tệ với dấu chấm phân cách hàng nghìn
+    function dinhDangTien(chuoi) {
+        if (!chuoi && chuoi !== 0) return '';
+        let chuoiSo = chuoi.toString().replace(/\D/g, '');
+        if (!chuoiSo) return '';
+        chuoiSo = chuoiSo.replace(/^0+(?=\d)/, '');
+        return chuoiSo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    // Khởi tạo các ô nhập tiền tệ và định dạng khi gõ
+    function khoiTaoDinhDangTienTe() {
+        document.querySelectorAll('.dinh-dang-tien').forEach(function (oNhap) {
+            if (oNhap.dataset.daGanDinhDang) return;
+            oNhap.dataset.daGanDinhDang = 'true';
+
+            oNhap.type = 'text';
+            oNhap.inputMode = 'numeric';
+            oNhap.autocomplete = 'off';
+
+            if (oNhap.value) {
+                oNhap.value = dinhDangTien(oNhap.value);
+            }
+
+            oNhap.addEventListener('input', function () {
+                const viTriHienTai = this.selectionStart;
+                const giaTriHienTai = this.value;
+                const chuSoTruoc = (giaTriHienTai.slice(0, viTriHienTai).match(/\d/g) || []).length;
+
+                const giaTriMoi = dinhDangTien(giaTriHienTai);
+                this.value = giaTriMoi;
+
+                let chuSoDem = 0;
+                let viTriMoi = 0;
+                for (let i = 0; i < giaTriMoi.length; i++) {
+                    if (/\d/.test(giaTriMoi[i])) {
+                        chuSoDem++;
+                    }
+                    if (chuSoDem === chuSoTruoc) {
+                        viTriMoi = i + 1;
+                        break;
+                    }
+                }
+                if (chuSoTruoc === 0) viTriMoi = 0;
+                this.setSelectionRange(viTriMoi, viTriMoi);
+            });
+        });
+
+        // Tự động bỏ dấu chấm trước khi submit form để gửi số nguyên chuẩn
+        document.querySelectorAll('form').forEach(function (form) {
+            if (form.dataset.daGanSubmitTien) return;
+            form.dataset.daGanSubmitTien = 'true';
+
+            form.addEventListener('submit', function () {
+                form.querySelectorAll('.dinh-dang-tien').forEach(function (oNhap) {
+                    oNhap.value = oNhap.value.replace(/\D/g, '');
+                });
+            });
+        });
+    }
+
+    khoiTaoDinhDangTienTe();
+
     // Hàm loại bỏ dấu tiếng Việt để tìm kiếm không dấu
     function loaiBoDauTiengViet(chuoi) {
         if (!chuoi) return '';
@@ -154,11 +216,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 danhSachMuc.forEach(m => m.classList.remove('dang-chon'));
                 this.classList.add('dang-chon');
 
-                // Nếu là hộp chọn phòng: tự động điền đơn giá thuê và tiền cọc
+                // Nếu là hộp chọn phòng: tự động điền đơn giá thuê và tiền cọc (định dạng tiền tệ)
                 if (donGia && inputGiaThue) {
-                    inputGiaThue.value = donGia;
+                    inputGiaThue.value = dinhDangTien(donGia);
                     if (inputTienCoc && (!inputTienCoc.value || inputTienCoc.value === '0')) {
-                        inputTienCoc.value = donGia;
+                        inputTienCoc.value = dinhDangTien(donGia);
                     }
                 }
 
@@ -241,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             const inputTienHoanCoc = document.getElementById('inputTienHoanCoc');
             if (inputTienHoanCoc) {
-                inputTienHoanCoc.value = tienCoc;
+                inputTienHoanCoc.value = dinhDangTien(tienCoc);
             }
 
             moModal('modalKetThucHopDong');

@@ -406,16 +406,18 @@
                             <label for="inputGiaThueChot" class="block font-medium text-zinc-700 mb-1">
                                 Giá thuê chốt (đ/tháng) <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" name="giaThueChot" id="inputGiaThueChot" required min="0" step="50000"
-                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
+                            <input type="text" inputmode="numeric" name="giaThueChot" id="inputGiaThueChot" required placeholder="Ví dụ: 3.000.000"
+                                value="{{ old('giaThueChot') ? number_format(str_replace(['.', ','], '', old('giaThueChot')), 0, ',', '.') : '' }}"
+                                class="dinh-dang-tien w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
                         </div>
 
                         <div>
                             <label for="inputTienDatCoc" class="block font-medium text-zinc-700 mb-1">
                                 Tiền đặt cọc giữ chỗ (đ) <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" name="tienDatCoc" id="inputTienDatCoc" required min="0" step="50000"
-                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
+                            <input type="text" inputmode="numeric" name="tienDatCoc" id="inputTienDatCoc" required placeholder="Ví dụ: 3.000.000"
+                                value="{{ old('tienDatCoc') ? number_format(str_replace(['.', ','], '', old('tienDatCoc')), 0, ',', '.') : '' }}"
+                                class="dinh-dang-tien w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
                         </div>
                     </div>
 
@@ -474,8 +476,8 @@
                         <label for="inputTienHoanCoc" class="block font-medium text-zinc-700 mb-1">
                             Số tiền cọc hoàn trả lại cho khách (đ)
                         </label>
-                        <input type="number" name="tienHoanCoc" id="inputTienHoanCoc" min="0" step="50000"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
+                        <input type="text" inputmode="numeric" name="tienHoanCoc" id="inputTienHoanCoc" placeholder="0"
+                            class="dinh-dang-tien w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
                     </div>
                 </div>
 

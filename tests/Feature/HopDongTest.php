@@ -49,7 +49,7 @@ class HopDongTest extends TestCase
     protected function taoPhongTroTrongMau()
     {
         return PhongTro::create([
-            'soPhong' => 'P' . rand(700, 999),
+            'soPhong' => 'P' . rand(1000, 9999) . '_' . substr(uniqid(), -4),
             'donGiaMacDinh' => 3000000,
             'trangThaiPhong' => 'TRONG',
             'dangHoatDong' => 1,
@@ -121,6 +121,33 @@ class HopDongTest extends TestCase
         // Kiểm tra trigger CSDL tự động chuyển trạng thái phòng sang DANG_THUE
         $phongCapNhat = $phong->fresh();
         $this->assertEquals('DANG_THUE', $phongCapNhat->trangThaiPhong);
+    }
+
+    public function test_lap_hop_dong_voi_gia_thue_va_tien_coc_dinh_dang_tien_te_thanh_cong()
+    {
+        $chuTro = $this->layTaiKhoanChuTro();
+        $phong = $this->taoPhongTroTrongMau();
+        $khach = $this->taoKhachThueMau();
+
+        $phanHoi = $this->actingAs($chuTro)->post('/hop-dong', [
+            'maPhong' => $phong->maPhong,
+            'maKhach' => $khach->maKhach,
+            'ngayBatDau' => '2026-11-01',
+            'ngayKetThuc' => '2027-11-01',
+            'giaThueChot' => '3.200.000',
+            'tienDatCoc' => '3.200.000',
+        ]);
+
+        $this->assertDatabaseHas('HopDong', [
+            'maPhong' => $phong->maPhong,
+            'maKhach' => $khach->maKhach,
+            'giaThueChot' => 3200000,
+            'tienDatCoc' => 3200000,
+            'trangThaiHD' => 'HIEU_LUC',
+        ]);
+
+        $hopDongMoi = HopDong::where('maPhong', $phong->maPhong)->first();
+        $phanHoi->assertRedirect("/hop-dong/{$hopDongMoi->maHopDong}");
     }
 
     public function test_lap_hop_dong_that_bai_khi_thieu_truong_bat_buoc()

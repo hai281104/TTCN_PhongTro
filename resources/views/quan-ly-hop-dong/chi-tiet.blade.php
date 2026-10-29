@@ -461,8 +461,8 @@
                         <label for="inputTienHoanCoc" class="block font-medium text-zinc-700 mb-1">
                             Số tiền cọc hoàn trả lại cho khách (đ)
                         </label>
-                        <input type="number" name="tienHoanCoc" id="inputTienHoanCoc" min="0" step="50000" value="{{ $hopDong->tienDatCoc }}"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
+                        <input type="text" inputmode="numeric" name="tienHoanCoc" id="inputTienHoanCoc" placeholder="0" value="{{ number_format($hopDong->tienDatCoc, 0, ',', '.') }}"
+                            class="dinh-dang-tien w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
                     </div>
                 </div>
 

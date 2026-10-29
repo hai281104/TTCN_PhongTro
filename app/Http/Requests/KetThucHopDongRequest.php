@@ -16,6 +16,15 @@ class KetThucHopDongRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        if ($this->has('tienHoanCoc') && is_string($this->tienHoanCoc)) {
+            $this->merge([
+                'tienHoanCoc' => str_replace(['.', ','], '', $this->tienHoanCoc),
+            ]);
+        }
+    }
+
     /**
      * Quy tắc xác thực khi kết thúc / thanh lý hợp đồng.
      *

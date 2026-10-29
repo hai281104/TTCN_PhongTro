@@ -19,6 +19,20 @@ class LuuHopDongRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $giaTriGop = [];
+        if ($this->has('giaThueChot') && is_string($this->giaThueChot)) {
+            $giaTriGop['giaThueChot'] = str_replace(['.', ','], '', $this->giaThueChot);
+        }
+        if ($this->has('tienDatCoc') && is_string($this->tienDatCoc)) {
+            $giaTriGop['tienDatCoc'] = str_replace(['.', ','], '', $this->tienDatCoc);
+        }
+        if (!empty($giaTriGop)) {
+            $this->merge($giaTriGop);
+        }
+    }
+
     /**
      * Quy tắc xác thực dữ liệu khi lập hợp đồng thuê phòng mới.
      *

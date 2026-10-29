@@ -154,11 +154,11 @@
                         </select>
 
                         <div class="flex items-center gap-2">
-                            <input type="number" name="giaTu" value="{{ request('giaTu') }}" placeholder="Giá từ..."
-                                class="w-28 px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
+                            <input type="text" inputmode="numeric" name="giaTu" value="{{ request('giaTu') ? number_format(str_replace(['.', ','], '', request('giaTu')), 0, ',', '.') : '' }}" placeholder="Giá từ..."
+                                class="dinh-dang-tien w-28 px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
                             <span class="text-zinc-400 text-xs">-</span>
-                            <input type="number" name="giaDen" value="{{ request('giaDen') }}" placeholder="Đến..."
-                                class="w-28 px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
+                            <input type="text" inputmode="numeric" name="giaDen" value="{{ request('giaDen') ? number_format(str_replace(['.', ','], '', request('giaDen')), 0, ',', '.') : '' }}" placeholder="Đến..."
+                                class="dinh-dang-tien w-28 px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
                         </div>
 
                         <button type="submit"
@@ -333,8 +333,9 @@
 
                     <div>
                         <label for="donGiaThem" class="block font-medium text-zinc-700 mb-1">Đơn giá mặc định (đ) <span class="text-red-500">*</span></label>
-                        <input type="number" name="donGiaMacDinh" id="donGiaThem" required min="0" step="50000" placeholder="Ví dụ: 2500000"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
+                        <input type="text" inputmode="numeric" name="donGiaMacDinh" id="donGiaThem" required placeholder="Ví dụ: 2.500.000"
+                            value="{{ old('donGiaMacDinh') ? number_format(str_replace(['.', ','], '', old('donGiaMacDinh')), 0, ',', '.') : '' }}"
+                            class="dinh-dang-tien w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
                     </div>
 
                     <div>
@@ -378,8 +379,8 @@
 
                     <div>
                         <label for="donGiaSua" class="block font-medium text-zinc-700 mb-1">Đơn giá mặc định (đ) <span class="text-red-500">*</span></label>
-                        <input type="number" name="donGiaMacDinh" id="donGiaSua" required min="0" step="50000"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
+                        <input type="text" inputmode="numeric" name="donGiaMacDinh" id="donGiaSua" required placeholder="Ví dụ: 2.500.000"
+                            class="dinh-dang-tien w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
                     </div>
 
                     <div>

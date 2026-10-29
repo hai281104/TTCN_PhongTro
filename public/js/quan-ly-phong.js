@@ -1,4 +1,66 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // Hàm định dạng tiền tệ với dấu chấm phân cách hàng nghìn
+    function dinhDangTien(chuoi) {
+        if (!chuoi && chuoi !== 0) return '';
+        let chuoiSo = chuoi.toString().replace(/\D/g, '');
+        if (!chuoiSo) return '';
+        chuoiSo = chuoiSo.replace(/^0+(?=\d)/, '');
+        return chuoiSo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    // Khởi tạo các ô nhập tiền tệ và định dạng khi gõ
+    function khoiTaoDinhDangTienTe() {
+        document.querySelectorAll('.dinh-dang-tien').forEach(function (oNhap) {
+            if (oNhap.dataset.daGanDinhDang) return;
+            oNhap.dataset.daGanDinhDang = 'true';
+
+            oNhap.type = 'text';
+            oNhap.inputMode = 'numeric';
+            oNhap.autocomplete = 'off';
+
+            if (oNhap.value) {
+                oNhap.value = dinhDangTien(oNhap.value);
+            }
+
+            oNhap.addEventListener('input', function () {
+                const viTriHienTai = this.selectionStart;
+                const giaTriHienTai = this.value;
+                const chuSoTruoc = (giaTriHienTai.slice(0, viTriHienTai).match(/\d/g) || []).length;
+
+                const giaTriMoi = dinhDangTien(giaTriHienTai);
+                this.value = giaTriMoi;
+
+                let chuSoDem = 0;
+                let viTriMoi = 0;
+                for (let i = 0; i < giaTriMoi.length; i++) {
+                    if (/\d/.test(giaTriMoi[i])) {
+                        chuSoDem++;
+                    }
+                    if (chuSoDem === chuSoTruoc) {
+                        viTriMoi = i + 1;
+                        break;
+                    }
+                }
+                if (chuSoTruoc === 0) viTriMoi = 0;
+                this.setSelectionRange(viTriMoi, viTriMoi);
+            });
+        });
+
+        // Tự động bỏ dấu chấm trước khi submit form để gửi số nguyên chuẩn
+        document.querySelectorAll('form').forEach(function (form) {
+            if (form.dataset.daGanSubmitTien) return;
+            form.dataset.daGanSubmitTien = 'true';
+
+            form.addEventListener('submit', function () {
+                form.querySelectorAll('.dinh-dang-tien').forEach(function (oNhap) {
+                    oNhap.value = oNhap.value.replace(/\D/g, '');
+                });
+            });
+        });
+    }
+
+    khoiTaoDinhDangTienTe();
+
     const modalThem = document.getElementById('modalThemPhong');
     const nutMoThem = document.getElementById('nutMoThemPhong');
     const cacNutDongModal = document.querySelectorAll('[data-dong-modal]');
@@ -55,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (bieuMauSua && modalSua) {
                 bieuMauSua.action = '/phong-tro/' + maPhong;
                 if (oSoPhongSua) oSoPhongSua.value = soPhong;
-                if (oDonGiaSua) oDonGiaSua.value = donGia;
+                if (oDonGiaSua) oDonGiaSua.value = dinhDangTien(donGia);
                 if (oGhiChuSua) oGhiChuSua.value = ghiChu;
 
                 modalSua.classList.remove('modal-an');

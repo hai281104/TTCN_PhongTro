@@ -77,6 +77,26 @@ class PhongTroTest extends TestCase
         ]);
     }
 
+    public function test_chu_tro_them_phong_moi_voi_don_gia_dinh_dang_tien_te_thanh_cong()
+    {
+        $chuTro = $this->layTaiKhoanChuTro();
+        $soPhongMoi = 'P_TienTe_' . substr(uniqid(), -5);
+
+        $phanHoi = $this->actingAs($chuTro)->post('/phong-tro', [
+            'soPhong' => $soPhongMoi,
+            'donGiaMacDinh' => '3.500.000',
+            'ghiChu' => 'Phòng kiểm thử định dạng tiền tệ',
+        ]);
+
+        $phanHoi->assertRedirect('/phong-tro');
+        $this->assertDatabaseHas('PhongTro', [
+            'soPhong' => $soPhongMoi,
+            'donGiaMacDinh' => 3500000,
+            'trangThaiPhong' => 'TRONG',
+            'dangHoatDong' => 1,
+        ]);
+    }
+
     public function test_them_phong_that_bai_khi_thieu_so_phong()
     {
         $chuTro = $this->layTaiKhoanChuTro();

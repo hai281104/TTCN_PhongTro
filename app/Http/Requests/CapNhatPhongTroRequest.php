@@ -17,6 +17,15 @@ class CapNhatPhongTroRequest extends FormRequest
         return $this->user() && $this->user()->laChuTro();
     }
 
+    protected function prepareForValidation()
+    {
+        if ($this->has('donGiaMacDinh') && is_string($this->donGiaMacDinh)) {
+            $this->merge([
+                'donGiaMacDinh' => str_replace(['.', ','], '', $this->donGiaMacDinh),
+            ]);
+        }
+    }
+
     /**
      * Lấy các quy tắc xác thực áp dụng cho yêu cầu.
      *
