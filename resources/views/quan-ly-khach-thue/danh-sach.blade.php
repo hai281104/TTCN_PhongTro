@@ -36,6 +36,10 @@
                             class="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-900 text-white">
                             Khách thuê
                         </a>
+                        <a href="{{ route('hop-dong.danh-sach') }}"
+                            class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-colors">
+                            Hợp đồng
+                        </a>
                     </nav>
                 </div>
 

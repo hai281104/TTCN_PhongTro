@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DangNhapController;
+use App\Http\Controllers\HopDongController;
 use App\Http\Controllers\KhachThueController;
 use App\Http\Controllers\PhongTroController;
 use App\Http\Controllers\TongQuanController;
@@ -44,6 +45,15 @@ Route::middleware('auth')->group(function () {
             Route::post('/{maKhach}/cap-tai-khoan', [KhachThueController::class, 'capTaiKhoan'])->name('cap-tai-khoan');
             Route::delete('/{maKhach}', [KhachThueController::class, 'xoaMem'])->name('xoa-mem');
             Route::patch('/{maKhach}/khoi-phuc', [KhachThueController::class, 'khoiPhuc'])->name('khoi-phuc');
+        });
+
+        Route::prefix('hop-dong')->name('hop-dong.')->where(['maHopDong' => '[0-9]+'])->group(function () {
+            Route::get('/', [HopDongController::class, 'danhSach'])->name('danh-sach');
+            Route::post('/', [HopDongController::class, 'taoMoi'])->name('tao-moi');
+            Route::get('/{maHopDong}', [HopDongController::class, 'chiTiet'])->name('chi-tiet');
+            Route::post('/{maHopDong}/nguoi-o-cung', [HopDongController::class, 'themNguoiOCung'])->name('them-nguoi-o-cung');
+            Route::delete('/{maHopDong}/nguoi-o-cung/{maNguoiO}', [HopDongController::class, 'xoaNguoiOCung'])->where(['maNguoiO' => '[0-9]+'])->name('xoa-nguoi-o-cung');
+            Route::patch('/{maHopDong}/ket-thuc', [HopDongController::class, 'ketThuc'])->name('ket-thuc');
         });
     });
 });
