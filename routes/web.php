@@ -3,6 +3,7 @@
 use App\Http\Controllers\DangNhapController;
 use App\Http\Controllers\KhachThueController;
 use App\Http\Controllers\PhongTroController;
+use App\Http\Controllers\TongQuanController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -19,15 +20,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/dang-xuat', [DangNhapController::class, 'dangXuat'])->name('dang-xuat');
 
     Route::middleware('vaiTro:KHACH_THUE')->group(function () {
-        Route::get('/khach-thue/phong-cua-toi', function () {
-            return view('tong-quan-khach-thue');
-        })->name('khach-thue.phong-cua-toi');
+        Route::get('/khach-thue/phong-cua-toi', [TongQuanController::class, 'phongCuaToi'])->name('khach-thue.phong-cua-toi');
     });
 
     Route::middleware('vaiTro:CHU_TRO')->group(function () {
-        Route::get('/tong-quan', function () {
-            return view('tong-quan-chu-tro');
-        })->name('tong-quan.chu-tro');
+        Route::get('/tong-quan', [TongQuanController::class, 'tongQuanChuTro'])->name('tong-quan.chu-tro');
 
         Route::prefix('phong-tro')->name('phong-tro.')->where(['maPhong' => '[0-9]+'])->group(function () {
             Route::get('/', [PhongTroController::class, 'danhSach'])->name('danh-sach');
