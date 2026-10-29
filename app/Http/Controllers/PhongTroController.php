@@ -9,12 +9,7 @@ use Illuminate\Http\Request;
 
 class PhongTroController extends Controller
 {
-    /**
-     * Hiển thị danh sách phòng trọ kèm bộ lọc và các thẻ thống kê.
-     *
-     * @param  \Illuminate\Http\Request  $yeuCau
-     * @return \Illuminate\View\View
-     */
+    // Hiển thị danh sách phòng trọ kèm bộ lọc và các thẻ thống kê.
     public function danhSach(Request $yeuCau)
     {
         $truyVan = PhongTro::query()->where('dangHoatDong', 1);
@@ -57,12 +52,7 @@ class PhongTroController extends Controller
         ));
     }
 
-    /**
-     * Lưu thông tin phòng trọ mới vào hệ thống.
-     *
-     * @param  \App\Http\Requests\LuuPhongTroRequest  $yeuCau
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
-     */
+    // Lưu thông tin phòng trọ mới vào hệ thống.
     public function taoMoi(LuuPhongTroRequest $yeuCau)
     {
         $phongMoi = PhongTro::create([
@@ -85,13 +75,7 @@ class PhongTroController extends Controller
             ->with('thongBaoThanhCong', "Thêm phòng {$phongMoi->soPhong} thành công.");
     }
 
-    /**
-     * Lấy dữ liệu chi tiết của một phòng trọ.
-     *
-     * @param  \Illuminate\Http\Request  $yeuCau
-     * @param  int  $maPhong
-     * @return \Illuminate\View\View|\Illuminate\Http\JsonResponse
-     */
+    // Lấy dữ liệu chi tiết của một phòng trọ.
     public function chiTiet(Request $yeuCau, $maPhong)
     {
         $phongTro = PhongTro::with([
@@ -115,13 +99,7 @@ class PhongTroController extends Controller
         return view('quan-ly-phong.chi-tiet', compact('phongTro'));
     }
 
-    /**
-     * Cập nhật thông tin phòng trọ đã có.
-     *
-     * @param  \App\Http\Requests\CapNhatPhongTroRequest  $yeuCau
-     * @param  int  $maPhong
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
-     */
+    // Cập nhật thông tin phòng trọ đã có.
     public function capNhat(CapNhatPhongTroRequest $yeuCau, $maPhong)
     {
         $phongTro = PhongTro::findOrFail($maPhong);
@@ -144,13 +122,7 @@ class PhongTroController extends Controller
             ->with('thongBaoThanhCong', "Cập nhật phòng {$phongTro->soPhong} thành công.");
     }
 
-    /**
-     * Chuyển đổi trạng thái vận hành giữa TRONG và DANG_SUA_CHUA.
-     *
-     * @param  \Illuminate\Http\Request  $yeuCau
-     * @param  int  $maPhong
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
-     */
+    // Chuyển đổi trạng thái vận hành giữa TRONG và DANG_SUA_CHUA.
     public function doiTrangThai(Request $yeuCau, $maPhong)
     {
         $phongTro = PhongTro::with('hopDongHieuLuc')->findOrFail($maPhong);
@@ -185,13 +157,7 @@ class PhongTroController extends Controller
         return back()->with('thongBaoThanhCong', $thongDiepThanhCong);
     }
 
-    /**
-     * Xóa mềm phòng trọ (cập nhật dangHoatDong = 0).
-     *
-     * @param  \Illuminate\Http\Request  $yeuCau
-     * @param  int  $maPhong
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
-     */
+    // Xóa mềm phòng trọ (cập nhật dangHoatDong = 0).
     public function xoaMem(Request $yeuCau, $maPhong)
     {
         $phongTro = PhongTro::with('hopDongHieuLuc')->findOrFail($maPhong);
@@ -224,13 +190,7 @@ class PhongTroController extends Controller
             ->with('thongBaoThanhCong', $thongDiepThanhCong);
     }
 
-    /**
-     * Khôi phục phòng trọ đã ngưng hoạt động.
-     *
-     * @param  \Illuminate\Http\Request  $yeuCau
-     * @param  int  $maPhong
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
-     */
+    // Khôi phục phòng trọ đã ngưng hoạt động.
     public function khoiPhuc(Request $yeuCau, $maPhong)
     {
         $phongTro = PhongTro::findOrFail($maPhong);

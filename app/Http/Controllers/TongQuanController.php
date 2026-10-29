@@ -11,11 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class TongQuanController extends Controller
 {
-    /**
-     * Hiển thị bảng điều khiển tổng quan dành cho chủ trọ.
-     *
-     * @return \Illuminate\View\View
-     */
+    // Hiển thị bảng điều khiển tổng quan dành cho chủ trọ.
     public function tongQuanChuTro()
     {
         $tongSoPhong = PhongTro::where('dangHoatDong', 1)->count();
@@ -47,11 +43,7 @@ class TongQuanController extends Controller
         ));
     }
 
-    /**
-     * Hiển thị thông tin phòng và hợp đồng của khách thuê đang đăng nhập.
-     *
-     * @return \Illuminate\View\View
-     */
+    // Hiển thị thông tin phòng và hợp đồng của khách thuê đang đăng nhập.
     public function phongCuaToi()
     {
         $nguoiDung = Auth::user();

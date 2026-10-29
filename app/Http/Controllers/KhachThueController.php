@@ -12,12 +12,7 @@ use Illuminate\Support\Facades\Hash;
 
 class KhachThueController extends Controller
 {
-    /**
-     * Hiển thị danh sách hồ sơ khách thuê kèm bộ lọc và thẻ KPI thống kê.
-     *
-     * @param  \Illuminate\Http\Request  $yeuCau
-     * @return \Illuminate\View\View
-     */
+    // Hiển thị danh sách hồ sơ khách thuê kèm bộ lọc và thẻ KPI thống kê.
     public function danhSach(Request $yeuCau)
     {
         $truyVan = KhachThue::query()->where('dangHoatDong', 1);
@@ -68,12 +63,7 @@ class KhachThueController extends Controller
         ));
     }
 
-    /**
-     * Lưu hồ sơ khách thuê mới (có thể kèm tạo tài khoản đăng nhập).
-     *
-     * @param  \App\Http\Requests\LuuKhachThueRequest  $yeuCau
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
-     */
+    // Lưu hồ sơ khách thuê mới (có thể kèm tạo tài khoản đăng nhập).
     public function taoMoi(LuuKhachThueRequest $yeuCau)
     {
         $khachMoi = DB::transaction(function () use ($yeuCau) {
@@ -111,13 +101,7 @@ class KhachThueController extends Controller
             ->with('thongBaoThanhCong', "Thêm hồ sơ khách thuê {$khachMoi->hoTen} thành công.");
     }
 
-    /**
-     * Xem thông tin chi tiết một hồ sơ khách thuê.
-     *
-     * @param  \Illuminate\Http\Request  $yeuCau
-     * @param  int  $maKhach
-     * @return \Illuminate\View\View|\Illuminate\Http\JsonResponse
-     */
+    // Xem thông tin chi tiết một hồ sơ khách thuê.
     public function chiTiet(Request $yeuCau, $maKhach)
     {
         $khachThue = KhachThue::with([
@@ -139,13 +123,7 @@ class KhachThueController extends Controller
         return view('quan-ly-khach-thue.chi-tiet', compact('khachThue'));
     }
 
-    /**
-     * Cập nhật thông tin nhân thân khách thuê.
-     *
-     * @param  \App\Http\Requests\CapNhatKhachThueRequest  $yeuCau
-     * @param  int  $maKhach
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
-     */
+    // Cập nhật thông tin nhân thân khách thuê.
     public function capNhat(CapNhatKhachThueRequest $yeuCau, $maKhach)
     {
         $khachThue = KhachThue::findOrFail($maKhach);
@@ -169,13 +147,7 @@ class KhachThueController extends Controller
             ->with('thongBaoThanhCong', "Cập nhật hồ sơ khách {$khachThue->hoTen} thành công.");
     }
 
-    /**
-     * Cấp tài khoản đăng nhập cho khách thuê chưa có tài khoản.
-     *
-     * @param  \Illuminate\Http\Request  $yeuCau
-     * @param  int  $maKhach
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
-     */
+    // Cấp tài khoản đăng nhập cho khách thuê chưa có tài khoản.
     public function capTaiKhoan(Request $yeuCau, $maKhach)
     {
         $khachThue = KhachThue::findOrFail($maKhach);
@@ -223,13 +195,7 @@ class KhachThueController extends Controller
             ->with('thongBaoThanhCong', $thongDiep);
     }
 
-    /**
-     * Xóa mềm hồ sơ khách thuê (cập nhật dangHoatDong = 0).
-     *
-     * @param  \Illuminate\Http\Request  $yeuCau
-     * @param  int  $maKhach
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
-     */
+    // Xóa mềm hồ sơ khách thuê (cập nhật dangHoatDong = 0).
     public function xoaMem(Request $yeuCau, $maKhach)
     {
         $khachThue = KhachThue::with(['hopDongHieuLuc', 'hopDong.hoaDon'])->findOrFail($maKhach);
@@ -286,13 +252,7 @@ class KhachThueController extends Controller
             ->with('thongBaoThanhCong', $thongDiep);
     }
 
-    /**
-     * Khôi phục hồ sơ khách thuê đã ngưng hoạt động.
-     *
-     * @param  \Illuminate\Http\Request  $yeuCau
-     * @param  int  $maKhach
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
-     */
+    // Khôi phục hồ sơ khách thuê đã ngưng hoạt động.
     public function khoiPhuc(Request $yeuCau, $maKhach)
     {
         $khachThue = KhachThue::findOrFail($maKhach);

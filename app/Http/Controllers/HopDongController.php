@@ -14,12 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class HopDongController extends Controller
 {
-    /**
-     * Hiển thị danh sách các hợp đồng thuê phòng kèm bộ lọc và các thẻ thống kê.
-     *
-     * @param  \Illuminate\Http\Request  $yeuCau
-     * @return \Illuminate\View\View
-     */
+    // Hiển thị danh sách các hợp đồng thuê phòng kèm bộ lọc và các thẻ thống kê.
     public function danhSach(Request $yeuCau)
     {
         $truyVan = HopDong::with(['phongTro', 'khachThue', 'nguoiOCung']);
@@ -76,12 +71,7 @@ class HopDongController extends Controller
         ));
     }
 
-    /**
-     * Tạo và lưu hợp đồng thuê phòng mới vào cơ sở dữ liệu.
-     *
-     * @param  \App\Http\Requests\LuuHopDongRequest  $yeuCau
-     * @return \Illuminate\Http\RedirectResponse
-     */
+    // Tạo và lưu hợp đồng thuê phòng mới vào cơ sở dữ liệu.
     public function taoMoi(LuuHopDongRequest $yeuCau)
     {
         DB::beginTransaction();
@@ -124,12 +114,7 @@ class HopDongController extends Controller
         }
     }
 
-    /**
-     * Hiển thị chi tiết hợp đồng, danh sách người ở cùng và lịch sử hóa đơn.
-     *
-     * @param  int  $maHopDong
-     * @return \Illuminate\View\View
-     */
+    // Hiển thị chi tiết hợp đồng, danh sách người ở cùng và lịch sử hóa đơn.
     public function chiTiet($maHopDong)
     {
         $hopDong = HopDong::with([
@@ -144,13 +129,7 @@ class HopDongController extends Controller
         return view('quan-ly-hop-dong.chi-tiet', compact('hopDong'));
     }
 
-    /**
-     * Thêm người ở cùng vào hợp đồng đang có hiệu lực.
-     *
-     * @param  \App\Http\Requests\ThemNguoiOCungRequest  $yeuCau
-     * @param  int  $maHopDong
-     * @return \Illuminate\Http\RedirectResponse
-     */
+    // Thêm người ở cùng vào hợp đồng đang có hiệu lực.
     public function themNguoiOCung(ThemNguoiOCungRequest $yeuCau, $maHopDong)
     {
         $hopDong = HopDong::findOrFail($maHopDong);
@@ -171,13 +150,7 @@ class HopDongController extends Controller
             ->with('thongBaoThanhCong', 'Đã thêm người ở cùng vào hợp đồng.');
     }
 
-    /**
-     * Xóa người ở cùng khỏi hợp đồng.
-     *
-     * @param  int  $maHopDong
-     * @param  int  $maNguoiO
-     * @return \Illuminate\Http\RedirectResponse
-     */
+    // Xóa người ở cùng khỏi hợp đồng.
     public function xoaNguoiOCung($maHopDong, $maNguoiO)
     {
         $nguoiO = NguoiOCung::where('maHopDong', $maHopDong)
@@ -190,13 +163,7 @@ class HopDongController extends Controller
             ->with('thongBaoThanhCong', 'Đã xóa người ở cùng khỏi hợp đồng.');
     }
 
-    /**
-     * Kết thúc / Thanh lý hợp đồng thuê phòng.
-     *
-     * @param  \App\Http\Requests\KetThucHopDongRequest  $yeuCau
-     * @param  int  $maHopDong
-     * @return \Illuminate\Http\RedirectResponse
-     */
+    // Kết thúc / Thanh lý hợp đồng thuê phòng.
     public function ketThuc(KetThucHopDongRequest $yeuCau, $maHopDong)
     {
         $hopDong = HopDong::findOrFail($maHopDong);
