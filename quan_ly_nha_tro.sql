@@ -126,7 +126,7 @@ CREATE TABLE HoaDon (
     maHopDong          INT UNSIGNED NOT NULL,
     maChiSo            INT UNSIGNED NULL COMMENT 'Chỉ số điện nước dùng để tính hóa đơn này',
     thangNam           DATE NOT NULL COMMENT 'Lưu ngày 01 của tháng thu tiền',
-    ngayLap            DATE NOT NULL DEFAULT (CURRENT_DATE),
+    ngayLap            DATE NULL,
     hanThanhToan       DATE NULL,
     tongTien           DECIMAL(14,0) NOT NULL DEFAULT 0,
     trangThaiThanhToan ENUM('CON_NO','DA_THANH_TOAN') NOT NULL DEFAULT 'CON_NO',
@@ -239,6 +239,16 @@ BEGIN
     UPDATE HoaDon
     SET tongTien = (SELECT COALESCE(SUM(thanhTien),0) FROM ChiTietHoaDon WHERE maHoaDon = OLD.maHoaDon)
     WHERE maHoaDon = OLD.maHoaDon;
+END$$
+
+-- Tu dong gan ngay lap hoa don neu de trong
+CREATE TRIGGER trg_hoadon_truoc_them
+BEFORE INSERT ON HoaDon
+FOR EACH ROW
+BEGIN
+    IF NEW.ngayLap IS NULL THEN
+        SET NEW.ngayLap = CURRENT_DATE;
+    END IF;
 END$$
 
 DELIMITER ;
