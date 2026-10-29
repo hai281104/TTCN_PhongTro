@@ -60,7 +60,7 @@ class PhongTroTest extends TestCase
     public function test_chu_tro_them_phong_moi_thanh_cong()
     {
         $chuTro = $this->layTaiKhoanChuTro();
-        $soPhongMoi = 'P.TEST.' . rand(100, 999);
+        $soPhongMoi = 'P.TEST.' . time() . rand(10, 99);
 
         $phanHoi = $this->actingAs($chuTro)->post('/phong-tro', [
             'soPhong' => $soPhongMoi,

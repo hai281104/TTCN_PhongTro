@@ -2,6 +2,16 @@
  * Quản lý tương tác giao diện Quản lý hợp đồng
  */
 document.addEventListener('DOMContentLoaded', function () {
+    // Hàm loại bỏ dấu tiếng Việt để tìm kiếm không dấu
+    function loaiBoDauTiengViet(chuoi) {
+        if (!chuoi) return '';
+        return chuoi.normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd')
+            .replace(/Đ/g, 'D')
+            .toLowerCase();
+    }
+
     // 1. Quản lý Modal
     const cacNutDongModal = document.querySelectorAll('[data-dong-modal]');
     const cacModal = document.querySelectorAll('.hop-thoai-modal');
@@ -11,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
             modal.classList.remove('modal-hien');
             modal.classList.add('modal-an');
         });
+        dongTatCaHopChon();
     }
 
     function moModal(idModal) {
@@ -47,23 +58,121 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // 3. Tự động điền giá thuê và tiền cọc khi chọn phòng trống
-    const selectPhong = document.getElementById('chonMaPhong');
+    // 3. Xử lý các Hộp chọn có tìm kiếm (Searchable Dropdown)
+    const cacHopChon = document.querySelectorAll('.hop-chon-tim-kiem');
     const inputGiaThue = document.getElementById('inputGiaThueChot');
     const inputTienCoc = document.getElementById('inputTienDatCoc');
 
-    if (selectPhong && inputGiaThue) {
-        selectPhong.addEventListener('change', function () {
-            const luaChon = this.options[this.selectedIndex];
-            const donGia = luaChon.getAttribute('data-don-gia');
-            if (donGia) {
-                inputGiaThue.value = donGia;
-                if (inputTienCoc && !inputTienCoc.value) {
-                    inputTienCoc.value = donGia;
-                }
-            }
+    function dongTatCaHopChon() {
+        cacHopChon.forEach(function (hop) {
+            const bang = hop.querySelector('.bang-lua-chon');
+            if (bang) bang.classList.add('hidden');
         });
     }
+
+    cacHopChon.forEach(function (hop) {
+        const nutKichHoat = hop.querySelector('.nut-kich-hoat-chon');
+        const bangLuaChon = hop.querySelector('.bang-lua-chon');
+        const oNhapTimKiem = hop.querySelector('.o-nhap-tim-kiem');
+        const danhSachMuc = hop.querySelectorAll('.muc-lua-chon');
+        const thongBaoKhongThay = hop.querySelector('.thong-bao-khong-tim-thay');
+        const hiddenInput = hop.querySelector('input[type="hidden"]');
+        const nhanHienThi = hop.querySelector('.nhan-hien-thi');
+
+        // Bật / tắt bảng chọn khi click nút
+        if (nutKichHoat && bangLuaChon) {
+            nutKichHoat.addEventListener('click', function (suKien) {
+                suKien.stopPropagation();
+                const dangMo = !bangLuaChon.classList.contains('hidden');
+                dongTatCaHopChon();
+
+                if (!dangMo) {
+                    bangLuaChon.classList.remove('hidden');
+                    if (oNhapTimKiem) {
+                        oNhapTimKiem.value = '';
+                        // Reset lại danh sách hiển thị
+                        danhSachMuc.forEach(m => m.classList.remove('hidden'));
+                        if (thongBaoKhongThay) thongBaoKhongThay.classList.add('hidden');
+                        setTimeout(() => oNhapTimKiem.focus(), 50);
+                    }
+                }
+            });
+        }
+
+        // Tìm kiếm thời gian thực (hỗ trợ có dấu và không dấu)
+        if (oNhapTimKiem) {
+            oNhapTimKiem.addEventListener('input', function () {
+                const tuKhoa = loaiBoDauTiengViet(this.value.trim());
+                let soLuongKhop = 0;
+
+                danhSachMuc.forEach(function (muc) {
+                    const duLieuTim = loaiBoDauTiengViet(muc.getAttribute('data-tim-kiem') || '');
+                    if (duLieuTim.includes(tuKhoa)) {
+                        muc.classList.remove('hidden');
+                        soLuongKhop++;
+                    } else {
+                        muc.classList.add('hidden');
+                    }
+                });
+
+                if (thongBaoKhongThay) {
+                    if (soLuongKhop === 0) {
+                        thongBaoKhongThay.classList.remove('hidden');
+                    } else {
+                        thongBaoKhongThay.classList.add('hidden');
+                    }
+                }
+            });
+
+            // Ngăn sự kiện click trong ô tìm kiếm làm đóng dropdown
+            oNhapTimKiem.addEventListener('click', function (suKien) {
+                suKien.stopPropagation();
+            });
+        }
+
+        // Chọn một mục
+        danhSachMuc.forEach(function (muc) {
+            muc.addEventListener('click', function (suKien) {
+                suKien.stopPropagation();
+                const giaTri = this.getAttribute('data-gia-tri');
+                const nhan = this.getAttribute('data-nhan');
+                const donGia = this.getAttribute('data-don-gia');
+
+                // Cập nhật giá trị vào hidden input
+                if (hiddenInput) {
+                    hiddenInput.value = giaTri;
+                }
+
+                // Cập nhật nhãn hiển thị
+                if (nhanHienThi) {
+                    nhanHienThi.textContent = nhan;
+                    nhanHienThi.classList.remove('text-zinc-500');
+                    nhanHienThi.classList.add('text-zinc-900', 'font-medium');
+                }
+
+                // Đánh dấu mục đang chọn
+                danhSachMuc.forEach(m => m.classList.remove('dang-chon'));
+                this.classList.add('dang-chon');
+
+                // Nếu là hộp chọn phòng: tự động điền đơn giá thuê và tiền cọc
+                if (donGia && inputGiaThue) {
+                    inputGiaThue.value = donGia;
+                    if (inputTienCoc && (!inputTienCoc.value || inputTienCoc.value === '0')) {
+                        inputTienCoc.value = donGia;
+                    }
+                }
+
+                bangLuaChon.classList.add('hidden');
+            });
+        });
+    });
+
+    // Đóng dropdown khi click ra ngoài
+    document.addEventListener('click', function (suKien) {
+        if (!suKien.target.closest('.hop-chon-tim-kiem')) {
+            dongTatCaHopChon();
+        }
+    });
 
     // 4. Thêm / Xóa dòng người ở cùng động trong form tạo hợp đồng
     const nutThemDongNguoi = document.querySelector('[data-hanh-dong="them-dong-nguoi-o"]');

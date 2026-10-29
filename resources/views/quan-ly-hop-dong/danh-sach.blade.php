@@ -291,35 +291,93 @@
                 @csrf
                 <div class="space-y-4 text-xs">
                     <!-- Chọn phòng và khách thuê -->
+                    <!-- Chọn phòng và khách thuê (Có tìm kiếm nhanh theo tên / số phòng) -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label for="chonMaPhong" class="block font-medium text-zinc-700 mb-1">
+                        <!-- CHỌN PHÒNG TRỐNG (CÓ TÌM KIẾM) -->
+                        <div class="relative hop-chon-tim-kiem" id="hopChonPhong">
+                            <label class="block font-medium text-zinc-700 mb-1">
                                 Chọn phòng trống <span class="text-red-500">*</span>
                             </label>
-                            <select name="maPhong" id="chonMaPhong" required
-                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
-                                <option value="">-- Chọn phòng trọ còn trống --</option>
-                                @foreach ($danhSachPhongTrong as $p)
-                                    <option value="{{ $p->maPhong }}" data-don-gia="{{ $p->donGiaMacDinh }}">
-                                        Phòng {{ $p->soPhong }} ({{ number_format($p->donGiaMacDinh, 0, ',', '.') }} đ/tháng)
-                                    </option>
-                                @endforeach
-                            </select>
+                            <input type="hidden" name="maPhong" id="chonMaPhong" required value="{{ old('maPhong') }}">
+
+                            <button type="button" class="nut-kich-hoat-chon w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-left text-zinc-900 flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-colors">
+                                <span class="nhan-hien-thi text-zinc-500">-- Chọn phòng trọ còn trống --</span>
+                                <svg class="w-4 h-4 text-zinc-400 shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+
+                            <div class="bang-lua-chon hidden absolute z-30 mt-1 w-full bg-white border border-zinc-200 rounded-lg shadow-lg max-h-60 overflow-hidden flex flex-col">
+                                <div class="p-2 border-b border-zinc-100 bg-zinc-50">
+                                    <div class="relative">
+                                        <input type="text" class="o-nhap-tim-kiem w-full px-2.5 py-1.5 pl-7 bg-white border border-zinc-300 rounded text-xs text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900"
+                                            placeholder="Gõ số phòng để lọc...">
+                                        <svg class="w-3.5 h-3.5 text-zinc-400 absolute left-2 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="danh-sach-muc overflow-y-auto max-h-48 divide-y divide-zinc-50 text-xs">
+                                    @foreach ($danhSachPhongTrong as $p)
+                                        <div class="muc-lua-chon px-3 py-2 cursor-pointer hover:bg-zinc-100 transition-colors flex items-center justify-between"
+                                            data-gia-tri="{{ $p->maPhong }}"
+                                            data-nhan="Phòng {{ $p->soPhong }} ({{ number_format($p->donGiaMacDinh, 0, ',', '.') }} đ/tháng)"
+                                            data-don-gia="{{ $p->donGiaMacDinh }}"
+                                            data-tim-kiem="Phòng {{ $p->soPhong }} {{ $p->soPhong }} {{ $p->donGiaMacDinh }}">
+                                            <span class="font-bold text-zinc-900">Phòng {{ $p->soPhong }}</span>
+                                            <span class="text-zinc-500 tabular-nums">{{ number_format($p->donGiaMacDinh, 0, ',', '.') }} đ/tháng</span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="thong-bao-khong-tim-thay hidden p-3 text-center text-xs text-zinc-400 italic">
+                                    Không tìm thấy phòng phù hợp
+                                </div>
+                            </div>
                         </div>
 
-                        <div>
-                            <label for="chonMaKhach" class="block font-medium text-zinc-700 mb-1">
+                        <!-- CHỌN KHÁCH ĐẠI DIỆN (CÓ TÌM KIẾM THEO TÊN / SĐT / CCCD) -->
+                        <div class="relative hop-chon-tim-kiem" id="hopChonKhach">
+                            <label class="block font-medium text-zinc-700 mb-1">
                                 Khách đại diện ký hợp đồng <span class="text-red-500">*</span>
                             </label>
-                            <select name="maKhach" id="chonMaKhach" required
-                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
-                                <option value="">-- Chọn khách thuê đại diện --</option>
-                                @foreach ($danhSachKhachThue as $k)
-                                    <option value="{{ $k->maKhach }}">
-                                        {{ $k->hoTen }} ({{ $k->soDienThoai }} - CCCD: {{ $k->soCCCD }})
-                                    </option>
-                                @endforeach
-                            </select>
+                            <input type="hidden" name="maKhach" id="chonMaKhach" required value="{{ old('maKhach') }}">
+
+                            <button type="button" class="nut-kich-hoat-chon w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-left text-zinc-900 flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-colors">
+                                <span class="nhan-hien-thi text-zinc-500">-- Chọn khách thuê đại diện --</span>
+                                <svg class="w-4 h-4 text-zinc-400 shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+
+                            <div class="bang-lua-chon hidden absolute z-30 mt-1 w-full bg-white border border-zinc-200 rounded-lg shadow-lg max-h-60 overflow-hidden flex flex-col">
+                                <div class="p-2 border-b border-zinc-100 bg-zinc-50">
+                                    <div class="relative">
+                                        <input type="text" class="o-nhap-tim-kiem w-full px-2.5 py-1.5 pl-7 bg-white border border-zinc-300 rounded text-xs text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900"
+                                            placeholder="Gõ tên khách, SĐT hoặc CCCD để lọc...">
+                                        <svg class="w-3.5 h-3.5 text-zinc-400 absolute left-2 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="danh-sach-muc overflow-y-auto max-h-48 divide-y divide-zinc-50 text-xs">
+                                    @foreach ($danhSachKhachThue as $k)
+                                        <div class="muc-lua-chon px-3 py-2 cursor-pointer hover:bg-zinc-100 transition-colors"
+                                            data-gia-tri="{{ $k->maKhach }}"
+                                            data-nhan="{{ $k->hoTen }} ({{ $k->soDienThoai }} - CCCD: {{ $k->soCCCD }})"
+                                            data-tim-kiem="{{ $k->hoTen }} {{ $k->soDienThoai }} {{ $k->soCCCD }}">
+                                            <div class="font-semibold text-zinc-900">{{ $k->hoTen }}</div>
+                                            <div class="text-[11px] text-zinc-500 flex items-center gap-2">
+                                                <span>SĐT: <strong class="text-zinc-700">{{ $k->soDienThoai }}</strong></span>
+                                                <span>&bull;</span>
+                                                <span>CCCD: {{ $k->soCCCD }}</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="thong-bao-khong-tim-thay hidden p-3 text-center text-xs text-zinc-400 italic">
+                                    Không tìm thấy khách thuê phù hợp
+                                </div>
+                            </div>
                         </div>
                     </div>
 

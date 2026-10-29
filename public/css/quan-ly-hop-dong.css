@@ -30,3 +30,22 @@ html, body {
         transform: scale(1) translateY(0);
     }
 }
+
+/* Tùy chỉnh danh sách chọn có tìm kiếm */
+.hop-chon-tim-kiem .danh-sach-muc::-webkit-scrollbar {
+    width: 5px;
+}
+
+.hop-chon-tim-kiem .danh-sach-muc::-webkit-scrollbar-track {
+    background: #f4f4f5;
+}
+
+.hop-chon-tim-kiem .danh-sach-muc::-webkit-scrollbar-thumb {
+    background: #d4d4d8;
+    border-radius: 4px;
+}
+
+.hop-chon-tim-kiem .muc-lua-chon.dang-chon {
+    background-color: #f4f4f5;
+    font-weight: 600;
+}
