@@ -37,3 +37,4 @@ class LoaiPhong extends Model
         return $this->hasMany(PhongTro::class, 'maLoaiPhong', 'maLoaiPhong');
     }
 }
+

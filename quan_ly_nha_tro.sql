@@ -9,6 +9,8 @@ CREATE DATABASE quan_ly_nha_tro
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 USE quan_ly_nha_tro;
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
 
 -- =====================================================================
 -- 1. NGƯỜI DÙNG (đăng nhập + phân quyền)
