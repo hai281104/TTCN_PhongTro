@@ -172,24 +172,24 @@ document.addEventListener('DOMContentLoaded', function () {
                     const giaThueDinhDang = new Intl.NumberFormat('vi-VN').format(hd.giaThueChot) + ' đ';
                     const tienCocDinhDang = new Intl.NumberFormat('vi-VN').format(hd.tienDatCoc) + ' đ';
 
-                    let danhSachNguoiO = '';
-                    if (hd.nguoi_o_cung && hd.nguoi_o_cung.length > 0) {
-                        danhSachNguoiO = '<div class="mt-3 pt-3 border-t border-sky-100"><span class="text-xs font-semibold text-sky-900 block mb-1.5">Người ở cùng (' + hd.nguoi_o_cung.length + ' người):</span><div class="space-y-1.5">';
-                        hd.nguoi_o_cung.forEach(function (nguoi) {
-                            danhSachNguoiO += '<div class="flex items-center justify-between bg-white p-2 rounded border border-sky-200 text-xs"><span>' + nguoi.hoTen + ' (' + (nguoi.quanHe || 'Ở cùng') + ')</span><span class="text-zinc-500">' + (nguoi.soDienThoai || '') + '</span></div>';
-                        });
-                        danhSachNguoiO += '</div></div>';
-                    }
+                    const loaiPhong = hd.phong_tro && hd.phong_tro.loai_phong ? hd.phong_tro.loai_phong.tenLoaiPhong : 'Chưa phân loại';
+                    const sucChua = hd.phong_tro && hd.phong_tro.soNguoiToiDa ? hd.phong_tro.soNguoiToiDa : 1;
+                    const soNguoiO = hd.soLuongNguoi || 1;
 
                     htmlHopDong = '<div class="rounded-lg border border-sky-200 bg-sky-50/40 p-4 mb-4">' +
-                        '<div class="flex items-center justify-between mb-3"><div class="text-xs font-semibold text-sky-900 uppercase">Đang thuê phòng ' + phong + '</div><span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-sky-100 text-sky-800">Hiệu lực</span></div>' +
+                        '<div class="flex items-center justify-between mb-3">' +
+                        '<div>' +
+                        '<div class="text-xs font-semibold text-sky-900 uppercase">Đang thuê phòng ' + phong + '</div>' +
+                        '<div class="text-[11px] text-zinc-500">Loại phòng: ' + loaiPhong + '</div>' +
+                        '</div>' +
+                        '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-sky-100 text-sky-800">Hiệu lực</span>' +
+                        '</div>' +
                         '<div class="grid grid-cols-2 gap-3 text-xs">' +
+                        '<div><span class="text-zinc-500 block">Số người ở:</span><strong class="text-zinc-900">' + soNguoiO + ' / ' + sucChua + ' người</strong></div>' +
                         '<div><span class="text-zinc-500 block">Giá thuê chốt:</span><strong class="text-zinc-900">' + giaThueDinhDang + '/tháng</strong></div>' +
                         '<div><span class="text-zinc-500 block">Tiền đặt cọc:</span><span class="text-zinc-800">' + tienCocDinhDang + '</span></div>' +
-                        '<div><span class="text-zinc-500 block">Ngày bắt đầu:</span><span class="text-zinc-800">' + hd.ngayBatDau + '</span></div>' +
-                        '<div><span class="text-zinc-500 block">Ngày kết thúc:</span><span class="text-zinc-800">' + (hd.ngayKetThuc || 'Đang thuê') + '</span></div>' +
+                        '<div><span class="text-zinc-500 block">Thời gian thuê:</span><span class="text-zinc-800">' + hd.ngayBatDau + ' ~ ' + (hd.ngayKetThuc || 'Đang thuê') + '</span></div>' +
                         '</div>' +
-                        danhSachNguoiO +
                         '</div>';
                 } else {
                     htmlHopDong = '<div class="rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-center text-xs text-zinc-500 mb-4">Khách hiện không có hợp đồng thuê phòng nào đang hiệu lực.</div>';

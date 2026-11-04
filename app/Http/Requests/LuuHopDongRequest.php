@@ -55,15 +55,12 @@ class LuuHopDongRequest extends FormRequest
                     $query->where('dangHoatDong', 1);
                 }),
             ],
+            'soLuongNguoi' => ['required', 'integer', 'min:1', 'max:20'],
             'ngayBatDau' => ['required', 'date'],
             'ngayKetThuc' => ['nullable', 'date', 'after_or_equal:ngayBatDau'],
             'giaThueChot' => ['required', 'numeric', 'min:0'],
             'tienDatCoc' => ['required', 'numeric', 'min:0'],
-            'nguoiOCung' => ['nullable', 'array'],
-            'nguoiOCung.*.hoTen' => ['required_with:nguoiOCung', 'string', 'max:100'],
-            'nguoiOCung.*.soCCCD' => ['nullable', 'string', 'digits:12'],
-            'nguoiOCung.*.soDienThoai' => ['nullable', 'string', 'regex:/^[0-9]{10,11}$/'],
-            'nguoiOCung.*.quanHe' => ['nullable', 'string', 'max:50'],
+            'ghiChu' => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -81,6 +78,11 @@ class LuuHopDongRequest extends FormRequest
                     } elseif ($phong->trangThaiPhong === 'DANG_THUE' || $phong->hopDongHieuLuc) {
                         $validator->errors()->add('maPhong', 'Phòng này đang có người thuê, không thể lập hợp đồng mới.');
                     }
+
+                    // Kiểm tra số lượng người ở không vượt quá sức chứa tối đa của phòng
+                    if ($this->filled('soLuongNguoi') && (int)$this->input('soLuongNguoi') > $phong->soNguoiToiDa) {
+                        $validator->errors()->add('soLuongNguoi', "Số lượng người ở ({$this->input('soLuongNguoi')} người) vượt quá sức chứa tối đa của phòng ({$phong->soNguoiToiDa} người).");
+                    }
                 }
             }
         });
@@ -96,8 +98,12 @@ class LuuHopDongRequest extends FormRequest
         return [
             'maPhong.required' => 'Vui lòng chọn phòng trọ cho thuê.',
             'maPhong.exists' => 'Phòng trọ được chọn không hợp lệ hoặc đã ngừng hoạt động.',
-            'maKhach.required' => 'Vui lòng chọn khách thuê đại diện.',
+            'maKhach.required' => 'Vui lòng chọn người đại diện ký hợp đồng.',
             'maKhach.exists' => 'Khách thuê được chọn không tồn tại hoặc đã ngừng hoạt động.',
+            'soLuongNguoi.required' => 'Vui lòng nhập số lượng người ở theo hợp đồng.',
+            'soLuongNguoi.integer' => 'Số lượng người ở phải là một số nguyên.',
+            'soLuongNguoi.min' => 'Số lượng người ở phải có ít nhất 1 người.',
+            'soLuongNguoi.max' => 'Số lượng người ở không được vượt quá 20 người.',
             'ngayBatDau.required' => 'Vui lòng chọn ngày bắt đầu hợp đồng.',
             'ngayBatDau.date' => 'Ngày bắt đầu hợp đồng không đúng định dạng ngày tháng.',
             'ngayKetThuc.date' => 'Ngày kết thúc hợp đồng không đúng định dạng ngày tháng.',
@@ -108,9 +114,7 @@ class LuuHopDongRequest extends FormRequest
             'tienDatCoc.required' => 'Vui lòng nhập số tiền đặt cọc giữ chân.',
             'tienDatCoc.numeric' => 'Tiền đặt cọc phải là số hợp lệ.',
             'tienDatCoc.min' => 'Tiền đặt cọc không được âm.',
-            'nguoiOCung.*.hoTen.required_with' => 'Vui lòng nhập họ tên cho người ở cùng.',
-            'nguoiOCung.*.soCCCD.digits' => 'Số CCCD người ở cùng phải đúng 12 chữ số.',
-            'nguoiOCung.*.soDienThoai.regex' => 'Số điện thoại người ở cùng phải từ 10 đến 11 chữ số.',
+            'ghiChu.max' => 'Ghi chú không được vượt quá 255 ký tự.',
         ];
     }
 }

@@ -37,6 +37,8 @@ class PhongTro extends Model
      */
     protected $fillable = [
         'soPhong',
+        'maLoaiPhong',
+        'soNguoiToiDa',
         'donGiaMacDinh',
         'trangThaiPhong',
         'ghiChu',
@@ -49,9 +51,21 @@ class PhongTro extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'maLoaiPhong' => 'integer',
+        'soNguoiToiDa' => 'integer',
         'donGiaMacDinh' => 'decimal:0',
         'dangHoatDong' => 'boolean',
     ];
+
+    /**
+     * Thể loại của phòng trọ.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function loaiPhong()
+    {
+        return $this->belongsTo(LoaiPhong::class, 'maLoaiPhong', 'maLoaiPhong');
+    }
 
     /**
      * Danh sách hợp đồng thuê của phòng trọ.
@@ -74,7 +88,7 @@ class PhongTro extends Model
     }
 
     /**
-     * Danh sách chỉ số điện nước ghi nhận hàng tháng của phòng.
+     * Danh sách ghi nhận chỉ số điện nước của phòng.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */

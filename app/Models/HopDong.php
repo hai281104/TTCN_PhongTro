@@ -40,12 +40,14 @@ class HopDong extends Model
     protected $fillable = [
         'maPhong',
         'maKhach',
+        'soLuongNguoi',
         'ngayBatDau',
         'ngayKetThuc',
         'giaThueChot',
         'tienDatCoc',
         'tienHoanCoc',
         'trangThaiHD',
+        'ghiChu',
     ];
 
     /**
@@ -54,6 +56,7 @@ class HopDong extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'soLuongNguoi' => 'integer',
         'ngayBatDau' => 'date',
         'ngayKetThuc' => 'date',
         'giaThueChot' => 'decimal:0',
@@ -72,23 +75,13 @@ class HopDong extends Model
     }
 
     /**
-     * Thông tin khách thuê đại diện ký hợp đồng.
+     * Thông tin khách thuê đại diện ký hợp đồng (1 người đại diện duy nhất).
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function khachThue()
     {
         return $this->belongsTo(KhachThue::class, 'maKhach', 'maKhach');
-    }
-
-    /**
-     * Danh sách những người ở cùng trong phòng trọ.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function nguoiOCung()
-    {
-        return $this->hasMany(NguoiOCung::class, 'maHopDong', 'maHopDong');
     }
 
     /**

@@ -106,11 +106,6 @@
 
                 @if ($hopDong->trangThaiHD === 'HIEU_LUC')
                     <div class="flex items-center gap-2">
-                        <button type="button" data-hanh-dong="mo-modal-them-nguoi-o"
-                            class="px-3 py-1.5 rounded-lg border border-zinc-300 bg-white text-zinc-700 text-xs font-medium hover:bg-zinc-50 transition-colors shadow-xs">
-                            + Thêm người ở cùng
-                        </button>
-
                         <button type="button"
                             data-hanh-dong="mo-modal-ket-thuc"
                             data-ma-hop-dong="{{ $hopDong->maHopDong }}"
@@ -143,7 +138,8 @@
                         </div>
                         <p class="text-xs text-zinc-500 mt-1">
                             Lập cho phòng: <strong class="text-zinc-900">Phòng {{ optional($hopDong->phongTro)->soPhong }}</strong> &bull;
-                            Khách đại diện: <strong class="text-zinc-900">{{ optional($hopDong->khachThue)->hoTen }}</strong>
+                            Thể loại: <strong class="text-zinc-800">{{ optional(optional($hopDong->phongTro)->loaiPhong)->tenLoaiPhong ?? 'Chưa phân loại' }}</strong> &bull;
+                            Người đại diện: <strong class="text-zinc-900">{{ optional($hopDong->khachThue)->hoTen }}</strong>
                         </p>
                     </div>
                 </div>
@@ -154,7 +150,7 @@
                         <strong class="text-zinc-900 text-sm tabular-nums">{{ number_format($hopDong->giaThueChot, 0, ',', '.') }} đ</strong>
                     </div>
                     <div>
-                        <span class="text-zinc-500 block">Tiền đặt cọc giữ chân:</span>
+                        <span class="text-zinc-500 block">Tiền đặt cọc giữ chỗ:</span>
                         <strong class="text-emerald-700 text-sm tabular-nums">{{ number_format($hopDong->tienDatCoc, 0, ',', '.') }} đ</strong>
                     </div>
                     <div>
@@ -163,9 +159,16 @@
                     </div>
                     <div>
                         <span class="text-zinc-500 block">Ngày kết thúc / trả phòng:</span>
-                        <span class="text-zinc-800 font-medium">{{ $hopDong->ngayKetThuc ? \Carbon\Carbon::parse($hopDong->ngayKetThuc)->format('d/m/Y') : '(Chưa có ngày kết thúc)' }}</span>
+                        <span class="text-zinc-800 font-medium">{{ $hopDong->ngayKetThuc ? \Carbon\Carbon::parse($hopDong->ngayKetThuc)->format('d/m/Y') : '(Vô thời hạn)' }}</span>
                     </div>
                 </div>
+
+                @if ($hopDong->ghiChu)
+                    <div class="mt-4 pt-3 border-t border-zinc-100 text-xs">
+                        <span class="text-zinc-500 block mb-1">Ghi chú điều khoản:</span>
+                        <p class="p-2.5 bg-zinc-50 rounded border border-zinc-200 text-zinc-700">{{ $hopDong->ghiChu }}</p>
+                    </div>
+                @endif
 
                 @if ($hopDong->trangThaiHD === 'DA_KET_THUC')
                     <div class="mt-4 pt-3 border-t border-zinc-100 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs bg-zinc-50 p-3 rounded-lg border border-zinc-200">
@@ -181,9 +184,9 @@
                 @endif
             </div>
 
-            <!-- 2 CỘT: PHÒNG & KHÁCH THUÊ -->
+            <!-- 2 CỘT: PHÒNG & KHÁCH THUÊ ĐẠI DIỆN -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- THÔNG TIN PHÒNG -->
+                <!-- THÔNG TIN PHÒNG & THỂ LOẠI -->
                 <div class="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs">
                     <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-4">
                         <h3 class="text-sm font-semibold text-zinc-900 uppercase tracking-wider">Thông tin phòng trọ</h3>
@@ -201,16 +204,24 @@
                                 <strong class="text-zinc-900 font-semibold">Phòng {{ $hopDong->phongTro->soPhong }}</strong>
                             </div>
                             <div class="flex justify-between">
+                                <span class="text-zinc-500">Thể loại phòng:</span>
+                                <span class="font-medium text-zinc-800">{{ optional($hopDong->phongTro->loaiPhong)->tenLoaiPhong ?? 'Chưa phân loại' }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-zinc-500">Sức chứa tối đa:</span>
+                                <span class="font-medium text-zinc-800">{{ $hopDong->phongTro->soNguoiToiDa }} người</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-zinc-500">Số người ở thực tế:</span>
+                                <span class="font-bold text-sky-700">{{ $hopDong->soLuongNguoi ?? 1 }} người</span>
+                            </div>
+                            <div class="flex justify-between">
                                 <span class="text-zinc-500">Đơn giá niêm yết:</span>
                                 <span class="tabular-nums font-medium text-zinc-800">{{ number_format($hopDong->phongTro->donGiaMacDinh, 0, ',', '.') }} đ</span>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="text-zinc-500">Trạng thái phòng hiện tại:</span>
-                                <span class="font-medium">{{ $hopDong->phongTro->trangThaiPhong }}</span>
-                            </div>
                             @if ($hopDong->phongTro->ghiChu)
                                 <div class="pt-2 border-t border-zinc-100">
-                                    <span class="text-zinc-500 block mb-1">Ghi chú đặc điểm:</span>
+                                    <span class="text-zinc-500 block mb-1">Đặc điểm phòng:</span>
                                     <p class="p-2.5 bg-zinc-50 rounded border border-zinc-200 text-zinc-700">{{ $hopDong->phongTro->ghiChu }}</p>
                                 </div>
                             @endif
@@ -220,10 +231,10 @@
                     @endif
                 </div>
 
-                <!-- THÔNG TIN KHÁCH ĐẠI DIỆN -->
+                <!-- THÔNG TIN NGƯỜI ĐẠI DIỆN DUY NHẤT -->
                 <div class="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs">
                     <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-4">
-                        <h3 class="text-sm font-semibold text-zinc-900 uppercase tracking-wider">Khách thuê đại diện</h3>
+                        <h3 class="text-sm font-semibold text-zinc-900 uppercase tracking-wider">Khách thuê đại diện ký hợp đồng</h3>
                         @if ($hopDong->khachThue)
                             <a href="{{ route('khach-thue.chi-tiet', $hopDong->maKhach) }}" class="text-xs text-sky-700 hover:underline">
                                 Xem hồ sơ khách &rarr;
@@ -260,67 +271,6 @@
                         <p class="text-xs text-zinc-500">Hồ sơ khách thuê không tồn tại.</p>
                     @endif
                 </div>
-            </div>
-
-            <!-- DANH SÁCH NGƯỜI Ở CÙNG -->
-            <div class="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs">
-                <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-4">
-                    <div>
-                        <h3 class="text-sm font-semibold text-zinc-900 uppercase tracking-wider">Danh sách người ở cùng trong phòng</h3>
-                        <p class="text-xs text-zinc-500 mt-0.5">Nhân khẩu cùng cư trú ngoài người đại diện ký hợp đồng.</p>
-                    </div>
-
-                    @if ($hopDong->trangThaiHD === 'HIEU_LUC')
-                        <button type="button" data-hanh-dong="mo-modal-them-nguoi-o"
-                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-zinc-300 bg-white text-zinc-700 text-xs font-medium hover:bg-zinc-50 transition-colors shadow-xs">
-                            + Thêm người ở cùng
-                        </button>
-                    @endif
-                </div>
-
-                @if ($hopDong->nguoiOCung && $hopDong->nguoiOCung->count() > 0)
-                    <div class="overflow-x-auto rounded-lg border border-zinc-200">
-                        <table class="min-w-full divide-y divide-zinc-200 text-xs">
-                            <thead class="bg-zinc-50 text-zinc-600 font-medium text-left">
-                                <tr>
-                                    <th scope="col" class="px-4 py-2.5">Họ và tên</th>
-                                    <th scope="col" class="px-4 py-2.5">Mối quan hệ</th>
-                                    <th scope="col" class="px-4 py-2.5">Số CCCD</th>
-                                    <th scope="col" class="px-4 py-2.5">Số điện thoại</th>
-                                    @if ($hopDong->trangThaiHD === 'HIEU_LUC')
-                                        <th scope="col" class="px-4 py-2.5 text-right">Thao tác</th>
-                                    @endif
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-zinc-200 bg-white">
-                                @foreach ($hopDong->nguoiOCung as $nguoi)
-                                    <tr class="hover:bg-zinc-50 transition-colors">
-                                        <td class="px-4 py-2.5 font-medium text-zinc-900">{{ $nguoi->hoTen }}</td>
-                                        <td class="px-4 py-2.5 text-zinc-600">{{ $nguoi->quanHe ?: 'Ở cùng' }}</td>
-                                        <td class="px-4 py-2.5 text-zinc-600">{{ $nguoi->soCCCD ?: '—' }}</td>
-                                        <td class="px-4 py-2.5 text-zinc-600 tabular-nums">{{ $nguoi->soDienThoai ?: '—' }}</td>
-                                        @if ($hopDong->trangThaiHD === 'HIEU_LUC')
-                                            <td class="px-4 py-2.5 text-right">
-                                                <form action="{{ route('hop-dong.xoa-nguoi-o-cung', [$hopDong->maHopDong, $nguoi->maNguoiO]) }}" method="POST"
-                                                    onsubmit="return confirm('Bạn có chắc chắn muốn xóa người ở cùng này khỏi hợp đồng?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="text-xs text-red-600 hover:text-red-800 font-medium">
-                                                        Xóa
-                                                    </button>
-                                                </form>
-                                            </td>
-                                        @endif
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @else
-                    <div class="p-6 text-center text-xs text-zinc-500 bg-zinc-50 rounded-lg border border-zinc-200">
-                        Chưa có người ở cùng nào được thêm vào hợp đồng này.
-                    </div>
-                @endif
             </div>
 
             <!-- LỊCH SỬ HÓA ĐƠN CỦA HỢP ĐỒNG -->
@@ -379,58 +329,6 @@
             </div>
 
         </main>
-    </div>
-
-    <!-- MODAL THÊM NGƯỜI Ở CÙNG -->
-    <div id="modalThemNguoiO" class="hop-thoai-modal modal-an fixed inset-0 z-50 bg-zinc-900/50 backdrop-blur-xs items-center justify-center p-4">
-        <div class="chuyen-dong-modal bg-white rounded-xl border border-zinc-200 shadow-xl max-w-md w-full p-6">
-            <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-4">
-                <h3 class="text-sm font-semibold text-zinc-900">Thêm Người Ở Cùng Phòng</h3>
-                <button type="button" data-dong-modal class="text-zinc-400 hover:text-zinc-700 text-lg">&times;</button>
-            </div>
-
-            <form action="{{ route('hop-dong.them-nguoi-o-cung', $hopDong->maHopDong) }}" method="POST">
-                @csrf
-                <div class="space-y-4 text-xs">
-                    <div>
-                        <label for="hoTenNguoiO" class="block font-medium text-zinc-700 mb-1">
-                            Họ và tên <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" name="hoTen" id="hoTenNguoiO" required placeholder="Nguyễn Văn B"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
-                    </div>
-
-                    <div>
-                        <label for="quanHeNguoiO" class="block font-medium text-zinc-700 mb-1">Mối quan hệ</label>
-                        <input type="text" name="quanHe" id="quanHeNguoiO" placeholder="Vợ/Chồng, Con, Bạn bè..."
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
-                    </div>
-
-                    <div>
-                        <label for="soCCCDNguoiO" class="block font-medium text-zinc-700 mb-1">Số CCCD (12 chữ số)</label>
-                        <input type="text" name="soCCCD" id="soCCCDNguoiO" maxlength="12" placeholder="079..."
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
-                    </div>
-
-                    <div>
-                        <label for="soDienThoaiNguoiO" class="block font-medium text-zinc-700 mb-1">Số điện thoại liên hệ</label>
-                        <input type="text" name="soDienThoai" id="soDienThoaiNguoiO" placeholder="09..."
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
-                    </div>
-                </div>
-
-                <div class="mt-6 flex items-center justify-end gap-2 pt-4 border-t border-zinc-100">
-                    <button type="button" data-dong-modal
-                        class="px-3.5 py-2 rounded-lg border border-zinc-300 bg-white text-zinc-700 text-xs font-medium hover:bg-zinc-50 transition-colors">
-                        Hủy
-                    </button>
-                    <button type="submit"
-                        class="px-4 py-2 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors shadow-xs">
-                        Thêm người ở
-                    </button>
-                </div>
-            </form>
-        </div>
     </div>
 
     <!-- MODAL THANH LÝ / KẾT THÚC HỢP ĐỒNG -->

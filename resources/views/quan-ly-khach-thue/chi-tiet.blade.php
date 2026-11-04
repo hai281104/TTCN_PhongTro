@@ -180,23 +180,10 @@
                                 <span class="text-zinc-800">{{ \Carbon\Carbon::parse($hd->ngayBatDau)->format('d/m/Y') }}</span>
                             </div>
                         </div>
-
-                        @if ($hd->nguoiOCung && $hd->nguoiOCung->count() > 0)
-                            <div class="pt-3 border-t border-sky-100">
-                                <span class="font-medium text-zinc-700 block mb-2">Người ở cùng phòng ({{ $hd->nguoiOCung->count() }} người):</span>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                    @foreach ($hd->nguoiOCung as $nguoi)
-                                        <div class="p-2.5 rounded bg-white border border-sky-200 flex items-center justify-between">
-                                            <div>
-                                                <span class="font-medium text-zinc-900">{{ $nguoi->hoTen }}</span>
-                                                <span class="text-[11px] text-zinc-500 block">Quan hệ: {{ $nguoi->quanHe ?: 'Ở cùng' }}</span>
-                                            </div>
-                                            <span class="text-[11px] text-zinc-600">{{ $nguoi->soDienThoai ?: 'Không có SĐT' }}</span>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
+                        <div class="pt-3 border-t border-sky-100 flex items-center justify-between text-xs">
+                            <span class="text-zinc-600">Quy mô người ở: <strong class="text-zinc-900">{{ $hd->soLuongNguoi ?? 1 }} / {{ $phong->soNguoiToiDa ?? 1 }} người</strong></span>
+                            <span class="text-[11px] text-zinc-500">Loại phòng: {{ $phong && $phong->loaiPhong ? $phong->loaiPhong->tenLoaiPhong : 'Chưa phân loại' }}</span>
+                        </div>
                     </div>
                 @else
                     <div class="p-6 text-center text-xs text-zinc-500 bg-zinc-50 rounded-lg border border-zinc-200">

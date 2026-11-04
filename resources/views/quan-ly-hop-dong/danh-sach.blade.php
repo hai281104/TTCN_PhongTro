@@ -98,7 +98,7 @@
             <div class="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h2 class="text-lg font-semibold text-zinc-900 mb-1">Quản Lý Hợp Đồng Thuê Phòng</h2>
-                    <p class="text-xs text-zinc-500">Quản lý danh sách hợp đồng gắn khách thuê với phòng, tiền đặt cọc và nhân khẩu ở cùng.</p>
+                    <p class="text-xs text-zinc-500">Ký hợp đồng trực tiếp với 1 khách thuê đại diện, xác định số người ở và bảo toàn cọc phòng.</p>
                 </div>
                 <button type="button" data-hanh-dong="mo-modal-tao-hop-dong"
                     class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors shadow-xs self-start sm:self-auto">
@@ -180,13 +180,13 @@
                         <thead class="bg-zinc-50 text-zinc-600 font-medium text-left">
                             <tr>
                                 <th scope="col" class="px-4 py-3">Mã HĐ</th>
-                                <th scope="col" class="px-4 py-3">Phòng</th>
+                                <th scope="col" class="px-4 py-3">Phòng & Thể loại</th>
                                 <th scope="col" class="px-4 py-3">Khách thuê đại diện</th>
+                                <th scope="col" class="px-4 py-3 text-center">Số người ở</th>
                                 <th scope="col" class="px-4 py-3 text-right">Giá thuê chốt</th>
                                 <th scope="col" class="px-4 py-3 text-right">Tiền đặt cọc</th>
                                 <th scope="col" class="px-4 py-3">Thời gian thuê</th>
                                 <th scope="col" class="px-4 py-3 text-center">Trạng thái</th>
-                                <th scope="col" class="px-4 py-3 text-center">Nhân khẩu</th>
                                 <th scope="col" class="px-4 py-3 text-right">Hành động</th>
                             </tr>
                         </thead>
@@ -200,6 +200,9 @@
                                         <a href="{{ route('phong-tro.chi-tiet', $hd->maPhong) }}" class="font-bold text-zinc-900 hover:underline">
                                             Phòng {{ optional($hd->phongTro)->soPhong ?? 'N/A' }}
                                         </a>
+                                        <div class="text-[11px] text-zinc-500">
+                                            {{ optional(optional($hd->phongTro)->loaiPhong)->tenLoaiPhong ?? 'Chưa phân loại' }}
+                                        </div>
                                     </td>
                                     <td class="px-4 py-3.5">
                                         @if ($hd->khachThue)
@@ -209,6 +212,12 @@
                                             <span class="text-zinc-500 text-[11px] block">{{ $hd->khachThue->soDienThoai }}</span>
                                         @else
                                             <span class="text-zinc-400 italic">Không tìm thấy</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3.5 text-center whitespace-nowrap text-zinc-700 font-medium">
+                                        <span class="font-bold text-sky-700">{{ $hd->soLuongNguoi ?? 1 }}</span> người
+                                        @if ($hd->phongTro)
+                                            <span class="text-zinc-400 text-[11px] font-normal block">(Tối đa {{ $hd->phongTro->soNguoiToiDa }} người)</span>
                                         @endif
                                     </td>
                                     <td class="px-4 py-3.5 text-right font-medium text-zinc-900 tabular-nums whitespace-nowrap">
@@ -233,9 +242,6 @@
                                                 Đã kết thúc
                                             </span>
                                         @endif
-                                    </td>
-                                    <td class="px-4 py-3.5 text-center whitespace-nowrap text-zinc-600">
-                                        {{ $hd->nguoiOCung ? $hd->nguoiOCung->count() + 1 : 1 }} người
                                     </td>
                                     <td class="px-4 py-3.5 text-right whitespace-nowrap space-x-1">
                                         <a href="{{ route('hop-dong.chi-tiet', $hd->maHopDong) }}"
@@ -276,13 +282,13 @@
         </main>
     </div>
 
-    <!-- MODAL LẬP HỢP ĐỒNG MỚI -->
+    <!-- MODAL LẬP HỢP ĐỒNG MỚI (1 người đại diện ký, xác định số người ở) -->
     <div id="modalTaoHopDong" class="hop-thoai-modal modal-an fixed inset-0 z-50 bg-zinc-900/50 backdrop-blur-xs items-center justify-center p-4">
         <div class="chuyen-dong-modal bg-white rounded-xl border border-zinc-200 shadow-xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-4">
                 <div>
                     <h3 class="text-sm font-semibold text-zinc-900">Lập Hợp Đồng Thuê Phòng Mới</h3>
-                    <p class="text-xs text-zinc-500">Phòng sẽ tự động chuyển sang trạng thái "Đang thuê" sau khi tạo hợp đồng.</p>
+                    <p class="text-xs text-zinc-500">1 khách thuê làm đại diện ký kết. Phòng tự động chuyển sang "Đang thuê".</p>
                 </div>
                 <button type="button" data-dong-modal class="text-zinc-400 hover:text-zinc-700 text-lg">&times;</button>
             </div>
@@ -290,7 +296,6 @@
             <form action="{{ route('hop-dong.tao-moi') }}" method="POST">
                 @csrf
                 <div class="space-y-4 text-xs">
-                    <!-- Chọn phòng và khách thuê -->
                     <!-- Chọn phòng và khách thuê (Có tìm kiếm nhanh theo tên / số phòng) -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <!-- CHỌN PHÒNG TRỐNG (CÓ TÌM KIẾM) -->
@@ -321,11 +326,15 @@
                                     @foreach ($danhSachPhongTrong as $p)
                                         <div class="muc-lua-chon px-3 py-2 cursor-pointer hover:bg-zinc-100 transition-colors flex items-center justify-between"
                                             data-gia-tri="{{ $p->maPhong }}"
-                                            data-nhan="Phòng {{ $p->soPhong }} ({{ number_format($p->donGiaMacDinh, 0, ',', '.') }} đ/tháng)"
+                                            data-nhan="Phòng {{ $p->soPhong }} ({{ $p->loaiPhong->tenLoaiPhong ?? 'Phòng' }} - {{ number_format($p->donGiaMacDinh, 0, ',', '.') }} đ)"
                                             data-don-gia="{{ $p->donGiaMacDinh }}"
-                                            data-tim-kiem="Phòng {{ $p->soPhong }} {{ $p->soPhong }} {{ $p->donGiaMacDinh }}">
-                                            <span class="font-bold text-zinc-900">Phòng {{ $p->soPhong }}</span>
-                                            <span class="text-zinc-500 tabular-nums">{{ number_format($p->donGiaMacDinh, 0, ',', '.') }} đ/tháng</span>
+                                            data-so-nguoi-toi-da="{{ $p->soNguoiToiDa }}"
+                                            data-tim-kiem="Phòng {{ $p->soPhong }} {{ $p->soPhong }} {{ optional($p->loaiPhong)->tenLoaiPhong }} {{ $p->donGiaMacDinh }}">
+                                            <div>
+                                                <span class="font-bold text-zinc-900">Phòng {{ $p->soPhong }}</span>
+                                                <span class="text-zinc-500 text-[11px] block">{{ optional($p->loaiPhong)->tenLoaiPhong ?? 'Tiêu chuẩn' }} (Tối đa {{ $p->soNguoiToiDa }} người)</span>
+                                            </div>
+                                            <span class="text-zinc-700 font-medium tabular-nums">{{ number_format($p->donGiaMacDinh, 0, ',', '.') }} đ</span>
                                         </div>
                                     @endforeach
                                 </div>
@@ -335,10 +344,10 @@
                             </div>
                         </div>
 
-                        <!-- CHỌN KHÁCH ĐẠI DIỆN (CÓ TÌM KIẾM THEO TÊN / SĐT / CCCD) -->
+                        <!-- CHỌN KHÁCH ĐẠI DIỆN KÝ HỢP ĐỒNG (1 NGƯỜI ĐẠI DIỆN DUY NHẤT) -->
                         <div class="relative hop-chon-tim-kiem" id="hopChonKhach">
                             <label class="block font-medium text-zinc-700 mb-1">
-                                Khách đại diện ký hợp đồng <span class="text-red-500">*</span>
+                                Người đại diện ký hợp đồng <span class="text-red-500">*</span>
                             </label>
                             <input type="hidden" name="maKhach" id="chonMaKhach" required value="{{ old('maKhach') }}">
 
@@ -381,6 +390,23 @@
                         </div>
                     </div>
 
+                    <!-- Số lượng người ở & Thông tin sức chứa -->
+                    <div class="p-3 bg-zinc-50 rounded-lg border border-zinc-200">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div>
+                                <label for="soLuongNguoi" class="block font-medium text-zinc-800 mb-1">
+                                    Số lượng người ở theo hợp đồng <span class="text-red-500">*</span>
+                                </label>
+                                <span class="text-[11px] text-zinc-500">Quy mô nhân khẩu thực tế trong phòng (do người đại diện đăng ký).</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="number" name="soLuongNguoi" id="soLuongNguoi" min="1" max="20" required value="{{ old('soLuongNguoi', 1) }}"
+                                    class="w-24 px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 font-semibold text-center focus:outline-none focus:ring-1 focus:ring-zinc-900 tabular-nums">
+                                <span id="nhanSucChuaPhong" class="text-xs text-zinc-500 font-medium">người</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Thời gian thuê -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
@@ -406,7 +432,7 @@
                             <label for="inputGiaThueChot" class="block font-medium text-zinc-700 mb-1">
                                 Giá thuê chốt (đ/tháng) <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" inputmode="numeric" name="giaThueChot" id="inputGiaThueChot" required placeholder="Ví dụ: 3.000.000"
+                            <input type="text" inputmode="numeric" name="giaThueChot" id="inputGiaThueChot" required placeholder="Ví dụ: 2.500.000"
                                 value="{{ old('giaThueChot') ? number_format(str_replace(['.', ','], '', old('giaThueChot')), 0, ',', '.') : '' }}"
                                 class="dinh-dang-tien w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
                         </div>
@@ -415,22 +441,16 @@
                             <label for="inputTienDatCoc" class="block font-medium text-zinc-700 mb-1">
                                 Tiền đặt cọc giữ chỗ (đ) <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" inputmode="numeric" name="tienDatCoc" id="inputTienDatCoc" required placeholder="Ví dụ: 3.000.000"
+                            <input type="text" inputmode="numeric" name="tienDatCoc" id="inputTienDatCoc" required placeholder="Ví dụ: 2.500.000"
                                 value="{{ old('tienDatCoc') ? number_format(str_replace(['.', ','], '', old('tienDatCoc')), 0, ',', '.') : '' }}"
                                 class="dinh-dang-tien w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
                         </div>
                     </div>
 
-                    <!-- Danh sách người ở cùng động -->
-                    <div class="pt-3 border-t border-zinc-100">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="font-medium text-zinc-800">Người ở cùng trong phòng (tùy chọn)</span>
-                            <button type="button" data-hanh-dong="them-dong-nguoi-o"
-                                class="inline-flex items-center gap-1 text-[11px] font-medium text-sky-700 hover:text-sky-900">
-                                <span>+ Thêm người ở cùng</span>
-                            </button>
-                        </div>
-                        <div id="danhSachDongNguoiO" class="space-y-2"></div>
+                    <div>
+                        <label for="ghiChu" class="block font-medium text-zinc-700 mb-1">Ghi chú điều khoản hợp đồng</label>
+                        <textarea name="ghiChu" id="ghiChu" rows="2" placeholder="Ghi chú thêm về điều khoản hợp đồng..."
+                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white"></textarea>
                     </div>
                 </div>
 
@@ -456,28 +476,32 @@
                 <button type="button" data-dong-modal class="text-zinc-400 hover:text-zinc-700 text-lg">&times;</button>
             </div>
 
-            <p class="text-xs text-zinc-600 mb-4">
-                Bạn đang thực hiện kết thúc hợp đồng thuê <strong id="spanSoPhongKetThuc" class="text-zinc-900">phòng</strong>. Phòng sẽ tự động chuyển về trạng thái <strong>"Trống"</strong> để đón khách mới.
-            </p>
-
             <form id="bieuMauKetThucHopDong" action="" method="POST">
                 @csrf
                 @method('PATCH')
                 <div class="space-y-4 text-xs">
+                    <p class="text-zinc-600 leading-relaxed">
+                        Bạn đang chuẩn bị thanh lý hợp đồng cho <strong id="nhanSoPhongKetThuc" class="text-zinc-900">phòng</strong>.
+                        Sau khi xác nhận, hợp đồng sẽ chuyển thành <span class="font-medium text-zinc-800">Đã kết thúc</span> và trạng thái phòng sẽ tự động hoàn về <span class="font-medium text-emerald-700">Trống</span>.
+                    </p>
+
                     <div>
-                        <label for="inputNgayKetThuc" class="block font-medium text-zinc-700 mb-1">
-                            Ngày trả phòng / Kết thúc hợp đồng <span class="text-red-500">*</span>
+                        <label for="ngayKetThucThanhLy" class="block font-medium text-zinc-700 mb-1">
+                            Ngày kết thúc thực tế <span class="text-red-500">*</span>
                         </label>
-                        <input type="date" name="ngayKetThuc" id="inputNgayKetThuc" required value="{{ date('Y-m-d') }}"
+                        <input type="date" name="ngayKetThuc" id="ngayKetThucThanhLy" required value="{{ date('Y-m-d') }}"
                             class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
                     </div>
 
                     <div>
-                        <label for="inputTienHoanCoc" class="block font-medium text-zinc-700 mb-1">
-                            Số tiền cọc hoàn trả lại cho khách (đ)
+                        <label for="tienHoanCoc" class="block font-medium text-zinc-700 mb-1">
+                            Số tiền cọc hoàn lại cho khách (đ) <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" inputmode="numeric" name="tienHoanCoc" id="inputTienHoanCoc" placeholder="0"
+                        <input type="text" inputmode="numeric" name="tienHoanCoc" id="tienHoanCoc" required
                             class="dinh-dang-tien w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
+                        <span class="text-[11px] text-zinc-400 mt-1 block">
+                            Số tiền cọc ban đầu: <span id="nhanTienCocGoc" class="font-medium text-zinc-700 tabular-nums">0 đ</span>
+                        </span>
                     </div>
                 </div>
 

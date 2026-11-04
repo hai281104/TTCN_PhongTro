@@ -81,6 +81,8 @@
                     <button type="button" data-hanh-dong="sua-phong"
                         data-ma-phong="{{ $phongTro->maPhong }}"
                         data-so-phong="{{ $phongTro->soPhong }}"
+                        data-ma-loai-phong="{{ $phongTro->maLoaiPhong }}"
+                        data-so-nguoi-toi-da="{{ $phongTro->soNguoiToiDa }}"
                         data-don-gia="{{ $phongTro->donGiaMacDinh }}"
                         data-ghi-chu="{{ $phongTro->ghiChu }}"
                         class="px-3 py-1.5 rounded-lg border border-zinc-300 bg-white text-zinc-700 text-xs font-medium hover:bg-zinc-50 transition-colors shadow-xs">
@@ -128,6 +130,13 @@
                         </div>
                         <p class="text-xs text-zinc-500 mt-1">Đơn giá niêm yết: <strong class="text-zinc-900 tabular-nums">{{ number_format($phongTro->donGiaMacDinh, 0, ',', '.') }} đ/tháng</strong></p>
                     </div>
+
+                    <div class="text-right">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-zinc-100 text-zinc-700 border border-zinc-200">
+                            {{ $phongTro->loaiPhong->tenLoaiPhong ?? 'Chưa phân loại' }}
+                        </span>
+                        <div class="text-[11px] text-zinc-500 mt-1">Sức chứa tối đa: <strong class="text-zinc-900">{{ $phongTro->soNguoiToiDa }} người</strong></div>
+                    </div>
                 </div>
 
                 <div class="text-xs text-zinc-700">
@@ -150,7 +159,7 @@
                     <div class="rounded-lg border border-sky-200 bg-sky-50/40 p-4 text-xs space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                             <div>
-                                <span class="text-zinc-500 block">Khách đại diện:</span>
+                                <span class="text-zinc-500 block">Người đại diện ký hợp đồng:</span>
                                 <strong class="text-zinc-900 text-sm">{{ $khach->hoTen }}</strong>
                             </div>
                             <div>
@@ -162,8 +171,9 @@
                                 <span class="text-zinc-800">{{ $khach->soCCCD }}</span>
                             </div>
                             <div>
-                                <span class="text-zinc-500 block">Địa chỉ thường trú:</span>
-                                <span class="text-zinc-800">{{ $khach->diaChi ?: 'Chưa cập nhật' }}</span>
+                                <span class="text-zinc-500 block">Số người ở hiện tại:</span>
+                                <span class="font-semibold text-sky-700">{{ $hd->soLuongNguoi ?? 1 }}</span>
+                                <span class="text-zinc-500">/ tối đa {{ $phongTro->soNguoiToiDa }} người</span>
                             </div>
                         </div>
 
@@ -182,31 +192,12 @@
                             </div>
                         </div>
 
-                        @if ($hd->nguoiOCung && $hd->nguoiOCung->count() > 0)
-                            <div class="pt-4 border-t border-sky-100">
-                                <span class="font-medium text-zinc-700 block mb-2 text-xs">Danh sách người ở cùng ({{ $hd->nguoiOCung->count() }} người):</span>
-                                <div class="overflow-x-auto rounded-lg border border-sky-200 bg-white">
-                                    <table class="min-w-full divide-y divide-sky-100 text-xs">
-                                        <thead class="bg-sky-50 text-sky-800 font-medium">
-                                            <tr>
-                                                <th scope="col" class="px-3.5 py-2 text-left">Họ và tên</th>
-                                                <th scope="col" class="px-3.5 py-2 text-left">Quan hệ</th>
-                                                <th scope="col" class="px-3.5 py-2 text-right">Số điện thoại</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-sky-100">
-                                            @foreach ($hd->nguoiOCung as $nguoi)
-                                                <tr class="hover:bg-sky-50/50 transition-colors">
-                                                    <td class="px-3.5 py-2 font-medium text-zinc-900">{{ $nguoi->hoTen }}</td>
-                                                    <td class="px-3.5 py-2 text-zinc-600">{{ $nguoi->quanHe ?: 'Ở cùng' }}</td>
-                                                    <td class="px-3.5 py-2 text-right tabular-nums text-zinc-700">{{ $nguoi->soDienThoai ?: '—' }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        @endif
+                        <div class="pt-2 text-right">
+                            <a href="{{ route('hop-dong.chi-tiet', $hd->maHopDong) }}"
+                                class="inline-flex items-center gap-1 text-xs font-semibold text-sky-700 hover:text-sky-900 hover:underline">
+                                <span>Xem hồ sơ hợp đồng chi tiết &rarr;</span>
+                            </a>
+                        </div>
                     </div>
                 @else
                     <div class="p-6 text-center text-xs text-zinc-500 bg-zinc-50 rounded-lg border border-zinc-200">
@@ -272,9 +263,29 @@
                     </div>
 
                     <div>
-                        <label for="donGiaSua" class="block font-medium text-zinc-700 mb-1">Đơn giá mặc định (đ) <span class="text-red-500">*</span></label>
-                        <input type="text" inputmode="numeric" name="donGiaMacDinh" id="donGiaSua" required placeholder="Ví dụ: 2.500.000"
-                            class="dinh-dang-tien w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
+                        <label for="maLoaiPhongSua" class="block font-medium text-zinc-700 mb-1">Thể loại phòng <span class="text-red-500">*</span></label>
+                        <select name="maLoaiPhong" id="maLoaiPhongSua" required
+                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
+                            @foreach ($danhSachLoaiPhong as $lp)
+                                <option value="{{ $lp->maLoaiPhong }}">
+                                    {{ $lp->tenLoaiPhong }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="soNguoiToiDaSua" class="block font-medium text-zinc-700 mb-1">Sức chứa tối đa (người) <span class="text-red-500">*</span></label>
+                            <input type="number" name="soNguoiToiDa" id="soNguoiToiDaSua" min="1" max="20" required
+                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
+                        </div>
+
+                        <div>
+                            <label for="donGiaSua" class="block font-medium text-zinc-700 mb-1">Đơn giá mặc định (đ) <span class="text-red-500">*</span></label>
+                            <input type="text" inputmode="numeric" name="donGiaMacDinh" id="donGiaSua" required placeholder="Ví dụ: 2.500.000"
+                                class="dinh-dang-tien w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
+                        </div>
                     </div>
 
                     <div>
@@ -329,4 +340,3 @@
     </div>
 </body>
 </html>
-

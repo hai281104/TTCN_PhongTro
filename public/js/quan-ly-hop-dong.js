@@ -124,6 +124,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const cacHopChon = document.querySelectorAll('.hop-chon-tim-kiem');
     const inputGiaThue = document.getElementById('inputGiaThueChot');
     const inputTienCoc = document.getElementById('inputTienDatCoc');
+    const inputSoLuongNguoi = document.getElementById('soLuongNguoi');
+    const nhanSucChuaPhong = document.getElementById('nhanSucChuaPhong');
 
     function dongTatCaHopChon() {
         cacHopChon.forEach(function (hop) {
@@ -152,7 +154,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     bangLuaChon.classList.remove('hidden');
                     if (oNhapTimKiem) {
                         oNhapTimKiem.value = '';
-                        // Reset lại danh sách hiển thị
                         danhSachMuc.forEach(m => m.classList.remove('hidden'));
                         if (thongBaoKhongThay) thongBaoKhongThay.classList.add('hidden');
                         setTimeout(() => oNhapTimKiem.focus(), 50);
@@ -161,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        // Tìm kiếm thời gian thực (hỗ trợ có dấu và không dấu)
+        // Tìm kiếm thời gian thực
         if (oNhapTimKiem) {
             oNhapTimKiem.addEventListener('input', function () {
                 const tuKhoa = loaiBoDauTiengViet(this.value.trim());
@@ -186,7 +187,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            // Ngăn sự kiện click trong ô tìm kiếm làm đóng dropdown
             oNhapTimKiem.addEventListener('click', function (suKien) {
                 suKien.stopPropagation();
             });
@@ -199,28 +199,36 @@ document.addEventListener('DOMContentLoaded', function () {
                 const giaTri = this.getAttribute('data-gia-tri');
                 const nhan = this.getAttribute('data-nhan');
                 const donGia = this.getAttribute('data-don-gia');
+                const soNguoiToiDa = this.getAttribute('data-so-nguoi-toi-da');
 
-                // Cập nhật giá trị vào hidden input
                 if (hiddenInput) {
                     hiddenInput.value = giaTri;
                 }
 
-                // Cập nhật nhãn hiển thị
                 if (nhanHienThi) {
                     nhanHienThi.textContent = nhan;
                     nhanHienThi.classList.remove('text-zinc-500');
                     nhanHienThi.classList.add('text-zinc-900', 'font-medium');
                 }
 
-                // Đánh dấu mục đang chọn
                 danhSachMuc.forEach(m => m.classList.remove('dang-chon'));
                 this.classList.add('dang-chon');
 
-                // Nếu là hộp chọn phòng: tự động điền đơn giá thuê và tiền cọc (định dạng tiền tệ)
+                // Nếu là hộp chọn phòng: cập nhật đơn giá, tiền cọc và sức chứa tối đa
                 if (donGia && inputGiaThue) {
                     inputGiaThue.value = dinhDangTien(donGia);
                     if (inputTienCoc && (!inputTienCoc.value || inputTienCoc.value === '0')) {
                         inputTienCoc.value = dinhDangTien(donGia);
+                    }
+                }
+
+                if (soNguoiToiDa && inputSoLuongNguoi) {
+                    inputSoLuongNguoi.max = soNguoiToiDa;
+                    if (nhanSucChuaPhong) {
+                        nhanSucChuaPhong.textContent = '/ tối đa ' + soNguoiToiDa + ' người';
+                    }
+                    if (parseInt(inputSoLuongNguoi.value || 0) > parseInt(soNguoiToiDa)) {
+                        inputSoLuongNguoi.value = soNguoiToiDa;
                     }
                 }
 
@@ -229,65 +237,17 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Đóng dropdown khi click ra ngoài
     document.addEventListener('click', function (suKien) {
         if (!suKien.target.closest('.hop-chon-tim-kiem')) {
             dongTatCaHopChon();
         }
     });
 
-    // 4. Thêm / Xóa dòng người ở cùng động trong form tạo hợp đồng
-    const nutThemDongNguoi = document.querySelector('[data-hanh-dong="them-dong-nguoi-o"]');
-    const khungChuaNguoiO = document.getElementById('danhSachDongNguoiO');
-
-    if (nutThemDongNguoi && khungChuaNguoiO) {
-        let chiSoDong = 0;
-
-        nutThemDongNguoi.addEventListener('click', function () {
-            chiSoDong++;
-            const divDong = document.createElement('div');
-            divDong.className = 'dong-nguoi-o p-3 bg-zinc-50 border border-zinc-200 rounded-lg space-y-2 relative';
-            divDong.innerHTML = `
-                <div class="flex items-center justify-between pb-1 border-b border-zinc-200">
-                    <span class="text-xs font-semibold text-zinc-700">Người ở cùng #${chiSoDong}</span>
-                    <button type="button" class="text-xs text-red-600 hover:text-red-800 font-medium nut-xoa-dong">Xóa</button>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                    <div>
-                        <label class="block text-zinc-600 mb-0.5">Họ và tên <span class="text-red-500">*</span></label>
-                        <input type="text" name="nguoiOCung[${chiSoDong}][hoTen]" required placeholder="Nguyễn Văn B"
-                            class="w-full px-2.5 py-1.5 bg-white border border-zinc-300 rounded text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-                    </div>
-                    <div>
-                        <label class="block text-zinc-600 mb-0.5">Mối quan hệ</label>
-                        <input type="text" name="nguoiOCung[${chiSoDong}][quanHe]" placeholder="Vợ/Chồng, Bạn..."
-                            class="w-full px-2.5 py-1.5 bg-white border border-zinc-300 rounded text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-                    </div>
-                    <div>
-                        <label class="block text-zinc-600 mb-0.5">Số CCCD (12 số)</label>
-                        <input type="text" name="nguoiOCung[${chiSoDong}][soCCCD]" maxlength="12" placeholder="079..."
-                            class="w-full px-2.5 py-1.5 bg-white border border-zinc-300 rounded text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-                    </div>
-                    <div>
-                        <label class="block text-zinc-600 mb-0.5">Số điện thoại</label>
-                        <input type="text" name="nguoiOCung[${chiSoDong}][soDienThoai]" placeholder="09..."
-                            class="w-full px-2.5 py-1.5 bg-white border border-zinc-300 rounded text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-                    </div>
-                </div>
-            `;
-
-            khungChuaNguoiO.appendChild(divDong);
-
-            divDong.querySelector('.nut-xoa-dong').addEventListener('click', function () {
-                divDong.remove();
-            });
-        });
-    }
-
-    // 5. Mở Modal kết thúc hợp đồng
+    // 4. Mở Modal kết thúc / thanh lý hợp đồng
     const cacNutKetThuc = document.querySelectorAll('[data-hanh-dong="mo-modal-ket-thuc"]');
     const formKetThuc = document.getElementById('bieuMauKetThucHopDong');
-    const spanSoPhongKetThuc = document.getElementById('spanSoPhongKetThuc');
+    const nhanSoPhongKetThuc = document.getElementById('nhanSoPhongKetThuc');
+    const nhanTienCocGoc = document.getElementById('nhanTienCocGoc');
 
     cacNutKetThuc.forEach(function (nut) {
         nut.addEventListener('click', function () {
@@ -298,10 +258,13 @@ document.addEventListener('DOMContentLoaded', function () {
             if (formKetThuc) {
                 formKetThuc.action = '/hop-dong/' + maHopDong + '/ket-thuc';
             }
-            if (spanSoPhongKetThuc) {
-                spanSoPhongKetThuc.textContent = 'phòng ' + soPhong;
+            if (nhanSoPhongKetThuc) {
+                nhanSoPhongKetThuc.textContent = 'Phòng ' + soPhong;
             }
-            const inputTienHoanCoc = document.getElementById('inputTienHoanCoc');
+            if (nhanTienCocGoc) {
+                nhanTienCocGoc.textContent = dinhDangTien(tienCoc) + ' đ';
+            }
+            const inputTienHoanCoc = document.getElementById('inputTienHoanCoc') || document.getElementById('tienHoanCoc');
             if (inputTienHoanCoc) {
                 inputTienHoanCoc.value = dinhDangTien(tienCoc);
             }
@@ -309,12 +272,4 @@ document.addEventListener('DOMContentLoaded', function () {
             moModal('modalKetThucHopDong');
         });
     });
-
-    // 6. Mở Modal thêm người ở cùng (trong trang chi tiết)
-    const nutMoThemNguoiO = document.querySelector('[data-hanh-dong="mo-modal-them-nguoi-o"]');
-    if (nutMoThemNguoiO) {
-        nutMoThemNguoiO.addEventListener('click', function () {
-            moModal('modalThemNguoiO');
-        });
-    }
 });

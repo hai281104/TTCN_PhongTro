@@ -81,6 +81,28 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Tự động gợi ý đơn giá và sức chứa khi chọn thể loại phòng (modal thêm)
+    const chonLoaiPhongThem = document.getElementById('maLoaiPhongThem');
+    const oDonGiaThem = document.getElementById('donGiaThem');
+    const oSoNguoiToiDaThem = document.getElementById('soNguoiToiDaThem');
+
+    if (chonLoaiPhongThem) {
+        chonLoaiPhongThem.addEventListener('change', function () {
+            const luaChon = this.options[this.selectedIndex];
+            if (luaChon && luaChon.value) {
+                const donGia = luaChon.getAttribute('data-don-gia');
+                const soNguoi = luaChon.getAttribute('data-so-nguoi');
+
+                if (donGia && oDonGiaThem) {
+                    oDonGiaThem.value = dinhDangTien(donGia);
+                }
+                if (soNguoi && oSoNguoiToiDaThem) {
+                    oSoNguoiToiDaThem.value = soNguoi;
+                }
+            }
+        });
+    }
+
     cacNutDongModal.forEach(function (nut) {
         nut.addEventListener('click', function () {
             dongTatCaModal();
@@ -104,6 +126,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const modalSua = document.getElementById('modalSuaPhong');
     const bieuMauSua = document.getElementById('bieuMauSuaPhong');
     const oSoPhongSua = document.getElementById('soPhongSua');
+    const oMaLoaiPhongSua = document.getElementById('maLoaiPhongSua');
+    const oSoNguoiToiDaSua = document.getElementById('soNguoiToiDaSua');
     const oDonGiaSua = document.getElementById('donGiaSua');
     const oGhiChuSua = document.getElementById('ghiChuSua');
 
@@ -111,12 +135,16 @@ document.addEventListener('DOMContentLoaded', function () {
         nut.addEventListener('click', function () {
             const maPhong = this.getAttribute('data-ma-phong');
             const soPhong = this.getAttribute('data-so-phong');
+            const maLoaiPhong = this.getAttribute('data-ma-loai-phong');
+            const soNguoiToiDa = this.getAttribute('data-so-nguoi-toi-da');
             const donGia = this.getAttribute('data-don-gia');
             const ghiChu = this.getAttribute('data-ghi-chu') || '';
 
             if (bieuMauSua && modalSua) {
                 bieuMauSua.action = '/phong-tro/' + maPhong;
                 if (oSoPhongSua) oSoPhongSua.value = soPhong;
+                if (oMaLoaiPhongSua && maLoaiPhong) oMaLoaiPhongSua.value = maLoaiPhong;
+                if (oSoNguoiToiDaSua && soNguoiToiDa) oSoNguoiToiDaSua.value = soNguoiToiDa;
                 if (oDonGiaSua) oDonGiaSua.value = dinhDangTien(donGia);
                 if (oGhiChuSua) oGhiChuSua.value = ghiChu;
 
@@ -187,6 +215,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 const donGiaDinhDang = new Intl.NumberFormat('vi-VN').format(p.donGiaMacDinh) + ' đ';
+                const tenLoaiPhong = (p.loai_phong && p.loai_phong.tenLoaiPhong) ? p.loai_phong.tenLoaiPhong : 'Chưa phân loại';
+                const sucChua = (p.soNguoiToiDa || 2) + ' người';
 
                 let htmlKhach = '';
                 if (p.hop_dong_hieu_luc && p.hop_dong_hieu_luc.khach_thue) {
@@ -194,30 +224,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     const hd = p.hop_dong_hieu_luc;
                     const tienCocDinhDang = new Intl.NumberFormat('vi-VN').format(hd.tienDatCoc) + ' đ';
                     const giaThueChotDinhDang = new Intl.NumberFormat('vi-VN').format(hd.giaThueChot) + ' đ';
-
-                    let danhSachNguoiO = '';
-                    if (hd.nguoi_o_cung && hd.nguoi_o_cung.length > 0) {
-                        danhSachNguoiO = '<div class="mt-3 pt-3 border-t border-zinc-100">' +
-                            '<div class="text-xs font-medium text-zinc-500 mb-2">Danh sách người ở cùng (' + hd.nguoi_o_cung.length + ' người):</div>' +
-                            '<div class="overflow-x-auto rounded-lg border border-zinc-200">' +
-                            '<table class="min-w-full divide-y divide-zinc-200 text-xs">' +
-                            '<thead class="bg-zinc-50 text-zinc-500 font-medium text-left"><tr><th class="px-3 py-1.5">Họ tên</th><th class="px-3 py-1.5">Quan hệ</th><th class="px-3 py-1.5 text-right">SĐT</th></tr></thead>' +
-                            '<tbody class="divide-y divide-zinc-200 bg-white">';
-                        hd.nguoi_o_cung.forEach(function (nguoi) {
-                            danhSachNguoiO += '<tr class="hover:bg-zinc-50/50"><td class="px-3 py-1.5 font-medium text-zinc-900">' + nguoi.hoTen + '</td><td class="px-3 py-1.5 text-zinc-600">' + (nguoi.quanHe || 'Ở cùng') + '</td><td class="px-3 py-1.5 text-right tabular-nums text-zinc-700">' + (nguoi.soDienThoai || '—') + '</td></tr>';
-                        });
-                        danhSachNguoiO += '</tbody></table></div></div>';
-                    }
+                    const soLuongNguoiO = (hd.soLuongNguoi || 1) + ' người';
 
                     htmlKhach = '<div class="rounded-lg border border-sky-200 bg-sky-50/40 p-4 mb-4">' +
                         '<div class="flex items-center justify-between mb-3"><div class="text-xs font-semibold text-sky-900 uppercase">Hợp đồng đang hiệu lực</div><span class="text-xs font-medium text-sky-700">Giá chốt: ' + giaThueChotDinhDang + '</span></div>' +
                         '<div class="grid grid-cols-2 gap-3 text-xs">' +
-                        '<div><span class="text-zinc-500 block">Người đại diện:</span><strong class="text-zinc-900">' + k.hoTen + '</strong></div>' +
+                        '<div><span class="text-zinc-500 block">Người đại diện ký hợp đồng:</span><strong class="text-zinc-900">' + k.hoTen + '</strong></div>' +
                         '<div><span class="text-zinc-500 block">Số điện thoại:</span><span class="text-zinc-800">' + k.soDienThoai + '</span></div>' +
-                        '<div><span class="text-zinc-500 block">Số CCCD:</span><span class="text-zinc-800">' + k.soCCCD + '</span></div>' +
+                        '<div><span class="text-zinc-500 block">Số người ở thực tế:</span><strong class="text-sky-700">' + soLuongNguoiO + '</strong> (Tối đa: ' + sucChua + ')</div>' +
                         '<div><span class="text-zinc-500 block">Tiền đặt cọc:</span><span class="text-zinc-800">' + tienCocDinhDang + '</span></div>' +
                         '</div>' +
-                        danhSachNguoiO +
                         '</div>';
                 } else {
                     htmlKhach = '<div class="rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-center text-xs text-zinc-500 mb-4">Hiện chưa có hợp đồng thuê nào đang hiệu lực tại phòng này.</div>';
@@ -237,10 +253,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 noiDungChiTiet.innerHTML =
-                    '<div class="grid grid-cols-2 gap-4 pb-4 border-b border-zinc-200 mb-4">' +
-                    '<div><span class="text-xs text-zinc-500 block">Trạng thái</span>' + badgeTrangThai + '</div>' +
-                    '<div class="text-right"><span class="text-xs text-zinc-500 block">Đơn giá niêm yết</span><span class="text-base font-semibold text-zinc-900">' + donGiaDinhDang + '</span></div>' +
-                    '<div class="col-span-2"><span class="text-xs text-zinc-500 block">Ghi chú phòng</span><span class="text-xs text-zinc-700">' + (p.ghiChu || 'Chưa có ghi chú') + '</span></div>' +
+                    '<div class="grid grid-cols-2 gap-4 pb-4 border-b border-zinc-200 mb-4 text-xs">' +
+                    '<div><span class="text-zinc-500 block">Trạng thái</span>' + badgeTrangThai + '</div>' +
+                    '<div class="text-right"><span class="text-zinc-500 block">Đơn giá niêm yết</span><span class="text-base font-semibold text-zinc-900">' + donGiaDinhDang + '</span></div>' +
+                    '<div><span class="text-zinc-500 block">Thể loại phòng</span><strong class="text-zinc-900">' + tenLoaiPhong + '</strong></div>' +
+                    '<div class="text-right"><span class="text-zinc-500 block">Sức chứa tối đa</span><strong class="text-zinc-900">' + sucChua + '</strong></div>' +
+                    '<div class="col-span-2"><span class="text-zinc-500 block">Ghi chú phòng</span><span class="text-zinc-700">' + (p.ghiChu || 'Chưa có ghi chú') + '</span></div>' +
                     '</div>' +
                     htmlKhach +
                     htmlDienNuoc;
@@ -262,4 +280,3 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 5000);
     });
 });
-

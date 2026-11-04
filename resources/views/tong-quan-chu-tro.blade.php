@@ -148,6 +148,7 @@
                             <thead class="bg-zinc-50 text-zinc-600 font-medium text-left">
                                 <tr>
                                     <th scope="col" class="px-4 py-3">Số phòng</th>
+                                    <th scope="col" class="px-4 py-3">Loại phòng</th>
                                     <th scope="col" class="px-4 py-3 text-right">Đơn giá niêm yết</th>
                                     <th scope="col" class="px-4 py-3 text-center">Trạng thái</th>
                                     <th scope="col" class="px-4 py-3">Khách đang thuê</th>
@@ -159,6 +160,12 @@
                                     <tr class="hover:bg-zinc-50 transition-colors">
                                         <td class="px-4 py-3 font-bold text-zinc-900">
                                             Phòng {{ $phong->soPhong }}
+                                        </td>
+                                        <td class="px-4 py-3 text-zinc-700">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-zinc-100 text-zinc-800 border border-zinc-200">
+                                                {{ $phong->loaiPhong ? $phong->loaiPhong->tenLoaiPhong : 'Chưa phân loại' }}
+                                            </span>
+                                            <span class="text-[11px] text-zinc-500 block">Tối đa {{ $phong->soNguoiToiDa }} người</span>
                                         </td>
                                         <td class="px-4 py-3 text-right tabular-nums text-zinc-800">
                                             {{ number_format($phong->donGiaMacDinh, 0, ',', '.') }} đ

@@ -253,39 +253,39 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- NGƯỜI Ở CÙNG -->
+                        <!-- QUY MÔ & THỂ LOẠI PHÒNG THUÊ -->
                         <div class="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs">
                             <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-4">
-                                <h3 class="text-sm font-semibold text-zinc-900 uppercase tracking-wider">Người ở cùng trong phòng</h3>
-                                <span class="text-xs text-zinc-500 font-medium">{{ $danhSachNguoiOCung->count() }} người</span>
+                                <h3 class="text-sm font-semibold text-zinc-900 uppercase tracking-wider">Thể loại & Quy mô phòng ở</h3>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-zinc-100 text-zinc-800 border border-zinc-200">
+                                    {{ $phongTro->loaiPhong ? $phongTro->loaiPhong->tenLoaiPhong : 'Chưa phân loại' }}
+                                </span>
                             </div>
 
-                            @if ($danhSachNguoiOCung->count() > 0)
-                                <div class="overflow-x-auto rounded-lg border border-zinc-200">
-                                    <table class="min-w-full divide-y divide-zinc-200 text-xs">
-                                        <thead class="bg-zinc-50 text-zinc-600 font-medium">
-                                            <tr>
-                                                <th scope="col" class="px-3.5 py-2.5 text-left">Họ và tên</th>
-                                                <th scope="col" class="px-3.5 py-2.5 text-left">Quan hệ</th>
-                                                <th scope="col" class="px-3.5 py-2.5 text-right">Số điện thoại</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-zinc-200 bg-white">
-                                            @foreach ($danhSachNguoiOCung as $nguoi)
-                                                <tr class="hover:bg-zinc-50 transition-colors">
-                                                    <td class="px-3.5 py-2.5 font-medium text-zinc-900">{{ $nguoi->hoTen }}</td>
-                                                    <td class="px-3.5 py-2.5 text-zinc-600">{{ $nguoi->quanHe ?: 'Ở cùng' }}</td>
-                                                    <td class="px-3.5 py-2.5 text-right tabular-nums text-zinc-700">{{ $nguoi->soDienThoai ?: '—' }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                                <div>
+                                    <span class="text-zinc-500 block">Số người ở thực tế:</span>
+                                    <strong class="text-zinc-900 text-sm font-bold tabular-nums">{{ $hopDong->soLuongNguoi ?? 1 }} người</strong>
                                 </div>
-                            @else
-                                <p class="text-xs text-zinc-500 p-4 bg-zinc-50 rounded-lg border border-zinc-200 text-center">
-                                    Hiện chưa có người ở cùng nào được đăng ký trong hợp đồng này.
-                                </p>
+                                <div>
+                                    <span class="text-zinc-500 block">Sức chứa tối đa:</span>
+                                    <span class="text-zinc-800 font-semibold tabular-nums">{{ $phongTro->soNguoiToiDa }} người</span>
+                                </div>
+                                <div>
+                                    <span class="text-zinc-500 block">Diện tích phòng:</span>
+                                    <span class="text-zinc-800 font-medium">{{ $phongTro->loaiPhong && $phongTro->loaiPhong->dienTich ? $phongTro->loaiPhong->dienTich . ' m²' : '—' }}</span>
+                                </div>
+                                <div>
+                                    <span class="text-zinc-500 block">Ký kết hợp đồng:</span>
+                                    <span class="text-emerald-700 font-medium">1 đại diện ký chính thức</span>
+                                </div>
+                            </div>
+
+                            @if ($phongTro->loaiPhong && $phongTro->loaiPhong->moTa)
+                                <div class="mt-4 pt-3 border-t border-zinc-100 text-xs">
+                                    <span class="text-zinc-500 block mb-1">Mô tả thể loại phòng:</span>
+                                    <p class="p-2.5 bg-zinc-50 rounded-lg border border-zinc-200 text-zinc-700">{{ $phongTro->loaiPhong->moTa }}</p>
+                                </div>
                             @endif
                         </div>
                     </div>

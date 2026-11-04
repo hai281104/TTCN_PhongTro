@@ -26,7 +26,7 @@ class TongQuanController extends Controller
 
         // Danh sách các phòng gần nhất để chủ trọ theo dõi nhanh
         $danhSachPhongGanDay = PhongTro::where('dangHoatDong', 1)
-            ->with(['hopDongHieuLuc.khachThue'])
+            ->with(['loaiPhong', 'hopDongHieuLuc.khachThue'])
             ->orderBy('soPhong')
             ->limit(8)
             ->get();
@@ -53,16 +53,14 @@ class TongQuanController extends Controller
 
         $hopDong = null;
         $phongTro = null;
-        $danhSachNguoiOCung = collect();
         $danhSachHoaDon = collect();
         $chiSoDienNuocMoiNhat = null;
         $hoaDonChuaThanhToan = null;
 
         if ($khachThue) {
-            // Lấy hợp đồng hiệu lực kèm phòng trọ, danh sách người ở cùng và các hóa đơn
+            // Lấy hợp đồng hiệu lực kèm phòng trọ, thể loại phòng và các hóa đơn
             $hopDong = HopDong::with([
-                'phongTro',
-                'nguoiOCung',
+                'phongTro.loaiPhong',
                 'hoaDon' => function ($truyVan) {
                     $truyVan->with('chiTietHoaDon.dichVu')->orderByDesc('thangNam');
                 }
@@ -73,7 +71,6 @@ class TongQuanController extends Controller
 
             if ($hopDong) {
                 $phongTro = $hopDong->phongTro;
-                $danhSachNguoiOCung = $hopDong->nguoiOCung;
                 $danhSachHoaDon = $hopDong->hoaDon;
                 $hoaDonChuaThanhToan = $danhSachHoaDon->where('trangThaiThanhToan', 'CON_NO')->first();
 
@@ -90,7 +87,6 @@ class TongQuanController extends Controller
             'khachThue',
             'hopDong',
             'phongTro',
-            'danhSachNguoiOCung',
             'danhSachHoaDon',
             'chiSoDienNuocMoiNhat',
             'hoaDonChuaThanhToan'

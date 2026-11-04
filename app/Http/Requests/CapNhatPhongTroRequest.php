@@ -42,6 +42,17 @@ class CapNhatPhongTroRequest extends FormRequest
                 'max:20',
                 Rule::unique('PhongTro', 'soPhong')->ignore($maPhong, 'maPhong'),
             ],
+            'maLoaiPhong' => [
+                'required',
+                'integer',
+                'exists:LoaiPhong,maLoaiPhong',
+            ],
+            'soNguoiToiDa' => [
+                'required',
+                'integer',
+                'min:1',
+                'max:20',
+            ],
             'donGiaMacDinh' => [
                 'required',
                 'numeric',
@@ -67,6 +78,13 @@ class CapNhatPhongTroRequest extends FormRequest
             'soPhong.string' => 'Số phòng phải là chuỗi ký tự hợp lệ.',
             'soPhong.max' => 'Số phòng không được vượt quá 20 ký tự.',
             'soPhong.unique' => 'Số phòng này đã tồn tại trong hệ thống.',
+            'maLoaiPhong.required' => 'Vui lòng chọn thể loại phòng trọ.',
+            'maLoaiPhong.integer' => 'Thể loại phòng không hợp lệ.',
+            'maLoaiPhong.exists' => 'Thể loại phòng được chọn không tồn tại trong hệ thống.',
+            'soNguoiToiDa.required' => 'Vui lòng nhập số người ở tối đa của phòng.',
+            'soNguoiToiDa.integer' => 'Sức chứa tối đa phải là số nguyên.',
+            'soNguoiToiDa.min' => 'Sức chứa tối đa phải có ít nhất 1 người.',
+            'soNguoiToiDa.max' => 'Sức chứa tối đa không vượt quá 20 người.',
             'donGiaMacDinh.required' => 'Vui lòng nhập đơn giá mặc định của phòng.',
             'donGiaMacDinh.numeric' => 'Đơn giá mặc định phải là một số hợp lệ.',
             'donGiaMacDinh.min' => 'Đơn giá mặc định không được nhỏ hơn 0 đ.',
@@ -75,4 +93,3 @@ class CapNhatPhongTroRequest extends FormRequest
         ];
     }
 }
-

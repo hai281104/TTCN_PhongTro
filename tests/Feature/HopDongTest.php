@@ -4,8 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\HopDong;
 use App\Models\KhachThue;
+use App\Models\LoaiPhong;
 use App\Models\NguoiDung;
-use App\Models\NguoiOCung;
 use App\Models\PhongTro;
 use Tests\TestCase;
 
@@ -46,11 +46,12 @@ class HopDongTest extends TestCase
         ]);
     }
 
-    protected function taoPhongTroTrongMau()
+    protected function taoPhongTroTrongMau($soNguoiToiDa = 2)
     {
         return PhongTro::create([
             'soPhong' => 'P' . rand(1000, 9999) . '_' . substr(uniqid(), -4),
             'donGiaMacDinh' => 3000000,
+            'soNguoiToiDa' => $soNguoiToiDa,
             'trangThaiPhong' => 'TRONG',
             'dangHoatDong' => 1,
         ]);
@@ -83,40 +84,29 @@ class HopDongTest extends TestCase
     public function test_chu_tro_lap_hop_dong_moi_thanh_cong_va_phong_chuyen_sang_dang_thue()
     {
         $chuTro = $this->layTaiKhoanChuTro();
-        $phong = $this->taoPhongTroTrongMau();
+        $phong = $this->taoPhongTroTrongMau(3);
         $khach = $this->taoKhachThueMau();
 
         $phanHoi = $this->actingAs($chuTro)->post('/hop-dong', [
             'maPhong' => $phong->maPhong,
             'maKhach' => $khach->maKhach,
+            'soLuongNguoi' => 2,
             'ngayBatDau' => '2026-11-01',
             'ngayKetThuc' => '2027-11-01',
             'giaThueChot' => 3000000,
             'tienDatCoc' => 3000000,
-            'nguoiOCung' => [
-                [
-                    'hoTen' => 'Người Ở Cùng Test',
-                    'soCCCD' => '079987654321',
-                    'soDienThoai' => '0911223344',
-                    'quanHe' => 'Bạn',
-                ]
-            ],
+            'ghiChu' => 'Hợp đồng 1 đại diện ký',
         ]);
 
         $this->assertDatabaseHas('HopDong', [
             'maPhong' => $phong->maPhong,
             'maKhach' => $khach->maKhach,
+            'soLuongNguoi' => 2,
             'trangThaiHD' => 'HIEU_LUC',
         ]);
 
         $hopDongMoi = HopDong::where('maPhong', $phong->maPhong)->first();
         $phanHoi->assertRedirect("/hop-dong/{$hopDongMoi->maHopDong}");
-
-        // Kiểm tra người ở cùng được lưu
-        $this->assertDatabaseHas('NguoiOCung', [
-            'maHopDong' => $hopDongMoi->maHopDong,
-            'hoTen' => 'Người Ở Cùng Test',
-        ]);
 
         // Kiểm tra trigger CSDL tự động chuyển trạng thái phòng sang DANG_THUE
         $phongCapNhat = $phong->fresh();
@@ -126,12 +116,13 @@ class HopDongTest extends TestCase
     public function test_lap_hop_dong_voi_gia_thue_va_tien_coc_dinh_dang_tien_te_thanh_cong()
     {
         $chuTro = $this->layTaiKhoanChuTro();
-        $phong = $this->taoPhongTroTrongMau();
+        $phong = $this->taoPhongTroTrongMau(2);
         $khach = $this->taoKhachThueMau();
 
         $phanHoi = $this->actingAs($chuTro)->post('/hop-dong', [
             'maPhong' => $phong->maPhong,
             'maKhach' => $khach->maKhach,
+            'soLuongNguoi' => 1,
             'ngayBatDau' => '2026-11-01',
             'ngayKetThuc' => '2027-11-01',
             'giaThueChot' => '3.200.000',
@@ -141,6 +132,7 @@ class HopDongTest extends TestCase
         $this->assertDatabaseHas('HopDong', [
             'maPhong' => $phong->maPhong,
             'maKhach' => $khach->maKhach,
+            'soLuongNguoi' => 1,
             'giaThueChot' => 3200000,
             'tienDatCoc' => 3200000,
             'trangThaiHD' => 'HIEU_LUC',
@@ -157,12 +149,49 @@ class HopDongTest extends TestCase
         $phanHoi = $this->actingAs($chuTro)->post('/hop-dong', [
             'maPhong' => '',
             'maKhach' => '',
+            'soLuongNguoi' => '',
             'ngayBatDau' => '',
             'giaThueChot' => '',
             'tienDatCoc' => '',
         ]);
 
-        $phanHoi->assertSessionHasErrors(['maPhong', 'maKhach', 'ngayBatDau', 'giaThueChot', 'tienDatCoc']);
+        $phanHoi->assertSessionHasErrors(['maPhong', 'maKhach', 'soLuongNguoi', 'ngayBatDau', 'giaThueChot', 'tienDatCoc']);
+    }
+
+    public function test_lap_hop_dong_that_bai_khi_so_luong_nguoi_vuot_qua_suc_chua_phong()
+    {
+        $chuTro = $this->layTaiKhoanChuTro();
+        $phong = $this->taoPhongTroTrongMau(2); // Sức chứa tối đa 2 người
+        $khach = $this->taoKhachThueMau();
+
+        $phanHoi = $this->actingAs($chuTro)->post('/hop-dong', [
+            'maPhong' => $phong->maPhong,
+            'maKhach' => $khach->maKhach,
+            'soLuongNguoi' => 4, // Vượt quá sức chứa
+            'ngayBatDau' => '2026-11-01',
+            'giaThueChot' => 3000000,
+            'tienDatCoc' => 3000000,
+        ]);
+
+        $phanHoi->assertSessionHasErrors(['soLuongNguoi']);
+    }
+
+    public function test_lap_hop_dong_that_bai_khi_so_luong_nguoi_nho_hon_1()
+    {
+        $chuTro = $this->layTaiKhoanChuTro();
+        $phong = $this->taoPhongTroTrongMau(2);
+        $khach = $this->taoKhachThueMau();
+
+        $phanHoi = $this->actingAs($chuTro)->post('/hop-dong', [
+            'maPhong' => $phong->maPhong,
+            'maKhach' => $khach->maKhach,
+            'soLuongNguoi' => 0,
+            'ngayBatDau' => '2026-11-01',
+            'giaThueChot' => 3000000,
+            'tienDatCoc' => 3000000,
+        ]);
+
+        $phanHoi->assertSessionHasErrors(['soLuongNguoi']);
     }
 
     public function test_lap_hop_dong_that_bai_khi_phong_dang_co_nguoi_thue()
@@ -176,6 +205,7 @@ class HopDongTest extends TestCase
             $phanHoi = $this->actingAs($chuTro)->post('/hop-dong', [
                 'maPhong' => $phongDangThue->maPhong,
                 'maKhach' => $khach->maKhach,
+                'soLuongNguoi' => 1,
                 'ngayBatDau' => '2026-11-01',
                 'giaThueChot' => 2500000,
                 'tienDatCoc' => 2500000,
@@ -199,74 +229,16 @@ class HopDongTest extends TestCase
         }
     }
 
-    public function test_chu_tro_them_nguoi_o_cung_thanh_cong()
-    {
-        $chuTro = $this->layTaiKhoanChuTro();
-        $phong = $this->taoPhongTroTrongMau();
-        $khach = $this->taoKhachThueMau();
-
-        $hopDong = HopDong::create([
-            'maPhong' => $phong->maPhong,
-            'maKhach' => $khach->maKhach,
-            'ngayBatDau' => '2026-11-01',
-            'giaThueChot' => 3000000,
-            'tienDatCoc' => 3000000,
-            'trangThaiHD' => 'HIEU_LUC',
-        ]);
-
-        $phanHoi = $this->actingAs($chuTro)->post("/hop-dong/{$hopDong->maHopDong}/nguoi-o-cung", [
-            'hoTen' => 'Nguyễn Thị Hoa Thêm Mới',
-            'quanHe' => 'Em gái',
-            'soCCCD' => '079111222333',
-            'soDienThoai' => '0933445566',
-        ]);
-
-        $phanHoi->assertRedirect("/hop-dong/{$hopDong->maHopDong}");
-        $this->assertDatabaseHas('NguoiOCung', [
-            'maHopDong' => $hopDong->maHopDong,
-            'hoTen' => 'Nguyễn Thị Hoa Thêm Mới',
-            'quanHe' => 'Em gái',
-        ]);
-    }
-
-    public function test_chu_tro_xoa_nguoi_o_cung_thanh_cong()
-    {
-        $chuTro = $this->layTaiKhoanChuTro();
-        $phong = $this->taoPhongTroTrongMau();
-        $khach = $this->taoKhachThueMau();
-
-        $hopDong = HopDong::create([
-            'maPhong' => $phong->maPhong,
-            'maKhach' => $khach->maKhach,
-            'ngayBatDau' => '2026-11-01',
-            'giaThueChot' => 3000000,
-            'tienDatCoc' => 3000000,
-            'trangThaiHD' => 'HIEU_LUC',
-        ]);
-
-        $nguoiO = NguoiOCung::create([
-            'maHopDong' => $hopDong->maHopDong,
-            'hoTen' => 'Người Cần Xóa',
-            'quanHe' => 'Bạn',
-        ]);
-
-        $phanHoi = $this->actingAs($chuTro)->delete("/hop-dong/{$hopDong->maHopDong}/nguoi-o-cung/{$nguoiO->maNguoiO}");
-
-        $phanHoi->assertRedirect("/hop-dong/{$hopDong->maHopDong}");
-        $this->assertDatabaseMissing('NguoiOCung', [
-            'maNguoiO' => $nguoiO->maNguoiO,
-        ]);
-    }
-
     public function test_chu_tro_thanh_ly_hop_dong_thanh_cong_va_phong_tu_dong_chuyen_ve_trong()
     {
         $chuTro = $this->layTaiKhoanChuTro();
-        $phong = $this->taoPhongTroTrongMau();
+        $phong = $this->taoPhongTroTrongMau(2);
         $khach = $this->taoKhachThueMau();
 
         $hopDong = HopDong::create([
             'maPhong' => $phong->maPhong,
             'maKhach' => $khach->maKhach,
+            'soLuongNguoi' => 2,
             'ngayBatDau' => '2026-11-01',
             'giaThueChot' => 3000000,
             'tienDatCoc' => 3000000,

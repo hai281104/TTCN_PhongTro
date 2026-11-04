@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CapNhatPhongTroRequest;
 use App\Http\Requests\LuuPhongTroRequest;
+use App\Models\LoaiPhong;
 use App\Models\PhongTro;
 use Illuminate\Http\Request;
 
@@ -17,6 +18,10 @@ class PhongTroController extends Controller
         if ($yeuCau->filled('tuKhoa')) {
             $tuKhoa = trim($yeuCau->input('tuKhoa'));
             $truyVan->where('soPhong', 'like', "%{$tuKhoa}%");
+        }
+
+        if ($yeuCau->filled('maLoaiPhong')) {
+            $truyVan->where('maLoaiPhong', $yeuCau->input('maLoaiPhong'));
         }
 
         if ($yeuCau->filled('trangThaiPhong') && in_array($yeuCau->input('trangThaiPhong'), ['TRONG', 'DANG_THUE', 'DANG_SUA_CHUA'])) {
@@ -33,10 +38,12 @@ class PhongTroController extends Controller
             $truyVan->where('donGiaMacDinh', '<=', $giaDen);
         }
 
-        $danhSachPhong = $truyVan->with(['hopDongHieuLuc.khachThue', 'hopDongHieuLuc.nguoiOCung'])
+        $danhSachPhong = $truyVan->with(['loaiPhong', 'hopDongHieuLuc.khachThue'])
             ->orderBy('soPhong', 'asc')
             ->paginate(12)
             ->withQueryString();
+
+        $danhSachLoaiPhong = LoaiPhong::where('dangHoatDong', 1)->orderBy('tenLoaiPhong', 'asc')->get();
 
         $tongSoPhong = PhongTro::where('dangHoatDong', 1)->count();
         $soPhongDangThue = PhongTro::where('dangHoatDong', 1)->where('trangThaiPhong', 'DANG_THUE')->count();
@@ -46,6 +53,7 @@ class PhongTroController extends Controller
 
         return view('quan-ly-phong.danh-sach', compact(
             'danhSachPhong',
+            'danhSachLoaiPhong',
             'tongSoPhong',
             'soPhongDangThue',
             'soPhongTrong',
@@ -59,6 +67,8 @@ class PhongTroController extends Controller
     {
         $phongMoi = PhongTro::create([
             'soPhong' => trim($yeuCau->input('soPhong')),
+            'maLoaiPhong' => $yeuCau->input('maLoaiPhong'),
+            'soNguoiToiDa' => $yeuCau->input('soNguoiToiDa'),
             'donGiaMacDinh' => $yeuCau->input('donGiaMacDinh'),
             'trangThaiPhong' => 'TRONG',
             'ghiChu' => $yeuCau->input('ghiChu'),
@@ -69,7 +79,7 @@ class PhongTroController extends Controller
             return response()->json([
                 'thanhCong' => true,
                 'thongBao' => 'Thêm phòng trọ mới thành công.',
-                'duLieu' => $phongMoi,
+                'duLieu' => $phongMoi->load('loaiPhong'),
             ], 201);
         }
 
@@ -81,8 +91,8 @@ class PhongTroController extends Controller
     public function chiTiet(Request $yeuCau, $maPhong)
     {
         $phongTro = PhongTro::with([
+            'loaiPhong',
             'hopDongHieuLuc.khachThue',
-            'hopDongHieuLuc.nguoiOCung',
             'chiSoDienNuoc' => function ($query) {
                 $query->orderBy('thangGhiNhan', 'desc')->take(3);
             },
@@ -91,6 +101,8 @@ class PhongTroController extends Controller
             },
         ])->findOrFail($maPhong);
 
+        $danhSachLoaiPhong = LoaiPhong::where('dangHoatDong', 1)->orderBy('tenLoaiPhong', 'asc')->get();
+
         if ($yeuCau->wantsJson() || $yeuCau->ajax()) {
             return response()->json([
                 'thanhCong' => true,
@@ -98,7 +110,7 @@ class PhongTroController extends Controller
             ]);
         }
 
-        return view('quan-ly-phong.chi-tiet', compact('phongTro'));
+        return view('quan-ly-phong.chi-tiet', compact('phongTro', 'danhSachLoaiPhong'));
     }
 
     // Cập nhật thông tin phòng trọ đã có.
@@ -108,6 +120,8 @@ class PhongTroController extends Controller
 
         $phongTro->update([
             'soPhong' => trim($yeuCau->input('soPhong')),
+            'maLoaiPhong' => $yeuCau->input('maLoaiPhong'),
+            'soNguoiToiDa' => $yeuCau->input('soNguoiToiDa'),
             'donGiaMacDinh' => $yeuCau->input('donGiaMacDinh'),
             'ghiChu' => $yeuCau->input('ghiChu'),
         ]);
@@ -116,7 +130,7 @@ class PhongTroController extends Controller
             return response()->json([
                 'thanhCong' => true,
                 'thongBao' => "Cập nhật phòng {$phongTro->soPhong} thành công.",
-                'duLieu' => $phongTro,
+                'duLieu' => $phongTro->load('loaiPhong'),
             ]);
         }
 
@@ -211,4 +225,3 @@ class PhongTroController extends Controller
             ->with('thongBaoThanhCong', $thongDiepThanhCong);
     }
 }
-

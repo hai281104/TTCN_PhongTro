@@ -51,8 +51,6 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [HopDongController::class, 'danhSach'])->name('danh-sach');
             Route::post('/', [HopDongController::class, 'taoMoi'])->name('tao-moi');
             Route::get('/{maHopDong}', [HopDongController::class, 'chiTiet'])->name('chi-tiet');
-            Route::post('/{maHopDong}/nguoi-o-cung', [HopDongController::class, 'themNguoiOCung'])->name('them-nguoi-o-cung');
-            Route::delete('/{maHopDong}/nguoi-o-cung/{maNguoiO}', [HopDongController::class, 'xoaNguoiOCung'])->where(['maNguoiO' => '[0-9]+'])->name('xoa-nguoi-o-cung');
             Route::patch('/{maHopDong}/ket-thuc', [HopDongController::class, 'ketThuc'])->name('ket-thuc');
         });
     });

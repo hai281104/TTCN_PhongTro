@@ -44,7 +44,7 @@ class KhachThueController extends Controller
             }
         }
 
-        $danhSachKhach = $truyVan->with(['nguoiDung', 'hopDongHieuLuc.phongTro', 'hopDongHieuLuc.nguoiOCung'])
+        $danhSachKhach = $truyVan->with(['nguoiDung', 'hopDongHieuLuc.phongTro.loaiPhong'])
             ->orderBy('hoTen', 'asc')
             ->paginate(12)
             ->withQueryString();
@@ -107,9 +107,9 @@ class KhachThueController extends Controller
         $khachThue = KhachThue::with([
             'nguoiDung',
             'hopDongHieuLuc.phongTro',
-            'hopDongHieuLuc.nguoiOCung',
+            'hopDongHieuLuc.phongTro.loaiPhong',
             'hopDong' => function ($q) {
-                $q->with(['phongTro', 'hoaDon'])->orderBy('ngayBatDau', 'desc');
+                $q->with(['phongTro.loaiPhong', 'hoaDon'])->orderBy('ngayBatDau', 'desc');
             },
         ])->findOrFail($maKhach);
 
