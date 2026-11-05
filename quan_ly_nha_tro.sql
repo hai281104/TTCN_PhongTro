@@ -107,6 +107,21 @@ CREATE TABLE HopDong (
 ) ENGINE=InnoDB COMMENT='Hợp đồng gắn khách thuê đại diện với phòng';
 
 -- =====================================================================
+-- 5B. NGƯỜI Ở CÙNG TRONG PHÒNG (Khách thuê ở cùng phòng với người đại diện)
+-- =====================================================================
+CREATE TABLE NguoiOCung (
+    maNguoiOCung INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    maHopDong    INT UNSIGNED NOT NULL COMMENT 'Hợp đồng phòng đang ở',
+    maKhach      INT UNSIGNED NOT NULL COMMENT 'Khách thuê ở cùng trong phòng',
+    ngayVaoO     DATE NULL COMMENT 'Ngày bắt đầu vào ở cùng',
+    ghiChu       VARCHAR(255) NULL COMMENT 'Ghi chú / Mối quan hệ với người đại diện',
+    dangHoatDong TINYINT(1) NOT NULL DEFAULT 1 COMMENT '1: Đang ở cùng, 0: Đã chuyển đi',
+    UNIQUE KEY uq_hopdong_khach_ocung (maHopDong, maKhach),
+    CONSTRAINT fk_nguoiocung_hopdong FOREIGN KEY (maHopDong) REFERENCES HopDong(maHopDong) ON DELETE CASCADE,
+    CONSTRAINT fk_nguoiocung_khachthue FOREIGN KEY (maKhach) REFERENCES KhachThue(maKhach) ON DELETE CASCADE
+) ENGINE=InnoDB COMMENT='Danh sách khách thuê ở cùng phòng trong hợp đồng';
+
+-- =====================================================================
 -- 6. DỊCH VỤ & ĐƠN GIÁ (điện, nước, rác, wifi...)
 -- =====================================================================
 CREATE TABLE DichVu (
@@ -343,13 +358,18 @@ INSERT INTO DichVu (tenDichVu, loaiDichVu, donGia, donViTinh, cachTinh) VALUES
 ('Rác',   'KHAC', 20000, 'phòng', 'CO_DINH_PHONG'),
 ('Wifi',  'KHAC', 50000, 'phòng', 'CO_DINH_PHONG');
 
--- 4. Khách thuê (Người đại diện)
+-- 4. Khách thuê (Người đại diện & Người ở cùng)
 INSERT INTO KhachThue (maNguoiDung, hoTen, ngaySinh, gioiTinh, soCCCD, ngayCapCCCD, noiCapCCCD, soDienThoai, diaChi, ngheNghiep, bienSoXe, nguoiLienHeKhanCap, sdtKhanCap, quanHeKhanCap, daDangKyTamTru) VALUES
-(2, 'Nguyễn Văn A', '2001-08-15', 'NAM', '079012345678', '2021-05-10', 'Cục CSQLHC về TTXH', '0901234567', 'Quận 7, TP. Hồ Chí Minh', 'Lập trình viên phần mềm', '59-X1 123.45', 'Nguyễn Văn Ba (Bố)', '0912345678', 'Bố', 1);
+(2, 'Nguyễn Văn A', '2001-08-15', 'NAM', '079012345678', '2021-05-10', 'Cục CSQLHC về TTXH', '0901234567', 'Quận 7, TP. Hồ Chí Minh', 'Lập trình viên phần mềm', '59-X1 123.45', 'Nguyễn Văn Ba (Bố)', '0912345678', 'Bố', 1),
+(NULL, 'Lê Thị Thảo', '2002-11-20', 'NU', '079198765432', '2022-03-15', 'Cục CSQLHC về TTXH', '0988776655', 'Bình Định', 'Kế toán viên', '77-F1 888.99', 'Lê Văn Mẹ', '0977112233', 'Mẹ', 1);
 
--- 5. Lập hợp đồng: 1 người đại diện ký, 2 người ở -> trigger tự chuyển P101 sang DANG_THUE
+-- 5. Lập hợp đồng: 1 người đại diện ký, quy mô 2 người ở -> trigger tự chuyển P101 sang DANG_THUE
 INSERT INTO HopDong (maPhong, maKhach, soLuongNguoi, ngayBatDau, giaThueChot, tienDatCoc)
 VALUES (1, 1, 2, '2026-09-01', 2500000, 2500000);
+
+-- 5B. Gán người ở cùng vào hợp đồng phòng P101
+INSERT INTO NguoiOCung (maHopDong, maKhach, ngayVaoO, ghiChu, dangHoatDong)
+VALUES (1, 2, '2026-09-01', 'Bạn cùng phòng với Nguyễn Văn A', 1);
 
 -- 6. Chỉ số điện nước tháng 10/2026 cho P101
 INSERT INTO ChiSoDienNuoc (maPhong, thangGhiNhan, chiSoDienCu, chiSoDienMoi, chiSoNuocCu, chiSoNuocMoi)

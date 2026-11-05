@@ -94,6 +94,10 @@
                         data-sdt-khan-cap="{{ $khachThue->sdtKhanCap }}"
                         data-quan-he-khan-cap="{{ $khachThue->quanHeKhanCap }}"
                         data-tam-tru="{{ $khachThue->daDangKyTamTru ? '1' : '0' }}"
+                        data-la-dai-dien="{{ $thongTinPhong && $thongTinPhong['laDaiDien'] ? '1' : '0' }}"
+                        data-ma-hop-dong-o-cung="{{ $thongTinPhong && !$thongTinPhong['laDaiDien'] && $thongTinPhong['hopDong'] ? $thongTinPhong['hopDong']->maHopDong : '' }}"
+                        data-quan-he-o-cung="{{ $thongTinPhong && !$thongTinPhong['laDaiDien'] ? ($thongTinPhong['quanHe'] ?? '') : '' }}"
+                        data-ten-phong="{{ $thongTinPhong && $thongTinPhong['phongTro'] ? $thongTinPhong['phongTro']->soPhong : '' }}"
                         class="px-3 py-1.5 rounded-lg border border-zinc-300 bg-white text-zinc-700 text-xs font-medium hover:bg-zinc-50 transition-colors shadow-xs">
                         Sửa thông tin
                     </button>
@@ -128,10 +132,19 @@
                         <div>
                             <div class="flex items-center gap-2">
                                 <h2 class="text-xl font-bold text-zinc-900">{{ $khachThue->hoTen }}</h2>
-                                @if ($khachThue->hopDongHieuLuc && $khachThue->hopDongHieuLuc->phongTro)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-sky-50 text-sky-700 border border-sky-200">
-                                        Đang thuê {{ $khachThue->hopDongHieuLuc->phongTro->soPhong }}
+                                @if ($thongTinPhong && $thongTinPhong['phongTro'])
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-semibold bg-sky-50 text-sky-800 border border-sky-200">
+                                        Phòng {{ $thongTinPhong['phongTro']->soPhong }}
                                     </span>
+                                    @if ($thongTinPhong['laDaiDien'])
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                            Đại diện hợp đồng
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                                            Ở cùng phòng
+                                        </span>
+                                    @endif
                                 @else
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-zinc-100 text-zinc-600 border border-zinc-200">
                                         Chưa thuê phòng
@@ -202,14 +215,27 @@
                 </div>
             </div>
 
-            <!-- HỢP ĐỒNG ĐANG HIỆU LỰC -->
+            <!-- THÔNG TIN NƠI Ở HIỆN TẠI -->
             <div class="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs mb-6">
-                <h3 class="text-sm font-semibold text-zinc-900 mb-4 uppercase tracking-wider">Phòng đang thuê</h3>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-semibold text-zinc-900 uppercase tracking-wider">Thông tin nơi ở hiện tại</h3>
+                    @if ($thongTinPhong && $thongTinPhong['phongTro'])
+                        @if ($thongTinPhong['laDaiDien'])
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                Người đại diện hợp đồng
+                            </span>
+                        @else
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                Người ở cùng phòng
+                            </span>
+                        @endif
+                    @endif
+                </div>
 
-                @if ($khachThue->hopDongHieuLuc && $khachThue->hopDongHieuLuc->phongTro)
+                @if ($thongTinPhong && $thongTinPhong['phongTro'])
                     @php
-                        $hd = $khachThue->hopDongHieuLuc;
-                        $phong = $hd->phongTro;
+                        $hd = $thongTinPhong['hopDong'];
+                        $phong = $thongTinPhong['phongTro'];
                     @endphp
                     <div class="rounded-lg border border-sky-200 bg-sky-50/40 p-4 text-xs space-y-4">
                         <div class="flex items-center justify-between">
@@ -231,8 +257,8 @@
 
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3 border-t border-sky-100">
                             <div>
-                                <span class="text-zinc-500 block">Số người ở:</span>
-                                <strong class="text-zinc-900">{{ $hd->soLuongNguoi ?? 1 }} người</strong>
+                                <span class="text-zinc-500 block">Quy mô hiện tại:</span>
+                                <strong class="text-zinc-900">{{ $hd->soLuongNguoi ?? 1 }} / {{ $phong->soNguoiToiDa }} người</strong>
                             </div>
                             <div>
                                 <span class="text-zinc-500 block">Giá thuê chốt:</span>
@@ -248,6 +274,75 @@
                             </div>
                         </div>
 
+                        @if ($thongTinPhong['laDaiDien'])
+                            <!-- DANH SÁCH BẠN CÙNG PHÒNG -->
+                            <div class="pt-3 border-t border-sky-200/60">
+                                <div class="text-xs font-semibold text-zinc-800 uppercase mb-2">
+                                    Danh sách người ở cùng phòng ({{ $hd->danhSachNguoiOCung ? $hd->danhSachNguoiOCung->count() : 0 }} người):
+                                </div>
+
+                                @if ($hd->danhSachNguoiOCung && $hd->danhSachNguoiOCung->isNotEmpty())
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                        @foreach ($hd->danhSachNguoiOCung as $noc)
+                                            @php $ban = $noc->khachThue; @endphp
+                                            @if ($ban)
+                                                <div class="p-2.5 bg-white rounded-lg border border-zinc-200 flex items-center justify-between shadow-2xs">
+                                                    <div class="flex items-center gap-2.5">
+                                                        <div class="w-7 h-7 rounded-full bg-zinc-800 text-white flex items-center justify-center font-bold text-xs">
+                                                            {{ mb_substr($ban->hoTen, 0, 1) }}
+                                                        </div>
+                                                        <div>
+                                                            <div class="font-semibold text-zinc-900 flex items-center gap-1.5">
+                                                                <a href="{{ route('khach-thue.chi-tiet', $ban->maKhach) }}" class="hover:underline hover:text-sky-700">
+                                                                    {{ $ban->hoTen }}
+                                                                </a>
+                                                                <span class="text-[10px] text-zinc-500 font-normal">({{ $noc->ghiChu ?: 'Ở cùng' }})</span>
+                                                            </div>
+                                                            <div class="text-[11px] text-zinc-500 tabular-nums">
+                                                                SĐT: {{ $ban->soDienThoai }} | CCCD: {{ $ban->soCCCD }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium {{ $ban->daDangKyTamTru ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200' }}">
+                                                        {{ $ban->daDangKyTamTru ? 'Đã tạm trú' : 'Chưa tạm trú' }}
+                                                    </span>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="text-[11px] text-zinc-500 italic bg-white/60 p-2 rounded border border-zinc-200">
+                                        Hiện tại chưa có người ở cùng nào được thêm vào phòng này.
+                                    </p>
+                                @endif
+                            </div>
+                        @else
+                            <!-- THÔNG TIN NGƯỜI ĐẠI DIỆN HỢP ĐỒNG KHI LÀ NGƯỜI Ở CÙNG -->
+                            <div class="pt-3 border-t border-sky-200/60 p-3 bg-white/80 rounded-lg border border-zinc-200 space-y-1.5">
+                                <div class="text-xs font-semibold text-zinc-800 uppercase mb-1">Thông tin đại diện hợp đồng</div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-7 h-7 rounded-full bg-indigo-700 text-white flex items-center justify-center font-bold text-xs">
+                                            {{ mb_substr($thongTinPhong['nguoiDaiDien']->hoTen ?? '?', 0, 1) }}
+                                        </div>
+                                        <div>
+                                            <div class="font-semibold text-zinc-900">
+                                                <a href="{{ route('khach-thue.chi-tiet', $thongTinPhong['nguoiDaiDien']->maKhach ?? 0) }}" class="hover:underline hover:text-indigo-700">
+                                                    {{ $thongTinPhong['nguoiDaiDien']->hoTen ?? 'Chưa rõ' }}
+                                                </a>
+                                            </div>
+                                            <div class="text-[11px] text-zinc-500">
+                                                SĐT: {{ $thongTinPhong['nguoiDaiDien']->soDienThoai ?? 'Chưa có' }} | Quan hệ với bạn: <strong class="text-zinc-800">{{ $thongTinPhong['quanHe'] ?: 'Bạn cùng phòng' }}</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                        Đứng tên ký hợp đồng
+                                    </span>
+                                </div>
+                            </div>
+                        @endif
+
                         <div class="pt-2 text-right">
                             <a href="{{ route('hop-dong.chi-tiet', $hd->maHopDong) }}"
                                 class="inline-flex items-center gap-1 text-xs font-semibold text-sky-700 hover:text-sky-900 hover:underline">
@@ -257,7 +352,7 @@
                     </div>
                 @else
                     <div class="p-6 text-center text-xs text-zinc-500 bg-zinc-50 rounded-lg border border-zinc-200">
-                        Khách hiện tại không có hợp đồng thuê phòng nào đang có hiệu lực.
+                        Khách hiện tại không có hợp đồng thuê phòng nào đang có hiệu lực (chưa xếp phòng).
                     </div>
                 @endif
             </div>
@@ -448,6 +543,50 @@
                             <div>
                                 <label for="quanHeKhanCapSua" class="block font-medium text-zinc-700 mb-1">Mối quan hệ</label>
                                 <input type="text" name="quanHeKhanCap" id="quanHeKhanCapSua" placeholder="Bố/Mẹ/Anh..."
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KHỐI 4: PHÒNG Ở & BẠN CÙNG PHÒNG -->
+                    <div class="bg-zinc-50 p-3 rounded-lg border border-zinc-200 space-y-3">
+                        <div class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider">4. Phòng ở & Bạn cùng phòng</div>
+
+                        <!-- Thông báo nếu là người đại diện hợp đồng -->
+                        <div id="vungCanhBaoDaiDienSua" class="hidden p-3 rounded-lg bg-sky-50 border border-sky-200 text-sky-800 space-y-1">
+                            <div class="font-semibold flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-sky-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>Người đại diện hợp đồng (<span id="nhanPhongDaiDienSua"></span>)</span>
+                            </div>
+                            <p class="text-[11px] text-zinc-600">Khách này đang là người đứng tên ký hợp đồng chính thức. Để thay đổi phòng hoặc kết thúc thuê, vui lòng quản lý tại mục <strong>Hợp đồng</strong>.</p>
+                        </div>
+
+                        <!-- Vùng chọn phòng nếu là người ở cùng hoặc chưa gán phòng -->
+                        <div id="vungChonPhongOCungSua" class="space-y-3">
+                            <div>
+                                <label for="maHopDongOCungSua" class="block font-medium text-zinc-700 mb-1">Xếp phòng ở cùng (Chọn hợp đồng đang thuê)</label>
+                                <select name="maHopDongOCung" id="maHopDongOCungSua"
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                                    <option value="">-- Không xếp phòng ở cùng (Rời phòng / Tự do) --</option>
+                                    @if (isset($danhSachHopDongDangThue))
+                                        @foreach ($danhSachHopDongDangThue as $hdOption)
+                                            @php
+                                                $soNguoiHienTai = $hdOption->layTongSoNguoiHienTai();
+                                                $soNguoiToiDa = $hdOption->phongTro->soNguoiToiDa ?? 1;
+                                            @endphp
+                                            <option value="{{ $hdOption->maHopDong }}">
+                                                Phòng {{ $hdOption->phongTro->soPhong ?? '?' }} (Đại diện: {{ $hdOption->khachThue->hoTen ?? '?' }}) - Đang ở: {{ $soNguoiHienTai }}/{{ $soNguoiToiDa }} người
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="quanHeVoiDaiDienSua" class="block font-medium text-zinc-700 mb-1">Quan hệ với người đại diện</label>
+                                <input type="text" name="quanHeVoiDaiDien" id="quanHeVoiDaiDienSua" placeholder="Ví dụ: Bạn cùng phòng, Vợ/Chồng, Em trai..."
                                     class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
                             </div>
                         </div>

@@ -269,4 +269,186 @@ class KhachThueTest extends TestCase
             'daDangKyTamTru' => 0,
         ]);
     }
+
+    public function test_them_khach_thue_kem_xep_phong_o_cung_thanh_cong()
+    {
+        $chuTro = $this->layTaiKhoanChuTro();
+
+        $phong = PhongTro::create([
+            'soPhong' => 'P_OCUNG_' . substr(md5(uniqid()), 0, 5),
+            'soNguoiToiDa' => 3,
+            'donGiaMacDinh' => 3000000,
+            'dangHoatDong' => 1,
+        ]);
+
+        $khachDaiDien = KhachThue::create([
+            'hoTen' => 'Người Đại Diện ' . rand(100, 999),
+            'soCCCD' => $this->taoSoCCCDNgauNhien(),
+            'soDienThoai' => '0988111222',
+            'dangHoatDong' => 1,
+        ]);
+
+        $hopDong = HopDong::create([
+            'maPhong' => $phong->maPhong,
+            'maKhach' => $khachDaiDien->maKhach,
+            'soLuongNguoi' => 1,
+            'ngayBatDau' => now()->toDateString(),
+            'giaThueChot' => 3000000,
+            'tienDatCoc' => 3000000,
+            'trangThaiHD' => 'HIEU_LUC',
+        ]);
+
+        $soCCCDMoi = $this->taoSoCCCDNgauNhien();
+
+        $phanHoi = $this->actingAs($chuTro)->post('/khach-thue', [
+            'hoTen' => 'Khách Ở Cùng Test',
+            'soCCCD' => $soCCCDMoi,
+            'soDienThoai' => '0977222333',
+            'diaChi' => 'Hà Nội',
+            'maHopDongOCung' => $hopDong->maHopDong,
+            'quanHeVoiDaiDien' => 'Bạn cùng lớp',
+        ]);
+
+        $phanHoi->assertRedirect('/khach-thue');
+
+        $khachMoi = KhachThue::where('soCCCD', $soCCCDMoi)->firstOrFail();
+
+        $this->assertDatabaseHas('NguoiOCung', [
+            'maHopDong' => $hopDong->maHopDong,
+            'maKhach' => $khachMoi->maKhach,
+            'ghiChu' => 'Bạn cùng lớp',
+            'dangHoatDong' => 1,
+        ]);
+
+        $hopDong->refresh();
+        $this->assertEquals(2, $hopDong->soLuongNguoi);
+    }
+
+    public function test_them_khach_o_cung_that_bai_khi_phong_da_du_nguoi()
+    {
+        $chuTro = $this->layTaiKhoanChuTro();
+
+        $phong = PhongTro::create([
+            'soPhong' => 'P_FULL_' . substr(md5(uniqid()), 0, 5),
+            'soNguoiToiDa' => 1, // Sức chứa tối đa 1 người
+            'donGiaMacDinh' => 2500000,
+            'dangHoatDong' => 1,
+        ]);
+
+        $khachDaiDien = KhachThue::create([
+            'hoTen' => 'Đại Diện Phòng Đơn',
+            'soCCCD' => $this->taoSoCCCDNgauNhien(),
+            'soDienThoai' => '0988444555',
+            'dangHoatDong' => 1,
+        ]);
+
+        $hopDong = HopDong::create([
+            'maPhong' => $phong->maPhong,
+            'maKhach' => $khachDaiDien->maKhach,
+            'soLuongNguoi' => 1, // Đã đủ 1 người
+            'ngayBatDau' => now()->toDateString(),
+            'giaThueChot' => 2500000,
+            'tienDatCoc' => 2500000,
+            'trangThaiHD' => 'HIEU_LUC',
+        ]);
+
+        $soCCCDMoi = $this->taoSoCCCDNgauNhien();
+
+        $phanHoi = $this->actingAs($chuTro)->post('/khach-thue', [
+            'hoTen' => 'Khách Bị Chặn Vì Đủ Chỗ',
+            'soCCCD' => $soCCCDMoi,
+            'soDienThoai' => '0977666777',
+            'maHopDongOCung' => $hopDong->maHopDong,
+        ]);
+
+        $phanHoi->assertSessionHas('thongBaoLoi');
+        $this->assertDatabaseMissing('KhachThue', [
+            'soCCCD' => $soCCCDMoi,
+        ]);
+    }
+
+    public function test_cap_nhat_khach_o_cung_chuyen_phong_va_roi_phong()
+    {
+        $chuTro = $this->layTaiKhoanChuTro();
+
+        $phong = PhongTro::create([
+            'soPhong' => 'P_ROI_' . substr(md5(uniqid()), 0, 5),
+            'soNguoiToiDa' => 3,
+            'donGiaMacDinh' => 3000000,
+            'dangHoatDong' => 1,
+        ]);
+
+        $khachDaiDien = KhachThue::create([
+            'hoTen' => 'Đại diện HĐ Rời',
+            'soCCCD' => $this->taoSoCCCDNgauNhien(),
+            'soDienThoai' => '0988777666',
+            'dangHoatDong' => 1,
+        ]);
+
+        $hopDong = HopDong::create([
+            'maPhong' => $phong->maPhong,
+            'maKhach' => $khachDaiDien->maKhach,
+            'soLuongNguoi' => 2,
+            'ngayBatDau' => now()->toDateString(),
+            'giaThueChot' => 3000000,
+            'tienDatCoc' => 3000000,
+            'trangThaiHD' => 'HIEU_LUC',
+        ]);
+
+        $khachOCung = KhachThue::create([
+            'hoTen' => 'Khách Sắp Rời Phòng',
+            'soCCCD' => $this->taoSoCCCDNgauNhien(),
+            'soDienThoai' => '0988999000',
+            'dangHoatDong' => 1,
+        ]);
+
+        \App\Models\NguoiOCung::create([
+            'maHopDong' => $hopDong->maHopDong,
+            'maKhach' => $khachOCung->maKhach,
+            'dangHoatDong' => 1,
+        ]);
+
+        // Cập nhật không còn chọn hợp đồng ở cùng -> Rời phòng
+        $phanHoi = $this->actingAs($chuTro)->put("/khach-thue/{$khachOCung->maKhach}", [
+            'hoTen' => 'Khách Đã Rời Phòng',
+            'soCCCD' => $khachOCung->soCCCD,
+            'soDienThoai' => $khachOCung->soDienThoai,
+            'maHopDongOCung' => '',
+        ]);
+
+        $phanHoi->assertRedirect('/khach-thue');
+
+        $this->assertDatabaseHas('NguoiOCung', [
+            'maHopDong' => $hopDong->maHopDong,
+            'maKhach' => $khachOCung->maKhach,
+            'dangHoatDong' => 0,
+        ]);
+
+        $hopDong->refresh();
+        $this->assertEquals(1, $hopDong->soLuongNguoi);
+    }
+
+    public function test_khong_the_gan_dai_dien_hop_dong_lam_nguoi_o_cung_phong_khac()
+    {
+        $chuTro = $this->layTaiKhoanChuTro();
+
+        $phong1 = PhongTro::create(['soPhong' => 'P1_' . rand(100, 999), 'soNguoiToiDa' => 2, 'donGiaMacDinh' => 3000000, 'dangHoatDong' => 1]);
+        $phong2 = PhongTro::create(['soPhong' => 'P2_' . rand(100, 999), 'soNguoiToiDa' => 2, 'donGiaMacDinh' => 3000000, 'dangHoatDong' => 1]);
+
+        $khachDaiDien1 = KhachThue::create(['hoTen' => 'Đại Diện P1', 'soCCCD' => $this->taoSoCCCDNgauNhien(), 'soDienThoai' => '0911000111', 'dangHoatDong' => 1]);
+        $khachDaiDien2 = KhachThue::create(['hoTen' => 'Đại Diện P2', 'soCCCD' => $this->taoSoCCCDNgauNhien(), 'soDienThoai' => '0911000222', 'dangHoatDong' => 1]);
+
+        $hd1 = HopDong::create(['maPhong' => $phong1->maPhong, 'maKhach' => $khachDaiDien1->maKhach, 'soLuongNguoi' => 1, 'ngayBatDau' => now(), 'giaThueChot' => 3000000, 'tienDatCoc' => 3000000, 'trangThaiHD' => 'HIEU_LUC']);
+        $hd2 = HopDong::create(['maPhong' => $phong2->maPhong, 'maKhach' => $khachDaiDien2->maKhach, 'soLuongNguoi' => 1, 'ngayBatDau' => now(), 'giaThueChot' => 3000000, 'tienDatCoc' => 3000000, 'trangThaiHD' => 'HIEU_LUC']);
+
+        // Khách 1 đang là đại diện HĐ1, cố gán vào HĐ2 làm người ở cùng
+        $phanHoi = $this->actingAs($chuTro)->put("/khach-thue/{$khachDaiDien1->maKhach}", [
+            'hoTen' => 'Đại Diện Cố Chuyển Phòng',
+            'soCCCD' => $khachDaiDien1->soCCCD,
+            'soDienThoai' => $khachDaiDien1->soDienThoai,
+            'maHopDongOCung' => $hd2->maHopDong,
+        ]);
+
+        $phanHoi->assertSessionHas('thongBaoLoi');
+    }
 }

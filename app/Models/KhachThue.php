@@ -87,12 +87,71 @@ class KhachThue extends Model
     }
 
     /**
-     * Hợp đồng đang có hiệu lực hiện tại của khách thuê.
+     * Hợp đồng đang có hiệu lực hiện tại của khách thuê (với tư cách người đại diện).
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function hopDongHieuLuc()
     {
         return $this->hasOne(HopDong::class, 'maKhach', 'maKhach')->where('trangThaiHD', 'HIEU_LUC');
+    }
+
+    /**
+     * Danh sách liên kết người ở cùng đang hoạt động.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function nguoiOCung()
+    {
+        return $this->hasMany(NguoiOCung::class, 'maKhach', 'maKhach')->where('dangHoatDong', 1);
+    }
+
+    /**
+     * Bản ghi liên kết người ở cùng hiện tại.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function nguoiOCungHienTai()
+    {
+        return $this->hasOne(NguoiOCung::class, 'maKhach', 'maKhach')->where('dangHoatDong', 1);
+    }
+
+    /**
+     * Lấy thông tin phòng trọ và hợp đồng đang ở hiện tại của khách (kể cả đại diện hoặc ở cùng).
+     *
+     * @return array|null
+     */
+    public function layThongTinPhongHienTai()
+    {
+        if ($this->hopDongHieuLuc && $this->hopDongHieuLuc->phongTro) {
+            return [
+                'laDaiDien' => true,
+                'vaiTro' => 'Đại diện',
+                'phong' => $this->hopDongHieuLuc->phongTro,
+                'phongTro' => $this->hopDongHieuLuc->phongTro,
+                'hopDong' => $this->hopDongHieuLuc,
+                'maHopDong' => $this->hopDongHieuLuc->maHopDong,
+                'quanHe' => 'Người đại diện hợp đồng',
+                'nguoiDaiDien' => $this,
+                'nguoiOCung' => null,
+            ];
+        }
+
+        if ($this->nguoiOCungHienTai && $this->nguoiOCungHienTai->hopDong && $this->nguoiOCungHienTai->hopDong->trangThaiHD === 'HIEU_LUC') {
+            $hd = $this->nguoiOCungHienTai->hopDong;
+            return [
+                'laDaiDien' => false,
+                'vaiTro' => 'Ở cùng',
+                'phong' => $hd->phongTro,
+                'phongTro' => $hd->phongTro,
+                'hopDong' => $hd,
+                'maHopDong' => $hd->maHopDong,
+                'quanHe' => $this->nguoiOCungHienTai->ghiChu ?: 'Bạn cùng phòng',
+                'nguoiDaiDien' => $hd->khachThue,
+                'nguoiOCung' => $this->nguoiOCungHienTai,
+            ];
+        }
+
+        return null;
     }
 }

@@ -93,4 +93,35 @@ class HopDong extends Model
     {
         return $this->hasMany(HoaDon::class, 'maHopDong', 'maHopDong');
     }
+
+    /**
+     * Danh sách khách thuê ở cùng đang hoạt động trong hợp đồng này.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function danhSachNguoiOCung()
+    {
+        return $this->hasMany(NguoiOCung::class, 'maHopDong', 'maHopDong')->where('dangHoatDong', 1);
+    }
+
+    /**
+     * Tính tổng số người thực tế đang ở trong phòng (1 đại diện + N người ở cùng).
+     *
+     * @return int
+     */
+    public function layTongSoNguoiHienTai()
+    {
+        return 1 + $this->danhSachNguoiOCung()->count();
+    }
+
+    /**
+     * Kiểm tra phòng trong hợp đồng còn chỗ trống không.
+     *
+     * @return bool
+     */
+    public function conChoTrong()
+    {
+        $sucChua = $this->phongTro ? $this->phongTro->soNguoiToiDa : 1;
+        return $this->layTongSoNguoiHienTai() < $sucChua;
+    }
 }
