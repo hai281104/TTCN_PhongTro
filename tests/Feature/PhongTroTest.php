@@ -269,7 +269,7 @@ class PhongTroTest extends TestCase
 
         $phanHoi = $this->actingAs($chuTro)->post('/phong-tro', [
             'soPhong' => $soPhongMoi,
-            'tang' => 2,
+            'tang' => 'Tầng 2',
             'dienTich' => '25.5',
             'maLoaiPhong' => $maLoaiPhong,
             'soNguoiToiDa' => 3,
@@ -282,7 +282,7 @@ class PhongTroTest extends TestCase
         $phanHoi->assertRedirect('/phong-tro');
         $this->assertDatabaseHas('PhongTro', [
             'soPhong' => $soPhongMoi,
-            'tang' => 2,
+            'tang' => 'Tầng 2',
             'dienTich' => 25.5,
             'donGiaMacDinh' => 3200000,
             'tienCocMacDinh' => 3000000,

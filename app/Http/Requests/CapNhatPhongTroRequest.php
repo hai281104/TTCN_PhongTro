@@ -30,7 +30,12 @@ class CapNhatPhongTroRequest extends FormRequest
         }
 
         if ($this->has('tang') && $this->tang !== null) {
-            $duLieuGop['tang'] = (string) $this->tang;
+            $tangGiaTri = trim((string) $this->tang);
+            if ($tangGiaTri !== '') {
+                $duLieuGop['tang'] = is_numeric($tangGiaTri) ? 'Tầng ' . $tangGiaTri : $tangGiaTri;
+            } else {
+                $duLieuGop['tang'] = null;
+            }
         }
 
         if (!empty($duLieuGop)) {
