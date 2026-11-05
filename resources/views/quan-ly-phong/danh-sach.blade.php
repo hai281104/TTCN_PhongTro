@@ -266,12 +266,12 @@
                                             @if (!empty($tienNghiArr))
                                                 <div class="flex flex-wrap gap-1 max-w-[200px]">
                                                     @foreach (array_slice($tienNghiArr, 0, 4) as $tnKey)
-                                                        @if (isset($danhSachTienNghi[$tnKey]))
-                                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] bg-zinc-100 text-zinc-700 border border-zinc-200" title="{{ $danhSachTienNghi[$tnKey]['ten'] }}">
-                                                                <span>{{ $danhSachTienNghi[$tnKey]['bieuTuong'] }}</span>
-                                                                <span class="truncate max-w-[70px]">{{ $danhSachTienNghi[$tnKey]['ten'] }}</span>
-                                                            </span>
-                                                        @endif
+                                                        @php
+                                                            $tenTienNghi = $danhSachTienNghi[$tnKey]['ten'] ?? \App\Models\PhongTro::layTenTienNghi($tnKey);
+                                                        @endphp
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-zinc-100 text-zinc-700 border border-zinc-200" title="{{ $tenTienNghi }}">
+                                                            <span class="truncate max-w-[90px]">{{ $tenTienNghi }}</span>
+                                                        </span>
                                                     @endforeach
                                                     @if (count($tienNghiArr) > 4)
                                                         <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-zinc-100 text-zinc-500 font-medium">
@@ -522,7 +522,6 @@
                                         <label class="flex items-center gap-2.5 p-2 rounded-lg border border-zinc-100 hover:border-zinc-300 hover:bg-zinc-50/50 cursor-pointer transition-all text-xs">
                                             <input type="checkbox" name="tienNghi[]" value="{{ $key }}"
                                                 class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
-                                            <span class="text-sm shrink-0">{{ $tn['bieuTuong'] }}</span>
                                             <span class="text-zinc-800 text-[11px] font-medium">{{ $tn['ten'] }}</span>
                                         </label>
                                     @endforeach
@@ -677,7 +676,6 @@
                                         <label class="flex items-center gap-2.5 p-2 rounded-lg border border-zinc-100 hover:border-zinc-300 hover:bg-zinc-50/50 cursor-pointer transition-all text-xs">
                                             <input type="checkbox" name="tienNghi[]" value="{{ $key }}" id="tienNghiSua_{{ $key }}"
                                                 class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900 hop-tien-nghi-sua">
-                                            <span class="text-sm shrink-0">{{ $tn['bieuTuong'] }}</span>
                                             <span class="text-zinc-800 text-[11px] font-medium">{{ $tn['ten'] }}</span>
                                         </label>
                                     @endforeach

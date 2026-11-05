@@ -168,12 +168,12 @@
                     @if (!empty($tienNghiArr))
                         <div class="flex flex-wrap gap-2">
                             @foreach ($tienNghiArr as $tnKey)
-                                @if (isset($danhSachTienNghi[$tnKey]))
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs bg-zinc-100 text-zinc-800 border border-zinc-200 font-medium">
-                                        <span>{{ $danhSachTienNghi[$tnKey]['bieuTuong'] }}</span>
-                                        <span>{{ $danhSachTienNghi[$tnKey]['ten'] }}</span>
-                                    </span>
-                                @endif
+                                @php
+                                    $tenTienNghi = $danhSachTienNghi[$tnKey]['ten'] ?? \App\Models\PhongTro::layTenTienNghi($tnKey);
+                                @endphp
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs bg-zinc-100 text-zinc-800 border border-zinc-200 font-medium">
+                                    <span>{{ $tenTienNghi }}</span>
+                                </span>
                             @endforeach
                         </div>
                     @else
@@ -369,8 +369,7 @@
                                 <label class="flex items-center gap-2 p-1.5 rounded hover:bg-white cursor-pointer transition-colors text-xs">
                                     <input type="checkbox" name="tienNghi[]" value="{{ $key }}" id="tienNghiSua_{{ $key }}"
                                         class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900 hop-tien-nghi-sua">
-                                    <span>{{ $tn['bieuTuong'] }}</span>
-                                    <span class="text-zinc-800 text-[11px]">{{ $tn['ten'] }}</span>
+                                    <span class="text-zinc-800 text-[11px] font-medium">{{ $tn['ten'] }}</span>
                                 </label>
                             @endforeach
                         </div>

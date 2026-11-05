@@ -72,17 +72,38 @@ class PhongTro extends Model
     public static function layDanhSachTienNghiHeThong()
     {
         return [
-            'dieu_hoa' => ['ten' => 'Điều hòa', 'bieuTuong' => '❄️'],
-            'nong_lanh' => ['ten' => 'Bình nóng lạnh', 'bieuTuong' => '🚿'],
-            'tu_lanh' => ['ten' => 'Tủ lạnh', 'bieuTuong' => '🧊'],
-            'giuong_nem' => ['ten' => 'Giường nệm', 'bieuTuong' => '🛏️'],
-            'tu_quan_ao' => ['ten' => 'Tủ quần áo', 'bieuTuong' => '🚪'],
-            'ke_bep' => ['ten' => 'Kệ bếp', 'bieuTuong' => '🍳'],
-            'gac_lung' => ['ten' => 'Gác lửng', 'bieuTuong' => '🪜'],
-            'ban_cong' => ['ten' => 'Ban công', 'bieuTuong' => '🌅'],
-            'may_giat' => ['ten' => 'Máy giặt', 'bieuTuong' => '🧺'],
-            'khoa_van_tay' => ['ten' => 'Khóa vân tay', 'bieuTuong' => '🔐'],
+            'dieu_hoa' => ['ten' => 'Điều hòa', 'bieuTuong' => ''],
+            'nong_lanh' => ['ten' => 'Bình nóng lạnh', 'bieuTuong' => ''],
+            'tu_lanh' => ['ten' => 'Tủ lạnh', 'bieuTuong' => ''],
+            'giuong_nem' => ['ten' => 'Giường nệm', 'bieuTuong' => ''],
+            'tu_quan_ao' => ['ten' => 'Tủ quần áo', 'bieuTuong' => ''],
+            'ke_bep' => ['ten' => 'Kệ bếp', 'bieuTuong' => ''],
+            'gac_lung' => ['ten' => 'Gác lửng', 'bieuTuong' => ''],
+            'ban_cong' => ['ten' => 'Ban công', 'bieuTuong' => ''],
+            'may_giat' => ['ten' => 'Máy giặt', 'bieuTuong' => ''],
+            'khoa_van_tay' => ['ten' => 'Khóa vân tay', 'bieuTuong' => ''],
         ];
+    }
+
+    /**
+     * Lấy tên hiển thị của tiện nghi từ mã key.
+     *
+     * @param string $key
+     * @return string
+     */
+    public static function layTenTienNghi($key)
+    {
+        $danhSach = self::layDanhSachTienNghiHeThong();
+        if (isset($danhSach[$key])) {
+            return $danhSach[$key]['ten'];
+        }
+        if ($key === 'binh_nong_lanh') {
+            return 'Bình nóng lạnh';
+        }
+        if ($key === 'ban_ghe') {
+            return 'Bàn ghế làm việc';
+        }
+        return ucfirst(str_replace('_', ' ', $key));
     }
 
     /**
