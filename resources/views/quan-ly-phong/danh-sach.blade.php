@@ -216,7 +216,7 @@
                 <div class="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-xs mb-6">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-zinc-200 text-xs">
-                            <thead class="bg-zinc-50 text-zinc-500 uppercase tracking-wider font-medium text-[11px] sticky top-16 z-20 shadow-2xs">
+                            <thead class="bg-zinc-50 text-zinc-500 uppercase tracking-wider font-medium text-[11px] border-b border-zinc-200">
                                 <tr>
                                     <th scope="col" class="px-3.5 py-3 text-left">Phòng & Vị trí</th>
                                     <th scope="col" class="px-3.5 py-3 text-left">Thể loại & Diện tích</th>
@@ -225,7 +225,7 @@
                                     <th scope="col" class="px-3.5 py-3 text-left">Trạng thái</th>
                                     <th scope="col" class="px-3.5 py-3 text-right">Giá thuê & Tiền cọc</th>
                                     <th scope="col" class="px-3.5 py-3 text-left">Người thuê</th>
-                                    <th scope="col" class="px-4 py-3 text-right sticky right-0 bg-zinc-50 z-20 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">Thao tác</th>
+                                    <th scope="col" class="px-4 py-3 text-right sticky right-0 bg-zinc-50 z-10 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-zinc-200 bg-white">
