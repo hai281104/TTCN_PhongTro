@@ -13,6 +13,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(NguoiDungSeeder::class);
+        $this->call([
+            NguoiDungSeeder::class,
+            DuLieuMauThucTeSeeder::class,
+        ]);
     }
 }
