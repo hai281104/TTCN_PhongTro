@@ -207,5 +207,66 @@ class KhachThueTest extends TestCase
             'dangHoatDong' => 0,
         ]);
     }
-}
 
+    public function test_chu_tro_them_khach_thue_voi_day_du_thong_tin_nhan_than_va_tam_tru_thanh_cong()
+    {
+        $chuTro = $this->layTaiKhoanChuTro();
+        $soCCCD = $this->taoSoCCCDNgauNhien();
+
+        $phanHoi = $this->actingAs($chuTro)->post('/khach-thue', [
+            'hoTen' => 'Ngô Thị Hồ Sơ Đầy Đủ',
+            'soCCCD' => $soCCCD,
+            'soDienThoai' => '0977889900',
+            'diaChi' => 'Đà Nẵng',
+            'ngaySinh' => '1998-05-20',
+            'gioiTinh' => 'NU',
+            'ngayCapCCCD' => '2021-08-15',
+            'noiCapCCCD' => 'Cục Cảnh sát QLHC về TTXH',
+            'ngheNghiep' => 'Lập trình viên',
+            'bienSoXe' => '43-C1 999.88',
+            'nguoiLienHeKhanCap' => 'Ngô Văn Bố',
+            'sdtKhanCap' => '0905123456',
+            'quanHeKhanCap' => 'Bố ruột',
+            'daDangKyTamTru' => 1,
+        ]);
+
+        $phanHoi->assertRedirect('/khach-thue');
+        $this->assertDatabaseHas('KhachThue', [
+            'hoTen' => 'Ngô Thị Hồ Sơ Đầy Đủ',
+            'soCCCD' => $soCCCD,
+            'gioiTinh' => 'NU',
+            'ngheNghiep' => 'Lập trình viên',
+            'bienSoXe' => '43-C1 999.88',
+            'nguoiLienHeKhanCap' => 'Ngô Văn Bố',
+            'daDangKyTamTru' => 1,
+            'dangHoatDong' => 1,
+        ]);
+    }
+
+    public function test_chu_tro_doi_trang_thai_tam_tru_thanh_cong()
+    {
+        $chuTro = $this->layTaiKhoanChuTro();
+        $khach = KhachThue::create([
+            'hoTen' => 'Vũ Thị Tạm Trú',
+            'soCCCD' => $this->taoSoCCCDNgauNhien(),
+            'soDienThoai' => '0933887766',
+            'daDangKyTamTru' => 0,
+            'dangHoatDong' => 1,
+        ]);
+
+        $phanHoi = $this->actingAs($chuTro)->patch("/khach-thue/{$khach->maKhach}/tam-tru");
+
+        $phanHoi->assertSessionHas('thongBaoThanhCong');
+        $this->assertDatabaseHas('KhachThue', [
+            'maKhach' => $khach->maKhach,
+            'daDangKyTamTru' => 1,
+        ]);
+
+        // Đổi ngược lại về 0
+        $this->actingAs($chuTro)->patch("/khach-thue/{$khach->maKhach}/tam-tru");
+        $this->assertDatabaseHas('KhachThue', [
+            'maKhach' => $khach->maKhach,
+            'daDangKyTamTru' => 0,
+        ]);
+    }
+}

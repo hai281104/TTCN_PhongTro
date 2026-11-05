@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/', [KhachThueController::class, 'taoMoi'])->name('tao-moi');
             Route::get('/{maKhach}', [KhachThueController::class, 'chiTiet'])->name('chi-tiet');
             Route::put('/{maKhach}', [KhachThueController::class, 'capNhat'])->name('cap-nhat');
+            Route::patch('/{maKhach}/tam-tru', [KhachThueController::class, 'doiTrangThaiTamTru'])->name('doi-trang-thai-tam-tru');
             Route::post('/{maKhach}/cap-tai-khoan', [KhachThueController::class, 'capTaiKhoan'])->name('cap-tai-khoan');
             Route::delete('/{maKhach}', [KhachThueController::class, 'xoaMem'])->name('xoa-mem');
             Route::patch('/{maKhach}/khoi-phuc', [KhachThueController::class, 'khoiPhuc'])->name('khoi-phuc');

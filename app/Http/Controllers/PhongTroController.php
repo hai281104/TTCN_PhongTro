@@ -24,6 +24,10 @@ class PhongTroController extends Controller
             $truyVan->where('maLoaiPhong', $yeuCau->input('maLoaiPhong'));
         }
 
+        if ($yeuCau->filled('tang')) {
+            $truyVan->where('tang', $yeuCau->input('tang'));
+        }
+
         if ($yeuCau->filled('trangThaiPhong') && in_array($yeuCau->input('trangThaiPhong'), ['TRONG', 'DANG_THUE', 'DANG_SUA_CHUA'])) {
             $truyVan->where('trangThaiPhong', $yeuCau->input('trangThaiPhong'));
         }
@@ -44,6 +48,14 @@ class PhongTroController extends Controller
             ->withQueryString();
 
         $danhSachLoaiPhong = LoaiPhong::where('dangHoatDong', 1)->orderBy('tenLoaiPhong', 'asc')->get();
+        $danhSachTienNghi = PhongTro::layDanhSachTienNghiHeThong();
+
+        // Danh sách các tầng hiện có trong hệ thống để phục vụ bộ lọc
+        $danhSachTang = PhongTro::where('dangHoatDong', 1)
+            ->whereNotNull('tang')
+            ->distinct()
+            ->orderBy('tang', 'asc')
+            ->pluck('tang');
 
         $tongSoPhong = PhongTro::where('dangHoatDong', 1)->count();
         $soPhongDangThue = PhongTro::where('dangHoatDong', 1)->where('trangThaiPhong', 'DANG_THUE')->count();
@@ -54,6 +66,8 @@ class PhongTroController extends Controller
         return view('quan-ly-phong.danh-sach', compact(
             'danhSachPhong',
             'danhSachLoaiPhong',
+            'danhSachTienNghi',
+            'danhSachTang',
             'tongSoPhong',
             'soPhongDangThue',
             'soPhongTrong',
@@ -68,6 +82,10 @@ class PhongTroController extends Controller
         $phongMoi = PhongTro::create([
             'soPhong' => trim($yeuCau->input('soPhong')),
             'maLoaiPhong' => $yeuCau->input('maLoaiPhong'),
+            'tang' => $yeuCau->filled('tang') ? trim($yeuCau->input('tang')) : 'Tầng 1',
+            'dienTich' => $yeuCau->filled('dienTich') ? $yeuCau->input('dienTich') : null,
+            'tienCocMacDinh' => $yeuCau->filled('tienCocMacDinh') ? $yeuCau->input('tienCocMacDinh') : 0,
+            'tienNghi' => $yeuCau->input('tienNghi', []),
             'soNguoiToiDa' => $yeuCau->input('soNguoiToiDa'),
             'donGiaMacDinh' => $yeuCau->input('donGiaMacDinh'),
             'trangThaiPhong' => 'TRONG',
@@ -102,15 +120,17 @@ class PhongTroController extends Controller
         ])->findOrFail($maPhong);
 
         $danhSachLoaiPhong = LoaiPhong::where('dangHoatDong', 1)->orderBy('tenLoaiPhong', 'asc')->get();
+        $danhSachTienNghi = PhongTro::layDanhSachTienNghiHeThong();
 
         if ($yeuCau->wantsJson() || $yeuCau->ajax()) {
             return response()->json([
                 'thanhCong' => true,
                 'duLieu' => $phongTro,
+                'danhSachTienNghi' => $danhSachTienNghi,
             ]);
         }
 
-        return view('quan-ly-phong.chi-tiet', compact('phongTro', 'danhSachLoaiPhong'));
+        return view('quan-ly-phong.chi-tiet', compact('phongTro', 'danhSachLoaiPhong', 'danhSachTienNghi'));
     }
 
     // Cập nhật thông tin phòng trọ đã có.
@@ -121,6 +141,10 @@ class PhongTroController extends Controller
         $phongTro->update([
             'soPhong' => trim($yeuCau->input('soPhong')),
             'maLoaiPhong' => $yeuCau->input('maLoaiPhong'),
+            'tang' => $yeuCau->filled('tang') ? trim($yeuCau->input('tang')) : 'Tầng 1',
+            'dienTich' => $yeuCau->filled('dienTich') ? $yeuCau->input('dienTich') : null,
+            'tienCocMacDinh' => $yeuCau->filled('tienCocMacDinh') ? $yeuCau->input('tienCocMacDinh') : 0,
+            'tienNghi' => $yeuCau->input('tienNghi', []),
             'soNguoiToiDa' => $yeuCau->input('soNguoiToiDa'),
             'donGiaMacDinh' => $yeuCau->input('donGiaMacDinh'),
             'ghiChu' => $yeuCau->input('ghiChu'),
@@ -206,22 +230,22 @@ class PhongTroController extends Controller
             ->with('thongBaoThanhCong', $thongDiepThanhCong);
     }
 
-    // Khôi phục phòng trọ đã ngưng hoạt động.
+    // Khôi phục phòng trọ đã xóa mềm.
     public function khoiPhuc(Request $yeuCau, $maPhong)
     {
         $phongTro = PhongTro::findOrFail($maPhong);
         $phongTro->update(['dangHoatDong' => 1]);
 
-        $thongDiepThanhCong = "Đã khôi phục hoạt động cho phòng {$phongTro->soPhong}.";
+        $thongDiep = "Đã mở lại hoạt động cho phòng {$phongTro->soPhong}.";
 
         if ($yeuCau->wantsJson()) {
             return response()->json([
                 'thanhCong' => true,
-                'thongBao' => $thongDiepThanhCong,
+                'thongBao' => $thongDiep,
             ]);
         }
 
         return redirect()->route('phong-tro.danh-sach')
-            ->with('thongBaoThanhCong', $thongDiepThanhCong);
+            ->with('thongBaoThanhCong', $thongDiep);
     }
 }

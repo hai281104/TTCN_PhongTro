@@ -44,6 +44,10 @@ CREATE TABLE PhongTro (
     maPhong        INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     soPhong        VARCHAR(20) NOT NULL UNIQUE,
     maLoaiPhong    INT UNSIGNED NULL DEFAULT NULL COMMENT 'Thể loại phòng',
+    tang           VARCHAR(20) NOT NULL DEFAULT 'Tầng 1' COMMENT 'Vị trí tầng (Trệt, Tầng 1, Tầng 2...)',
+    dienTich       DECIMAL(6,2) NULL COMMENT 'Diện tích thực tế của phòng (m2)',
+    tienCocMacDinh DECIMAL(12,0) NOT NULL DEFAULT 0 COMMENT 'Tiền cọc gợi ý mặc định',
+    tienNghi       TEXT NULL COMMENT 'JSON lưu danh sách tiện nghi nội thất có sẵn trong phòng',
     soNguoiToiDa   TINYINT UNSIGNED NOT NULL DEFAULT 2 COMMENT 'Số người tối đa được phép ở phòng này',
     donGiaMacDinh  DECIMAL(12,0) NOT NULL CHECK (donGiaMacDinh >= 0),
     trangThaiPhong ENUM('TRONG','DANG_THUE','DANG_SUA_CHUA') NOT NULL DEFAULT 'TRONG',
@@ -56,13 +60,23 @@ CREATE TABLE PhongTro (
 -- 4. KHÁCH THUÊ
 -- =====================================================================
 CREATE TABLE KhachThue (
-    maKhach       INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    maNguoiDung   INT UNSIGNED NULL UNIQUE COMMENT 'NULL nếu khách chưa có tài khoản',
-    hoTen         VARCHAR(100) NOT NULL,
-    soCCCD        VARCHAR(12)  NOT NULL UNIQUE,
-    soDienThoai   VARCHAR(15)  NOT NULL,
-    diaChi        VARCHAR(255) NULL COMMENT 'Địa chỉ thường trú / thông tin liên hệ',
-    dangHoatDong  TINYINT(1) NOT NULL DEFAULT 1,
+    maKhach            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    maNguoiDung        INT UNSIGNED NULL UNIQUE COMMENT 'NULL nếu khách chưa có tài khoản',
+    hoTen              VARCHAR(100) NOT NULL,
+    ngaySinh           DATE NULL COMMENT 'Ngày sinh của khách thuê',
+    gioiTinh           ENUM('NAM','NU','KHAC') NOT NULL DEFAULT 'NAM' COMMENT 'Giới tính',
+    soCCCD             VARCHAR(12)  NOT NULL UNIQUE,
+    ngayCapCCCD        DATE NULL COMMENT 'Ngày cấp thẻ CCCD',
+    noiCapCCCD         VARCHAR(150) NULL DEFAULT 'Cục CSQLHC về TTXH' COMMENT 'Nơi cấp thẻ CCCD',
+    soDienThoai        VARCHAR(15)  NOT NULL,
+    diaChi             VARCHAR(255) NULL COMMENT 'Địa chỉ thường trú / quê quán',
+    ngheNghiep         VARCHAR(100) NULL COMMENT 'Nghề nghiệp / Trường học / Cơ quan',
+    bienSoXe           VARCHAR(30)  NULL COMMENT 'Biển số xe máy quản lý nhà xe',
+    nguoiLienHeKhanCap VARCHAR(100) NULL COMMENT 'Họ tên người liên hệ khi có sự cố khẩn cấp',
+    sdtKhanCap         VARCHAR(15)  NULL COMMENT 'Số điện thoại người liên hệ khẩn cấp',
+    quanHeKhanCap      VARCHAR(50)  NULL COMMENT 'Quan hệ với người liên hệ khẩn cấp (Bố/Mẹ/Anh/Chị/Bạn...)',
+    daDangKyTamTru     TINYINT(1)   NOT NULL DEFAULT 0 COMMENT '0 = Chưa đăng ký, 1 = Đã đăng ký tạm trú',
+    dangHoatDong       TINYINT(1)   NOT NULL DEFAULT 1,
     CONSTRAINT fk_khach_nguoidung FOREIGN KEY (maNguoiDung)
         REFERENCES NguoiDung(maNguoiDung) ON DELETE SET NULL
 ) ENGINE=InnoDB COMMENT='Hồ sơ khách thuê (người đại diện hợp đồng)';
@@ -269,9 +283,9 @@ DELIMITER ;
 -- VIEW PHỤC VỤ THỐNG KÊ & BÁO CÁO
 -- =====================================================================
 
--- Danh sách phòng trống kèm thể loại phòng và sức chứa để tìm khách
+-- Danh sách phòng trống kèm thể loại phòng, vị trí tầng, diện tích và sức chứa
 CREATE VIEW v_PhongTrong AS
-SELECT p.maPhong, p.soPhong, lp.tenLoaiPhong, p.soNguoiToiDa, p.donGiaMacDinh
+SELECT p.maPhong, p.soPhong, p.tang, p.dienTich, lp.tenLoaiPhong, p.soNguoiToiDa, p.donGiaMacDinh, p.tienCocMacDinh
 FROM PhongTro p
 JOIN LoaiPhong lp ON lp.maLoaiPhong = p.maLoaiPhong
 WHERE p.trangThaiPhong = 'TRONG' AND p.dangHoatDong = 1;
@@ -305,8 +319,8 @@ GROUP BY p.soPhong, k.hoTen, k.soDienThoai;
 -- DỮ LIỆU MẪU BAN ĐẦU
 -- =====================================================================
 INSERT INTO NguoiDung (email, matKhau, vaiTro) VALUES
-('chutro@example.com',    'DOI_BANG_MA_BAM_THAT', 'CHU_TRO'),
-('nguyenvana@example.com', 'DOI_BANG_MA_BAM_THAT', 'KHACH_THUE');
+('chutro@example.com',    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'CHU_TRO'),
+('nguyenvana@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'KHACH_THUE');
 
 -- 1. Thể loại phòng trọ
 INSERT INTO LoaiPhong (maLoaiPhong, tenLoaiPhong, soNguoiToiDa, dienTich, donGiaGoiY, moTa) VALUES
@@ -316,11 +330,11 @@ INSERT INTO LoaiPhong (maLoaiPhong, tenLoaiPhong, soNguoiToiDa, dienTich, donGia
 (4, 'Căn hộ Studio mini',    3, 28.00, 4000000, 'Căn hộ dịch vụ mini full nội thất: máy lạnh, tủ lạnh, giường nệm');
 
 -- 2. Phòng trọ
-INSERT INTO PhongTro (soPhong, maLoaiPhong, soNguoiToiDa, donGiaMacDinh, trangThaiPhong) VALUES
-('P101', 2, 2, 2500000, 'TRONG'),
-('P102', 1, 1, 2000000, 'TRONG'),
-('P201', 3, 4, 3500000, 'TRONG'),
-('P202', 4, 3, 4000000, 'DANG_SUA_CHUA');
+INSERT INTO PhongTro (soPhong, maLoaiPhong, tang, dienTich, tienCocMacDinh, tienNghi, soNguoiToiDa, donGiaMacDinh, trangThaiPhong, ghiChu) VALUES
+('P101', 2, 'Tầng 1', 22.00, 2500000, '["dieu_hoa","nong_lanh","gac_lung","ke_bep"]', 2, 2500000, 'TRONG', 'Phòng gần cửa ra vào, có gác lửng cao'),
+('P102', 1, 'Tầng 1', 16.00, 2000000, '["dieu_hoa","nong_lanh","giuong_nem"]', 1, 2000000, 'TRONG', 'Phòng yên tĩnh, thoáng mát'),
+('P201', 3, 'Tầng 2', 32.00, 3500000, '["dieu_hoa","nong_lanh","tu_lanh","giuong_nem","tu_quan_ao","ban_cong"]', 4, 3500000, 'TRONG', 'Phòng ban công hướng Đông, đón gió mát'),
+('P202', 4, 'Tầng 2', 28.00, 4000000, '["dieu_hoa","nong_lanh","tu_lanh","giuong_nem","tu_quan_ao","ke_bep","may_giat"]', 3, 4000000, 'DANG_SUA_CHUA', 'Đang sơn lại tường và kiểm tra đường nước');
 
 -- 3. Dịch vụ
 INSERT INTO DichVu (tenDichVu, loaiDichVu, donGia, donViTinh, cachTinh) VALUES
@@ -330,8 +344,8 @@ INSERT INTO DichVu (tenDichVu, loaiDichVu, donGia, donViTinh, cachTinh) VALUES
 ('Wifi',  'KHAC', 50000, 'phòng', 'CO_DINH_PHONG');
 
 -- 4. Khách thuê (Người đại diện)
-INSERT INTO KhachThue (maNguoiDung, hoTen, soCCCD, soDienThoai, diaChi) VALUES
-(2, 'Nguyễn Văn A', '079012345678', '0901234567', 'Quận 7, TP. Hồ Chí Minh');
+INSERT INTO KhachThue (maNguoiDung, hoTen, ngaySinh, gioiTinh, soCCCD, ngayCapCCCD, noiCapCCCD, soDienThoai, diaChi, ngheNghiep, bienSoXe, nguoiLienHeKhanCap, sdtKhanCap, quanHeKhanCap, daDangKyTamTru) VALUES
+(2, 'Nguyễn Văn A', '2001-08-15', 'NAM', '079012345678', '2021-05-10', 'Cục CSQLHC về TTXH', '0901234567', 'Quận 7, TP. Hồ Chí Minh', 'Lập trình viên phần mềm', '59-X1 123.45', 'Nguyễn Văn Ba (Bố)', '0912345678', 'Bố', 1);
 
 -- 5. Lập hợp đồng: 1 người đại diện ký, 2 người ở -> trigger tự chuyển P101 sang DANG_THUE
 INSERT INTO HopDong (maPhong, maKhach, soLuongNguoi, ngayBatDau, giaThueChot, tienDatCoc)

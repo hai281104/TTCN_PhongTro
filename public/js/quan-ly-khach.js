@@ -58,27 +58,58 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // MODAL SỬA KHÁCH THUÊ
     const modalSua = document.getElementById('modalSuaKhach');
     const bieuMauSua = document.getElementById('bieuMauSuaKhach');
     const oHoTenSua = document.getElementById('hoTenSua');
+    const oGioiTinhSua = document.getElementById('gioiTinhSua');
+    const oNgaySinhSua = document.getElementById('ngaySinhSua');
     const oCCCDSua = document.getElementById('soCCCDSua');
+    const oNgayCapCCCDSua = document.getElementById('ngayCapCCCDSua');
+    const oNoiCapCCCDSua = document.getElementById('noiCapCCCDSua');
     const oDienThoaiSua = document.getElementById('soDienThoaiSua');
     const oDiaChiSua = document.getElementById('diaChiSua');
+    const oBienSoXeSua = document.getElementById('bienSoXeSua');
+    const oNgheNghiepSua = document.getElementById('ngheNghiepSua');
+    const oNguoiKhanCapSua = document.getElementById('nguoiLienHeKhanCapSua');
+    const oSdtKhanCapSua = document.getElementById('sdtKhanCapSua');
+    const oQuanHeKhanCapSua = document.getElementById('quanHeKhanCapSua');
+    const oTamTruSua = document.getElementById('daDangKyTamTruSua');
 
     document.querySelectorAll('[data-hanh-dong="sua-khach"]').forEach(function (nut) {
         nut.addEventListener('click', function () {
             const maKhach = this.getAttribute('data-ma-khach');
             const hoTen = this.getAttribute('data-ho-ten');
+            const gioiTinh = this.getAttribute('data-gioi-tinh') || 'NAM';
+            const ngaySinh = this.getAttribute('data-ngay-sinh') || '';
             const soCCCD = this.getAttribute('data-so-cccd');
+            const ngayCapCCCD = this.getAttribute('data-ngay-cap-cccd') || '';
+            const noiCapCCCD = this.getAttribute('data-noi-cap-cccd') || 'Cục CSQLHC về TTXH';
             const soDienThoai = this.getAttribute('data-so-dien-thoai');
             const diaChi = this.getAttribute('data-dia-chi') || '';
+            const bienSoXe = this.getAttribute('data-bien-so-xe') || '';
+            const ngheNghiep = this.getAttribute('data-nghe-nghiep') || '';
+            const nguoiKhanCap = this.getAttribute('data-nguoi-khan-cap') || '';
+            const sdtKhanCap = this.getAttribute('data-sdt-khan-cap') || '';
+            const quanHeKhanCap = this.getAttribute('data-quan-he-khan-cap') || '';
+            const tamTru = this.getAttribute('data-tam-tru') === '1';
 
             if (bieuMauSua && modalSua) {
                 bieuMauSua.action = '/khach-thue/' + maKhach;
                 if (oHoTenSua) oHoTenSua.value = hoTen;
+                if (oGioiTinhSua) oGioiTinhSua.value = gioiTinh;
+                if (oNgaySinhSua) oNgaySinhSua.value = ngaySinh;
                 if (oCCCDSua) oCCCDSua.value = soCCCD;
+                if (oNgayCapCCCDSua) oNgayCapCCCDSua.value = ngayCapCCCD;
+                if (oNoiCapCCCDSua) oNoiCapCCCDSua.value = noiCapCCCD;
                 if (oDienThoaiSua) oDienThoaiSua.value = soDienThoai;
                 if (oDiaChiSua) oDiaChiSua.value = diaChi;
+                if (oBienSoXeSua) oBienSoXeSua.value = bienSoXe;
+                if (oNgheNghiepSua) oNgheNghiepSua.value = ngheNghiep;
+                if (oNguoiKhanCapSua) oNguoiKhanCapSua.value = nguoiKhanCap;
+                if (oSdtKhanCapSua) oSdtKhanCapSua.value = sdtKhanCap;
+                if (oQuanHeKhanCapSua) oQuanHeKhanCapSua.value = quanHeKhanCap;
+                if (oTamTruSua) oTamTruSua.checked = tamTru;
 
                 modalSua.classList.remove('modal-an');
                 modalSua.classList.add('modal-hien');
@@ -127,6 +158,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // MODAL CHI TIẾT KHÁCH THUÊ
     const modalChiTiet = document.getElementById('modalChiTietKhach');
     const tieuDeChiTiet = document.getElementById('chiTietTenKhach');
     const noiDungChiTiet = document.getElementById('noiDungChiTietKhach');
@@ -164,6 +196,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else {
                     htmlTaiKhoan = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200">Chưa có tài khoản</span>';
                 }
+
+                const tenGioiTinh = k.gioiTinh === 'NU' ? 'Nữ' : (k.gioiTinh === 'KHAC' ? 'Khác' : 'Nam');
+                const ngaySinhHienThi = k.ngaySinh || 'Chưa cập nhật';
+                const ngayCapHienThi = k.ngayCapCCCD || 'Chưa rõ';
+                const noiCapHienThi = k.noiCapCCCD || 'Cục CSQLHC về TTXH';
+                const badgeTamTru = k.daDangKyTamTru
+                    ? '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">Đã đăng ký tạm trú</span>'
+                    : '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-red-50 text-red-700 border border-red-200">Chưa đăng ký tạm trú</span>';
 
                 let htmlHopDong = '';
                 if (k.hop_dong_hieu_luc) {
@@ -215,10 +255,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 noiDungChiTiet.innerHTML =
                     '<div class="grid grid-cols-2 gap-3 pb-4 border-b border-zinc-200 mb-4 text-xs">' +
-                    '<div><span class="text-zinc-500 block">Số CCCD:</span><span class="font-semibold text-zinc-900">' + k.soCCCD + '</span></div>' +
+                    '<div><span class="text-zinc-500 block">Giới tính & Ngày sinh:</span><span class="font-semibold text-zinc-900">' + tenGioiTinh + ' - ' + ngaySinhHienThi + '</span></div>' +
                     '<div><span class="text-zinc-500 block">Số điện thoại:</span><span class="font-semibold text-zinc-900">' + k.soDienThoai + '</span></div>' +
-                    '<div class="col-span-2"><span class="text-zinc-500 block">Địa chỉ thường trú:</span><span class="text-zinc-800">' + (k.diaChi || 'Chưa cập nhật') + '</span></div>' +
-                    '<div class="col-span-2 pt-1"><span class="text-zinc-500 block mb-1">Tài khoản đăng nhập:</span>' + htmlTaiKhoan + '</div>' +
+                    '<div><span class="text-zinc-500 block">Số CCCD:</span><span class="font-semibold text-zinc-900">' + k.soCCCD + '</span></div>' +
+                    '<div><span class="text-zinc-500 block">Cấp ngày & Nơi cấp:</span><span class="text-zinc-800">' + ngayCapHienThi + ' (' + noiCapHienThi + ')</span></div>' +
+                    '<div><span class="text-zinc-500 block">Biển số xe máy:</span><strong class="text-zinc-900">' + (k.bienSoXe || 'Chưa đăng ký') + '</strong></div>' +
+                    '<div><span class="text-zinc-500 block">Nghề nghiệp:</span><span class="text-zinc-800">' + (k.ngheNghiep || 'Chưa cập nhật') + '</span></div>' +
+                    '<div class="col-span-2"><span class="text-zinc-500 block">Tình trạng tạm trú:</span>' + badgeTamTru + '</div>' +
+                    (k.nguoiLienHeKhanCap ? '<div class="col-span-2 p-2 bg-zinc-50 rounded border border-zinc-200"><span class="text-zinc-500 block mb-0.5">Liên hệ khẩn cấp:</span><strong>' + k.nguoiLienHeKhanCap + '</strong> (' + (k.quanHeKhanCap || 'Người thân') + ') - SĐT: ' + (k.sdtKhanCap || 'Không có') + '</div>' : '') +
+                    '<div class="col-span-2"><span class="text-zinc-500 block">Địa chỉ thường trú / Quê quán:</span><span class="text-zinc-800">' + (k.diaChi || 'Chưa cập nhật') + '</span></div>' +
+                    '<div class="col-span-2 pt-1 border-t border-zinc-100"><span class="text-zinc-500 block mb-1">Tài khoản đăng nhập:</span>' + htmlTaiKhoan + '</div>' +
                     '</div>' +
                     htmlHopDong +
                     htmlLichSu;
@@ -240,4 +286,3 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 5000);
     });
 });
-

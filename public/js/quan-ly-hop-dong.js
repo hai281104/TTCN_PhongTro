@@ -200,6 +200,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const nhan = this.getAttribute('data-nhan');
                 const donGia = this.getAttribute('data-don-gia');
                 const soNguoiToiDa = this.getAttribute('data-so-nguoi-toi-da');
+                const tienCocMacDinh = this.getAttribute('data-tien-coc-mac-dinh');
 
                 if (hiddenInput) {
                     hiddenInput.value = giaTri;
@@ -217,8 +218,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Nếu là hộp chọn phòng: cập nhật đơn giá, tiền cọc và sức chứa tối đa
                 if (donGia && inputGiaThue) {
                     inputGiaThue.value = dinhDangTien(donGia);
-                    if (inputTienCoc && (!inputTienCoc.value || inputTienCoc.value === '0')) {
-                        inputTienCoc.value = dinhDangTien(donGia);
+                    if (inputTienCoc) {
+                        inputTienCoc.value = dinhDangTien(tienCocMacDinh || donGia);
                     }
                 }
 
@@ -272,4 +273,18 @@ document.addEventListener('DOMContentLoaded', function () {
             moModal('modalKetThucHopDong');
         });
     });
+
+    // 5. Tự động mở modal và chọn phòng nếu có tham số maPhongChon trên URL
+    const thamSoUrl = new URLSearchParams(window.location.search);
+    const maPhongChon = thamSoUrl.get('maPhongChon');
+    if (maPhongChon) {
+        moModal('modalTaoHopDong');
+        const hopChonPhong = document.getElementById('hopChonPhong');
+        if (hopChonPhong) {
+            const mucPhong = hopChonPhong.querySelector('.muc-lua-chon[data-gia-tri="' + maPhongChon + '"]');
+            if (mucPhong) {
+                mucPhong.click();
+            }
+        }
+    }
 });

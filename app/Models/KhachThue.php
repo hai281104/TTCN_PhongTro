@@ -38,9 +38,19 @@ class KhachThue extends Model
     protected $fillable = [
         'maNguoiDung',
         'hoTen',
+        'ngaySinh',
+        'gioiTinh',
         'soCCCD',
+        'ngayCapCCCD',
+        'noiCapCCCD',
         'soDienThoai',
         'diaChi',
+        'ngheNghiep',
+        'bienSoXe',
+        'nguoiLienHeKhanCap',
+        'sdtKhanCap',
+        'quanHeKhanCap',
+        'daDangKyTamTru',
         'dangHoatDong',
     ];
 
@@ -50,6 +60,9 @@ class KhachThue extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'ngaySinh' => 'date',
+        'ngayCapCCCD' => 'date',
+        'daDangKyTamTru' => 'boolean',
         'dangHoatDong' => 'boolean',
     ];
 

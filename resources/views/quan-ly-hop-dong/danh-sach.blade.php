@@ -328,6 +328,7 @@
                                             data-gia-tri="{{ $p->maPhong }}"
                                             data-nhan="Phòng {{ $p->soPhong }} ({{ $p->loaiPhong->tenLoaiPhong ?? 'Phòng' }} - {{ number_format($p->donGiaMacDinh, 0, ',', '.') }} đ)"
                                             data-don-gia="{{ $p->donGiaMacDinh }}"
+                                            data-tien-coc-mac-dinh="{{ ($p->tienCocMacDinh ?? 0) > 0 ? $p->tienCocMacDinh : $p->donGiaMacDinh }}"
                                             data-so-nguoi-toi-da="{{ $p->soNguoiToiDa }}"
                                             data-tim-kiem="Phòng {{ $p->soPhong }} {{ $p->soPhong }} {{ optional($p->loaiPhong)->tenLoaiPhong }} {{ $p->donGiaMacDinh }}">
                                             <div>

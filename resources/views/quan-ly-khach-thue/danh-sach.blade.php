@@ -108,7 +108,8 @@
                 </div>
             @endif
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <!-- KPI THỐNG KÊ HỒ SƠ -->
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
                 <div class="bg-white border border-zinc-200 rounded-xl p-4 shadow-xs">
                     <div class="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">Tổng số khách</div>
                     <div class="text-2xl font-bold text-zinc-900 mt-1 tabular-nums">{{ $tongSoKhach }}</div>
@@ -120,22 +121,28 @@
                 </div>
 
                 <div class="bg-white border border-zinc-200 rounded-xl p-4 shadow-xs">
-                    <div class="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">Chưa thuê / Đã trả</div>
+                    <div class="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">Chưa thuê phòng</div>
                     <div class="text-2xl font-bold text-zinc-700 mt-1 tabular-nums">{{ $soKhachChuaThue }}</div>
                 </div>
 
                 <div class="bg-white border border-zinc-200 rounded-xl p-4 shadow-xs">
+                    <div class="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">Chưa làm tạm trú</div>
+                    <div class="text-2xl font-bold text-red-600 mt-1 tabular-nums">{{ $soKhachChuaTamTru }}</div>
+                </div>
+
+                <div class="bg-white border border-zinc-200 rounded-xl p-4 shadow-xs col-span-2 md:col-span-1">
                     <div class="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">Đã có tài khoản</div>
                     <div class="text-2xl font-bold text-emerald-700 mt-1 tabular-nums">{{ $soKhachCoTaiKhoan }}</div>
                 </div>
             </div>
 
+            <!-- THANH TÌM KIẾM & BỘ LỌC -->
             <div class="bg-white border border-zinc-200 rounded-xl p-5 shadow-xs mb-6">
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <form action="{{ route('khach-thue.danh-sach') }}" method="GET" class="flex flex-wrap items-center gap-3 flex-1">
                         <div class="relative w-full sm:w-64">
                             <input type="text" name="tuKhoa" value="{{ request('tuKhoa') }}"
-                                placeholder="Tìm theo tên, CCCD, SĐT..."
+                                placeholder="Tìm theo tên, CCCD, SĐT, biển xe..."
                                 class="w-full pl-9 pr-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-all">
                             <svg class="w-4 h-4 text-zinc-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -147,6 +154,13 @@
                             <option value="">Tất cả tình trạng</option>
                             <option value="DANG_THUE" {{ request('tinhTrang') === 'DANG_THUE' ? 'selected' : '' }}>Đang thuê phòng</option>
                             <option value="CHUA_THUE" {{ request('tinhTrang') === 'CHUA_THUE' ? 'selected' : '' }}>Chưa thuê / Đã trả</option>
+                        </select>
+
+                        <select name="tamTru"
+                            class="px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-xs text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-all">
+                            <option value="">Tình trạng tạm trú</option>
+                            <option value="DA_DANG_KY" {{ request('tamTru') === 'DA_DANG_KY' ? 'selected' : '' }}>Đã đăng ký tạm trú</option>
+                            <option value="CHUA_DANG_KY" {{ request('tamTru') === 'CHUA_DANG_KY' ? 'selected' : '' }}>Chưa đăng ký tạm trú</option>
                         </select>
 
                         <select name="taiKhoan"
@@ -161,7 +175,7 @@
                             Lọc
                         </button>
 
-                        @if (request()->hasAny(['tuKhoa', 'tinhTrang', 'taiKhoan']))
+                        @if (request()->hasAny(['tuKhoa', 'tinhTrang', 'tamTru', 'taiKhoan']))
                             <a href="{{ route('khach-thue.danh-sach') }}"
                                 class="px-3 py-2 rounded-lg border border-zinc-300 bg-white text-zinc-600 text-xs font-medium hover:bg-zinc-100 transition-colors">
                                 Xóa bộ lọc
@@ -198,8 +212,13 @@
                                             {{ mb_substr($khach->hoTen, 0, 1) }}
                                         </div>
                                         <div>
-                                            <div class="text-sm font-semibold text-zinc-900 leading-tight">{{ $khach->hoTen }}</div>
-                                            <div class="text-[11px] text-zinc-500">{{ $khach->soDienThoai }}</div>
+                                            <div class="text-sm font-semibold text-zinc-900 leading-tight flex items-center gap-1.5">
+                                                <span>{{ $khach->hoTen }}</span>
+                                                <span class="text-[10px] text-zinc-500 font-normal">
+                                                    ({{ $khach->gioiTinh === 'NU' ? 'Nữ' : ($khach->gioiTinh === 'KHAC' ? 'Khác' : 'Nam') }}{{ $khach->ngaySinh ? ', ' . \Carbon\Carbon::parse($khach->ngaySinh)->format('Y') : '' }})
+                                                </span>
+                                            </div>
+                                            <div class="text-[11px] text-zinc-500 tabular-nums">{{ $khach->soDienThoai }}</div>
                                         </div>
                                     </div>
 
@@ -214,25 +233,42 @@
                                     @endif
                                 </div>
 
-                                <div class="space-y-2 mb-4 text-xs">
+                                <div class="space-y-1.5 mb-3 text-xs">
                                     <div class="flex items-baseline justify-between">
-                                        <span class="text-zinc-500">Số CCCD:</span>
-                                        <span class="font-medium text-zinc-900 tabular-nums">{{ $khach->soCCCD }}</span>
+                                        <span class="text-zinc-500 text-[11px]">CCCD:</span>
+                                        <span class="font-medium text-zinc-900 tabular-nums text-[11px]">{{ $khach->soCCCD }}</span>
                                     </div>
 
                                     <div class="flex items-baseline justify-between">
-                                        <span class="text-zinc-500">Tài khoản:</span>
+                                        <span class="text-zinc-500 text-[11px]">Biển số xe:</span>
+                                        <span class="font-medium text-zinc-800 text-[11px]">{{ $khach->bienSoXe ?: 'Chưa có' }}</span>
+                                    </div>
+
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-zinc-500 text-[11px]">Tạm trú:</span>
+                                        <form action="{{ route('khach-thue.doi-trang-thai-tam-tru', $khach->maKhach) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" title="Nhấp để đổi trạng thái tạm trú"
+                                                class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors {{ $khach->daDangKyTamTru ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100' : 'bg-red-50 text-red-700 border border-red-200 hover:bg-red-100' }}">
+                                                <span>{{ $khach->daDangKyTamTru ? '✓ Đã ĐK' : '! Chưa ĐK' }}</span>
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <div class="flex items-baseline justify-between pt-1">
+                                        <span class="text-zinc-500 text-[11px]">Tài khoản:</span>
                                         @if ($khach->nguoiDung)
-                                            <span class="font-medium text-emerald-700 truncate max-w-[130px] text-right" title="{{ $khach->nguoiDung->email }}">
+                                            <span class="font-medium text-emerald-700 truncate max-w-[120px] text-right text-[11px]" title="{{ $khach->nguoiDung->email }}">
                                                 {{ $khach->nguoiDung->email }}
                                             </span>
                                         @else
-                                            <span class="text-amber-700 text-[11px]">Chưa cấp</span>
+                                            <span class="text-amber-700 text-[10px]">Chưa cấp</span>
                                         @endif
                                     </div>
 
-                                    <div class="pt-1 text-[11px] text-zinc-500 truncate" title="{{ $khach->diaChi ?: 'Chưa cập nhật địa chỉ' }}">
-                                        {{ $khach->diaChi ?: 'Chưa cập nhật địa chỉ' }}
+                                    <div class="pt-1 text-[11px] text-zinc-500 truncate" title="{{ $khach->diaChi ?: 'Chưa cập nhật quê quán' }}">
+                                        📍 {{ $khach->diaChi ?: 'Chưa cập nhật quê quán' }}
                                     </div>
                                 </div>
                             </div>
@@ -246,9 +282,19 @@
                                 <button type="button" data-hanh-dong="sua-khach"
                                     data-ma-khach="{{ $khach->maKhach }}"
                                     data-ho-ten="{{ $khach->hoTen }}"
+                                    data-ngay-sinh="{{ $khach->ngaySinh ? \Carbon\Carbon::parse($khach->ngaySinh)->format('Y-m-d') : '' }}"
+                                    data-gioi-tinh="{{ $khach->gioiTinh }}"
                                     data-so-cccd="{{ $khach->soCCCD }}"
+                                    data-ngay-cap-cccd="{{ $khach->ngayCapCCCD ? \Carbon\Carbon::parse($khach->ngayCapCCCD)->format('Y-m-d') : '' }}"
+                                    data-noi-cap-cccd="{{ $khach->noiCapCCCD }}"
                                     data-so-dien-thoai="{{ $khach->soDienThoai }}"
                                     data-dia-chi="{{ $khach->diaChi }}"
+                                    data-nghe-nghiep="{{ $khach->ngheNghiep }}"
+                                    data-bien-so-xe="{{ $khach->bienSoXe }}"
+                                    data-nguoi-khan-cap="{{ $khach->nguoiLienHeKhanCap }}"
+                                    data-sdt-khan-cap="{{ $khach->sdtKhanCap }}"
+                                    data-quan-he-khan-cap="{{ $khach->quanHeKhanCap }}"
+                                    data-tam-tru="{{ $khach->daDangKyTamTru ? '1' : '0' }}"
                                     class="px-2 py-1 rounded border border-zinc-200 hover:bg-zinc-50 text-zinc-700 text-[11px] font-medium transition-colors">
                                     Sửa
                                 </button>
@@ -285,41 +331,136 @@
 
     <!-- MODAL THÊM KHÁCH THUÊ -->
     <div id="modalThemKhach" class="hop-thoai-modal modal-an fixed inset-0 z-50 bg-zinc-900/50 backdrop-blur-xs items-center justify-center p-4">
-        <div class="chuyen-dong-modal bg-white rounded-xl border border-zinc-200 shadow-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
+        <div class="chuyen-dong-modal bg-white rounded-xl border border-zinc-200 shadow-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-4">
-                <h3 class="text-sm font-semibold text-zinc-900">Thêm hồ sơ khách thuê mới</h3>
+                <div>
+                    <h3 class="text-sm font-semibold text-zinc-900">Thêm hồ sơ khách thuê mới</h3>
+                    <p class="text-[11px] text-zinc-500">Thông tin nhân thân, giấy tờ tùy thân và liên hệ khẩn cấp</p>
+                </div>
                 <button type="button" data-dong-modal class="text-zinc-400 hover:text-zinc-700 text-base">&times;</button>
             </div>
 
             <form action="{{ route('khach-thue.tao-moi') }}" method="POST">
                 @csrf
                 <div class="space-y-4 text-xs">
-                    <div>
-                        <label for="hoTenThem" class="block font-medium text-zinc-700 mb-1">Họ và tên <span class="text-red-500">*</span></label>
-                        <input type="text" name="hoTen" id="hoTenThem" required placeholder="Ví dụ: Nguyễn Văn B"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
-                    </div>
+                    <!-- KHỐI 1: THÔNG TIN NHÂN THÂN -->
+                    <div class="bg-zinc-50 p-3 rounded-lg border border-zinc-200 space-y-3">
+                        <div class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider">1. Thông tin cá nhân</div>
 
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label for="soCCCDThem" class="block font-medium text-zinc-700 mb-1">Số CCCD (12 số) <span class="text-red-500">*</span></label>
-                            <input type="text" name="soCCCD" id="soCCCDThem" required maxlength="12" placeholder="079012345678"
-                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="col-span-2 sm:col-span-1">
+                                <label for="hoTenThem" class="block font-medium text-zinc-700 mb-1">Họ và tên <span class="text-red-500">*</span></label>
+                                <input type="text" name="hoTen" id="hoTenThem" required placeholder="Ví dụ: Nguyễn Văn B"
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+
+                            <div>
+                                <label for="gioiTinhThem" class="block font-medium text-zinc-700 mb-1">Giới tính <span class="text-red-500">*</span></label>
+                                <select name="gioiTinh" id="gioiTinhThem" required
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                                    <option value="NAM">Nam</option>
+                                    <option value="NU">Nữ</option>
+                                    <option value="KHAC">Khác</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="ngaySinhThem" class="block font-medium text-zinc-700 mb-1">Ngày sinh</label>
+                                <input type="date" name="ngaySinh" id="ngaySinhThem"
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+
+                            <div>
+                                <label for="soDienThoaiThem" class="block font-medium text-zinc-700 mb-1">Số điện thoại <span class="text-red-500">*</span></label>
+                                <input type="text" name="soDienThoai" id="soDienThoaiThem" required placeholder="0901234567"
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 tabular-nums">
+                            </div>
                         </div>
 
                         <div>
-                            <label for="soDienThoaiThem" class="block font-medium text-zinc-700 mb-1">Số điện thoại <span class="text-red-500">*</span></label>
-                            <input type="text" name="soDienThoai" id="soDienThoaiThem" required placeholder="0901234567"
-                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
+                            <label for="diaChiThem" class="block font-medium text-zinc-700 mb-1">Địa chỉ thường trú / Quê quán</label>
+                            <input type="text" name="diaChi" id="diaChiThem" placeholder="Ví dụ: Quận 7, TP. Hồ Chí Minh"
+                                class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
                         </div>
                     </div>
 
-                    <div>
-                        <label for="diaChiThem" class="block font-medium text-zinc-700 mb-1">Địa chỉ thường trú / Quê quán</label>
-                        <input type="text" name="diaChi" id="diaChiThem" placeholder="Ví dụ: Quận 7, TP. Hồ Chí Minh"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
+                    <!-- KHỐI 2: GIẤY TỜ & CƯ TRÚ -->
+                    <div class="bg-zinc-50 p-3 rounded-lg border border-zinc-200 space-y-3">
+                        <div class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider">2. Giấy tờ tùy thân & Tạm trú</div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="soCCCDThem" class="block font-medium text-zinc-700 mb-1">Số CCCD (12 số) <span class="text-red-500">*</span></label>
+                                <input type="text" name="soCCCD" id="soCCCDThem" required maxlength="12" placeholder="079012345678"
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 tabular-nums">
+                            </div>
+
+                            <div>
+                                <label for="ngayCapCCCDThem" class="block font-medium text-zinc-700 mb-1">Ngày cấp thẻ</label>
+                                <input type="date" name="ngayCapCCCD" id="ngayCapCCCDThem"
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="noiCapCCCDThem" class="block font-medium text-zinc-700 mb-1">Nơi cấp CCCD</label>
+                                <input type="text" name="noiCapCCCD" id="noiCapCCCDThem" value="Cục CSQLHC về TTXH"
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+
+                            <div class="flex items-center pt-5">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" name="daDangKyTamTru" id="daDangKyTamTruThem" value="1"
+                                        class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
+                                    <span class="font-medium text-zinc-800">Đã đăng ký tạm trú với Công an</span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
 
+                    <!-- KHỐI 3: PHƯƠNG TIỆN & LIÊN HỆ KHẨN CẤP -->
+                    <div class="bg-zinc-50 p-3 rounded-lg border border-zinc-200 space-y-3">
+                        <div class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider">3. Phương tiện & Liên hệ khẩn cấp</div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="bienSoXeThem" class="block font-medium text-zinc-700 mb-1">Biển số xe máy (nhà xe)</label>
+                                <input type="text" name="bienSoXe" id="bienSoXeThem" placeholder="Ví dụ: 59-X1 123.45"
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+
+                            <div>
+                                <label for="ngheNghiepThem" class="block font-medium text-zinc-700 mb-1">Nghề nghiệp / Đơn vị</label>
+                                <input type="text" name="ngheNghiep" id="ngheNghiepThem" placeholder="Ví dụ: Sinh viên, NV văn phòng..."
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label for="nguoiLienHeKhanCapThem" class="block font-medium text-zinc-700 mb-1">Người thân khẩn cấp</label>
+                                <input type="text" name="nguoiLienHeKhanCap" id="nguoiLienHeKhanCapThem" placeholder="Họ tên người thân"
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+
+                            <div>
+                                <label for="sdtKhanCapThem" class="block font-medium text-zinc-700 mb-1">SĐT người thân</label>
+                                <input type="text" name="sdtKhanCap" id="sdtKhanCapThem" placeholder="0912..."
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 tabular-nums">
+                            </div>
+
+                            <div>
+                                <label for="quanHeKhanCapThem" class="block font-medium text-zinc-700 mb-1">Mối quan hệ</label>
+                                <input type="text" name="quanHeKhanCap" id="quanHeKhanCapThem" placeholder="Bố/Mẹ/Anh..."
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KHỐI 4: TÀI KHOẢN ĐĂNG NHẬP -->
                     <div class="pt-2 border-t border-zinc-100">
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" name="taoTaiKhoan" id="taoTaiKhoanThem" value="1"
@@ -349,7 +490,7 @@
                     </button>
                     <button type="submit"
                         class="px-4 py-2 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors shadow-xs">
-                        Lưu hồ sơ
+                        Lưu hồ sơ khách
                     </button>
                 </div>
             </form>
@@ -358,9 +499,12 @@
 
     <!-- MODAL SỬA KHÁCH THUÊ -->
     <div id="modalSuaKhach" class="hop-thoai-modal modal-an fixed inset-0 z-50 bg-zinc-900/50 backdrop-blur-xs items-center justify-center p-4">
-        <div class="chuyen-dong-modal bg-white rounded-xl border border-zinc-200 shadow-xl max-w-md w-full p-6">
+        <div class="chuyen-dong-modal bg-white rounded-xl border border-zinc-200 shadow-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-4">
-                <h3 class="text-sm font-semibold text-zinc-900">Chỉnh sửa hồ sơ khách thuê</h3>
+                <div>
+                    <h3 class="text-sm font-semibold text-zinc-900">Cập nhật hồ sơ khách thuê</h3>
+                    <p class="text-[11px] text-zinc-500">Chỉnh sửa thông tin nhân thân, tạm trú và liên hệ</p>
+                </div>
                 <button type="button" data-dong-modal class="text-zinc-400 hover:text-zinc-700 text-base">&times;</button>
             </div>
 
@@ -368,30 +512,121 @@
                 @csrf
                 @method('PUT')
                 <div class="space-y-4 text-xs">
-                    <div>
-                        <label for="hoTenSua" class="block font-medium text-zinc-700 mb-1">Họ và tên <span class="text-red-500">*</span></label>
-                        <input type="text" name="hoTen" id="hoTenSua" required
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
-                    </div>
+                    <!-- KHỐI 1: THÔNG TIN NHÂN THÂN -->
+                    <div class="bg-zinc-50 p-3 rounded-lg border border-zinc-200 space-y-3">
+                        <div class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider">1. Thông tin cá nhân</div>
 
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label for="soCCCDSua" class="block font-medium text-zinc-700 mb-1">Số CCCD (12 số) <span class="text-red-500">*</span></label>
-                            <input type="text" name="soCCCD" id="soCCCDSua" required maxlength="12"
-                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="col-span-2 sm:col-span-1">
+                                <label for="hoTenSua" class="block font-medium text-zinc-700 mb-1">Họ và tên <span class="text-red-500">*</span></label>
+                                <input type="text" name="hoTen" id="hoTenSua" required
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+
+                            <div>
+                                <label for="gioiTinhSua" class="block font-medium text-zinc-700 mb-1">Giới tính <span class="text-red-500">*</span></label>
+                                <select name="gioiTinh" id="gioiTinhSua" required
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                                    <option value="NAM">Nam</option>
+                                    <option value="NU">Nữ</option>
+                                    <option value="KHAC">Khác</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="ngaySinhSua" class="block font-medium text-zinc-700 mb-1">Ngày sinh</label>
+                                <input type="date" name="ngaySinh" id="ngaySinhSua"
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+
+                            <div>
+                                <label for="soDienThoaiSua" class="block font-medium text-zinc-700 mb-1">Số điện thoại <span class="text-red-500">*</span></label>
+                                <input type="text" name="soDienThoai" id="soDienThoaiSua" required
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 tabular-nums">
+                            </div>
                         </div>
 
                         <div>
-                            <label for="soDienThoaiSua" class="block font-medium text-zinc-700 mb-1">Số điện thoại <span class="text-red-500">*</span></label>
-                            <input type="text" name="soDienThoai" id="soDienThoaiSua" required
-                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white tabular-nums">
+                            <label for="diaChiSua" class="block font-medium text-zinc-700 mb-1">Địa chỉ thường trú / Quê quán</label>
+                            <input type="text" name="diaChi" id="diaChiSua"
+                                class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
                         </div>
                     </div>
 
-                    <div>
-                        <label for="diaChiSua" class="block font-medium text-zinc-700 mb-1">Địa chỉ thường trú / Quê quán</label>
-                        <input type="text" name="diaChi" id="diaChiSua"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
+                    <!-- KHỐI 2: GIẤY TỜ & CƯ TRÚ -->
+                    <div class="bg-zinc-50 p-3 rounded-lg border border-zinc-200 space-y-3">
+                        <div class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider">2. Giấy tờ tùy thân & Tạm trú</div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="soCCCDSua" class="block font-medium text-zinc-700 mb-1">Số CCCD (12 số) <span class="text-red-500">*</span></label>
+                                <input type="text" name="soCCCD" id="soCCCDSua" required maxlength="12"
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 tabular-nums">
+                            </div>
+
+                            <div>
+                                <label for="ngayCapCCCDSua" class="block font-medium text-zinc-700 mb-1">Ngày cấp thẻ</label>
+                                <input type="date" name="ngayCapCCCD" id="ngayCapCCCDSua"
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="noiCapCCCDSua" class="block font-medium text-zinc-700 mb-1">Nơi cấp CCCD</label>
+                                <input type="text" name="noiCapCCCD" id="noiCapCCCDSua"
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+
+                            <div class="flex items-center pt-5">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" name="daDangKyTamTru" id="daDangKyTamTruSua" value="1"
+                                        class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
+                                    <span class="font-medium text-zinc-800">Đã đăng ký tạm trú với Công an</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KHỐI 3: PHƯƠNG TIỆN & LIÊN HỆ KHẨN CẤP -->
+                    <div class="bg-zinc-50 p-3 rounded-lg border border-zinc-200 space-y-3">
+                        <div class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider">3. Phương tiện & Liên hệ khẩn cấp</div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="bienSoXeSua" class="block font-medium text-zinc-700 mb-1">Biển số xe máy (nhà xe)</label>
+                                <input type="text" name="bienSoXe" id="bienSoXeSua" placeholder="Ví dụ: 59-X1 123.45"
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+
+                            <div>
+                                <label for="ngheNghiepSua" class="block font-medium text-zinc-700 mb-1">Nghề nghiệp / Đơn vị</label>
+                                <input type="text" name="ngheNghiep" id="ngheNghiepSua" placeholder="Ví dụ: Sinh viên, NV văn phòng..."
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label for="nguoiLienHeKhanCapSua" class="block font-medium text-zinc-700 mb-1">Người thân khẩn cấp</label>
+                                <input type="text" name="nguoiLienHeKhanCap" id="nguoiLienHeKhanCapSua" placeholder="Họ tên người thân"
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+
+                            <div>
+                                <label for="sdtKhanCapSua" class="block font-medium text-zinc-700 mb-1">SĐT người thân</label>
+                                <input type="text" name="sdtKhanCap" id="sdtKhanCapSua" placeholder="0912..."
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 tabular-nums">
+                            </div>
+
+                            <div>
+                                <label for="quanHeKhanCapSua" class="block font-medium text-zinc-700 mb-1">Mối quan hệ</label>
+                                <input type="text" name="quanHeKhanCap" id="quanHeKhanCapSua" placeholder="Bố/Mẹ/Anh..."
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -402,7 +637,7 @@
                     </button>
                     <button type="submit"
                         class="px-4 py-2 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors shadow-xs">
-                        Cập nhật
+                        Cập nhật hồ sơ
                     </button>
                 </div>
             </form>
@@ -417,13 +652,13 @@
                 <button type="button" data-dong-modal class="text-zinc-400 hover:text-zinc-700 text-base">&times;</button>
             </div>
 
-            <p class="text-xs text-zinc-500 mb-4">
-                Cấp tài khoản cổng khách thuê cho <strong id="nhanTenKhachCapTK" class="text-zinc-900">khách này</strong>.
-            </p>
-
             <form id="bieuMauCapTaiKhoan" action="" method="POST">
                 @csrf
                 <div class="space-y-4 text-xs">
+                    <p class="text-zinc-500">
+                        Cấp quyền đăng nhập cho khách <strong id="nhanTenKhachCapTK" class="text-zinc-900">...</strong> vào cổng tự phục vụ của khách thuê.
+                    </p>
+
                     <div>
                         <label for="emailCapMoi" class="block font-medium text-zinc-700 mb-1">Email đăng nhập <span class="text-red-500">*</span></label>
                         <input type="email" name="email" id="emailCapMoi" required placeholder="khach@example.com"
@@ -432,7 +667,7 @@
 
                     <div>
                         <label for="matKhauCapMoi" class="block font-medium text-zinc-700 mb-1">Mật khẩu khởi tạo <span class="text-red-500">*</span></label>
-                        <input type="password" name="matKhau" id="matKhauCapMoi" required minlength="6" placeholder="Tối thiểu 6 ký tự"
+                        <input type="password" name="matKhau" id="matKhauCapMoi" required placeholder="Tối thiểu 6 ký tự"
                             class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
                     </div>
                 </div>
@@ -443,8 +678,8 @@
                         Hủy
                     </button>
                     <button type="submit"
-                        class="px-4 py-2 rounded-lg bg-emerald-600 text-white text-xs font-medium hover:bg-emerald-700 transition-colors shadow-xs">
-                        Cấp tài khoản
+                        class="px-4 py-2 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors shadow-xs">
+                        Xác nhận cấp
                     </button>
                 </div>
             </form>
@@ -455,7 +690,7 @@
     <div id="modalChiTietKhach" class="hop-thoai-modal modal-an fixed inset-0 z-50 bg-zinc-900/50 backdrop-blur-xs items-center justify-center p-4">
         <div class="chuyen-dong-modal bg-white rounded-xl border border-zinc-200 shadow-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-4">
-                <h3 id="chiTietTenKhach" class="text-sm font-semibold text-zinc-900">Chi tiết hồ sơ khách thuê</h3>
+                <h3 id="chiTietTenKhach" class="text-sm font-semibold text-zinc-900">Chi tiết khách thuê</h3>
                 <button type="button" data-dong-modal class="text-zinc-400 hover:text-zinc-700 text-base">&times;</button>
             </div>
 
@@ -480,9 +715,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                 </svg>
             </div>
-            <h3 class="text-sm font-semibold text-zinc-900 mb-1">Ngưng hoạt động hồ sơ khách này?</h3>
+            <h3 class="text-sm font-semibold text-zinc-900 mb-1">Xóa hồ sơ khách thuê?</h3>
             <p class="text-xs text-zinc-500 mb-4">
-                Bạn có chắc muốn ngưng hoạt động hồ sơ của <strong id="nhanTenKhachXoa" class="text-zinc-900">khách này</strong>? Hồ sơ sẽ bị ẩn khỏi danh sách nhưng lịch sử thuê phòng và hóa đơn vẫn được bảo toàn.
+                Bạn có chắc chắn muốn ngưng hoạt động hồ sơ của <strong id="nhanTenKhachXoa" class="text-zinc-900">...</strong>? Dữ liệu lịch sử hợp đồng và thanh toán vẫn được bảo toàn.
             </p>
 
             <form id="bieuMauXoaKhach" action="" method="POST">
@@ -495,7 +730,7 @@
                     </button>
                     <button type="submit"
                         class="px-4 py-2 rounded-lg bg-red-600 text-white text-xs font-medium hover:bg-red-700 transition-colors shadow-xs">
-                        Xác nhận ngừng
+                        Xác nhận xóa
                     </button>
                 </div>
             </form>
@@ -503,4 +738,3 @@
     </div>
 </body>
 </html>
-

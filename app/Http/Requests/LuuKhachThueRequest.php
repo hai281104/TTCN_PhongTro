@@ -29,11 +29,30 @@ class LuuKhachThueRequest extends FormRequest
                 'string',
                 'max:100',
             ],
+            'ngaySinh' => [
+                'nullable',
+                'date',
+                'before:today',
+            ],
+            'gioiTinh' => [
+                'nullable',
+                'in:NAM,NU,KHAC',
+            ],
             'soCCCD' => [
                 'required',
                 'string',
                 'digits:12',
                 'unique:KhachThue,soCCCD',
+            ],
+            'ngayCapCCCD' => [
+                'nullable',
+                'date',
+                'before_or_equal:today',
+            ],
+            'noiCapCCCD' => [
+                'nullable',
+                'string',
+                'max:150',
             ],
             'soDienThoai' => [
                 'required',
@@ -44,6 +63,35 @@ class LuuKhachThueRequest extends FormRequest
                 'nullable',
                 'string',
                 'max:255',
+            ],
+            'ngheNghiep' => [
+                'nullable',
+                'string',
+                'max:100',
+            ],
+            'bienSoXe' => [
+                'nullable',
+                'string',
+                'max:30',
+            ],
+            'nguoiLienHeKhanCap' => [
+                'nullable',
+                'string',
+                'max:100',
+            ],
+            'sdtKhanCap' => [
+                'nullable',
+                'string',
+                'max:15',
+            ],
+            'quanHeKhanCap' => [
+                'nullable',
+                'string',
+                'max:50',
+            ],
+            'daDangKyTamTru' => [
+                'nullable',
+                'boolean',
             ],
             'taoTaiKhoan' => [
                 'nullable',
@@ -75,12 +123,23 @@ class LuuKhachThueRequest extends FormRequest
             'hoTen.required' => 'Vui lòng nhập họ và tên khách thuê.',
             'hoTen.string' => 'Họ và tên phải là chuỗi ký tự hợp lệ.',
             'hoTen.max' => 'Họ và tên không được vượt quá 100 ký tự.',
+            'ngaySinh.date' => 'Ngày sinh không đúng định dạng ngày tháng.',
+            'ngaySinh.before' => 'Ngày sinh phải trước ngày hôm nay.',
+            'gioiTinh.in' => 'Giới tính được chọn không hợp lệ.',
             'soCCCD.required' => 'Vui lòng nhập số căn cước công dân (CCCD).',
             'soCCCD.digits' => 'Số CCCD phải bao gồm đúng 12 chữ số.',
             'soCCCD.unique' => 'Số CCCD này đã tồn tại trong hệ thống hồ sơ khách thuê.',
+            'ngayCapCCCD.date' => 'Ngày cấp CCCD không đúng định dạng ngày tháng.',
+            'ngayCapCCCD.before_or_equal' => 'Ngày cấp CCCD không thể lớn hơn ngày hiện tại.',
+            'noiCapCCCD.max' => 'Nơi cấp CCCD không được vượt quá 150 ký tự.',
             'soDienThoai.required' => 'Vui lòng nhập số điện thoại liên lạc.',
             'soDienThoai.max' => 'Số điện thoại không được vượt quá 15 ký tự.',
             'diaChi.max' => 'Địa chỉ thường trú không được vượt quá 255 ký tự.',
+            'ngheNghiep.max' => 'Nghề nghiệp không được vượt quá 100 ký tự.',
+            'bienSoXe.max' => 'Biển số xe không được vượt quá 30 ký tự.',
+            'nguoiLienHeKhanCap.max' => 'Tên người liên hệ khẩn cấp không được vượt quá 100 ký tự.',
+            'sdtKhanCap.max' => 'Số điện thoại khẩn cấp không được vượt quá 15 ký tự.',
+            'quanHeKhanCap.max' => 'Mối quan hệ khẩn cấp không được vượt quá 50 ký tự.',
             'email.required_if' => 'Vui lòng nhập địa chỉ email để cấp tài khoản đăng nhập.',
             'email.email' => 'Địa chỉ email không đúng định dạng.',
             'email.unique' => 'Địa chỉ email này đã được sử dụng bởi một tài khoản khác.',
@@ -89,4 +148,3 @@ class LuuKhachThueRequest extends FormRequest
         ];
     }
 }
-

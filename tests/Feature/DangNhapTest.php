@@ -110,13 +110,13 @@ class DangNhapTest extends TestCase
         for ($i = 0; $i < 5; $i++) {
             $this->post('/dang-nhap', [
                 'email' => 'spam@example.com',
-                'matKhau' => 'matkhausai',
+                'matKhau' => 'matkhausai123',
             ]);
         }
 
         $phanHoi = $this->post('/dang-nhap', [
             'email' => 'spam@example.com',
-            'matKhau' => 'matkhausai',
+            'matKhau' => 'matkhausai123',
         ]);
 
         $phanHoi->assertSessionHasErrors(['email']);

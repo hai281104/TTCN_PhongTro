@@ -38,6 +38,10 @@ class PhongTro extends Model
     protected $fillable = [
         'soPhong',
         'maLoaiPhong',
+        'tang',
+        'dienTich',
+        'tienCocMacDinh',
+        'tienNghi',
         'soNguoiToiDa',
         'donGiaMacDinh',
         'trangThaiPhong',
@@ -52,10 +56,34 @@ class PhongTro extends Model
      */
     protected $casts = [
         'maLoaiPhong' => 'integer',
+        'dienTich' => 'decimal:2',
+        'tienCocMacDinh' => 'decimal:0',
+        'tienNghi' => 'array',
         'soNguoiToiDa' => 'integer',
         'donGiaMacDinh' => 'decimal:0',
         'dangHoatDong' => 'boolean',
     ];
+
+    /**
+     * Danh mục tiện nghi nội thất hệ thống hỗ trợ.
+     *
+     * @return array<string, array<string, string>>
+     */
+    public static function layDanhSachTienNghiHeThong()
+    {
+        return [
+            'dieu_hoa' => ['ten' => 'Điều hòa', 'bieuTuong' => '❄️'],
+            'nong_lanh' => ['ten' => 'Bình nóng lạnh', 'bieuTuong' => '🚿'],
+            'tu_lanh' => ['ten' => 'Tủ lạnh', 'bieuTuong' => '🧊'],
+            'giuong_nem' => ['ten' => 'Giường nệm', 'bieuTuong' => '🛏️'],
+            'tu_quan_ao' => ['ten' => 'Tủ quần áo', 'bieuTuong' => '🚪'],
+            'ke_bep' => ['ten' => 'Kệ bếp', 'bieuTuong' => '🍳'],
+            'gac_lung' => ['ten' => 'Gác lửng', 'bieuTuong' => '🪜'],
+            'ban_cong' => ['ten' => 'Ban công', 'bieuTuong' => '🌅'],
+            'may_giat' => ['ten' => 'Máy giặt', 'bieuTuong' => '🧺'],
+            'khoa_van_tay' => ['ten' => 'Khóa vân tay', 'bieuTuong' => '🔐'],
+        ];
+    }
 
     /**
      * Thể loại của phòng trọ.

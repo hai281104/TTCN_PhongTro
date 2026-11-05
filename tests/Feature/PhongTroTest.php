@@ -260,4 +260,40 @@ class PhongTroTest extends TestCase
             'dangHoatDong' => 0,
         ]);
     }
+
+    public function test_chu_tro_them_phong_voi_thong_tin_chi_tiet_tang_dien_tich_tien_coc_va_tien_nghi()
+    {
+        $chuTro = $this->layTaiKhoanChuTro();
+        $soPhongMoi = 'P_Full_' . substr(uniqid(), -5);
+        $maLoaiPhong = $this->layMaLoaiPhongMau();
+
+        $phanHoi = $this->actingAs($chuTro)->post('/phong-tro', [
+            'soPhong' => $soPhongMoi,
+            'tang' => 2,
+            'dienTich' => '25.5',
+            'maLoaiPhong' => $maLoaiPhong,
+            'soNguoiToiDa' => 3,
+            'donGiaMacDinh' => '3.200.000',
+            'tienCocMacDinh' => '3.000.000',
+            'tienNghi' => ['dieuHoa', 'nongLanh', 'wifi', 'tuLanh'],
+            'ghiChu' => 'Phòng full nội thất cao cấp',
+        ]);
+
+        $phanHoi->assertRedirect('/phong-tro');
+        $this->assertDatabaseHas('PhongTro', [
+            'soPhong' => $soPhongMoi,
+            'tang' => 2,
+            'dienTich' => 25.5,
+            'donGiaMacDinh' => 3200000,
+            'tienCocMacDinh' => 3000000,
+            'trangThaiPhong' => 'TRONG',
+            'dangHoatDong' => 1,
+        ]);
+
+        $phong = PhongTro::where('soPhong', $soPhongMoi)->first();
+        $this->assertNotNull($phong);
+        $this->assertIsArray($phong->tienNghi);
+        $this->assertContains('dieuHoa', $phong->tienNghi);
+        $this->assertContains('tuLanh', $phong->tienNghi);
+    }
 }

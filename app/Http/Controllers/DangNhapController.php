@@ -87,14 +87,16 @@ class DangNhapController extends Controller
 
     protected function dieuHuongTheoVaiTro($nguoiDung)
     {
-        if ($nguoiDung->laChuTro()) {
-            return redirect()->intended(
-                Route::has('phong-tro.danh-sach') ? route('phong-tro.danh-sach') : '/phong-tro'
-            );
+        $dichDen = $nguoiDung->laChuTro()
+            ? (Route::has('phong-tro.danh-sach') ? route('phong-tro.danh-sach') : '/phong-tro')
+            : (Route::has('khach-thue.phong-cua-toi') ? route('khach-thue.phong-cua-toi') : '/khach-thue/phong-cua-toi');
+
+        $intended = session()->get('url.intended');
+        if (!$intended || rtrim($intended, '/') === rtrim(url('/'), '/') || $intended === route('dang-nhap.hien-thi') || rtrim($intended, '/') === rtrim(url('/login'), '/')) {
+            session()->forget('url.intended');
+            return redirect()->to($dichDen);
         }
 
-        return redirect()->intended(
-            Route::has('khach-thue.phong-cua-toi') ? route('khach-thue.phong-cua-toi') : '/khach-thue/phong-cua-toi'
-        );
+        return redirect()->intended($dichDen);
     }
 }

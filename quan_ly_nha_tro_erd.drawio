@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2026-11-04T15:30:00.000Z" agent="Antigravity" version="21.0.0" type="device">
-  <diagram id="erd_quan_ly_nha_tro" name="ERD Quản Lý Nhà Trọ">
-    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="950" math="0" shadow="0">
+<mxfile host="Electron" modified="2026-11-05T12:00:00.000Z" agent="Antigravity" version="21.6.8" type="device">
+  <diagram id="quan-ly-nha-tro-erd" name="Sơ đồ quan hệ thực thể (ERD)">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1350" pageHeight="950" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -12,13 +12,13 @@
         </mxCell>
 
         <!-- Bảng 2: KhachThue -->
-        <mxCell id="tbl_KhachThue" value="&lt;center&gt;&lt;b&gt;KhachThue&lt;/b&gt;&lt;/center&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;b&gt;PK&lt;/b&gt; maKhach : INT&lt;br/&gt;&lt;b&gt;FK&lt;/b&gt; maNguoiDung : INT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;hoTen : VARCHAR(100)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;soCCCD : VARCHAR(12)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;soDienThoai : VARCHAR(15)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;diaChi : VARCHAR(255)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;dangHoatDong : TINYINT" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;spacingLeft=10;spacingRight=10;spacingTop=8;spacingBottom=8;" vertex="1" parent="1">
-          <mxGeometry x="330" y="40" width="230" height="190" as="geometry" />
+        <mxCell id="tbl_KhachThue" value="&lt;center&gt;&lt;b&gt;KhachThue&lt;/b&gt;&lt;/center&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;b&gt;PK&lt;/b&gt; maKhach : INT&lt;br/&gt;&lt;b&gt;FK&lt;/b&gt; maNguoiDung : INT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;hoTen : VARCHAR(100)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ngaySinh : DATE&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;gioiTinh : ENUM&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;soCCCD : VARCHAR(12)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ngayCapCCCD : DATE&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;noiCapCCCD : VARCHAR(150)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;soDienThoai : VARCHAR(15)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;diaChi : VARCHAR(255)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ngheNghiep : VARCHAR(100)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;bienSoXe : VARCHAR(30)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;nguoiLienHeKhanCap : VARCHAR(100)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;sdtKhanCap : VARCHAR(15)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;daDangKyTamTru : TINYINT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;dangHoatDong : TINYINT" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;spacingLeft=10;spacingRight=10;spacingTop=8;spacingBottom=8;" vertex="1" parent="1">
+          <mxGeometry x="330" y="40" width="240" height="240" as="geometry" />
         </mxCell>
 
         <!-- Bảng 3: PhongTro -->
-        <mxCell id="tbl_PhongTro" value="&lt;center&gt;&lt;b&gt;PhongTro&lt;/b&gt;&lt;/center&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;b&gt;PK&lt;/b&gt; maPhong : INT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;soPhong : VARCHAR(20)&lt;br/&gt;&lt;b&gt;FK&lt;/b&gt; maLoaiPhong : INT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;soNguoiToiDa : TINYINT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;donGiaMacDinh : DECIMAL&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;trangThaiPhong : ENUM&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ghiChu : VARCHAR(255)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;dangHoatDong : TINYINT" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;spacingLeft=10;spacingRight=10;spacingTop=8;spacingBottom=8;" vertex="1" parent="1">
-          <mxGeometry x="660" y="40" width="230" height="190" as="geometry" />
+        <mxCell id="tbl_PhongTro" value="&lt;center&gt;&lt;b&gt;PhongTro&lt;/b&gt;&lt;/center&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;b&gt;PK&lt;/b&gt; maPhong : INT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;soPhong : VARCHAR(20)&lt;br/&gt;&lt;b&gt;FK&lt;/b&gt; maLoaiPhong : INT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;tang : VARCHAR(20)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;dienTich : DECIMAL(6,2)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;tienCocMacDinh : DECIMAL&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;tienNghi : TEXT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;soNguoiToiDa : TINYINT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;donGiaMacDinh : DECIMAL&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;trangThaiPhong : ENUM&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ghiChu : VARCHAR(255)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;dangHoatDong : TINYINT" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;spacingLeft=10;spacingRight=10;spacingTop=8;spacingBottom=8;" vertex="1" parent="1">
+          <mxGeometry x="660" y="40" width="240" height="240" as="geometry" />
         </mxCell>
 
         <!-- ================== HÀNG 2 ================== -->
@@ -29,23 +29,23 @@
 
         <!-- Bảng 5: HopDong (1 người đại diện ký, lưu số lượng người ở) -->
         <mxCell id="tbl_HopDong" value="&lt;center&gt;&lt;b&gt;HopDong&lt;/b&gt;&lt;/center&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;b&gt;PK&lt;/b&gt; maHopDong : INT&lt;br/&gt;&lt;b&gt;FK&lt;/b&gt; maPhong : INT&lt;br/&gt;&lt;b&gt;FK&lt;/b&gt; maKhach : INT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;soLuongNguoi : TINYINT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ngayBatDau : DATE&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ngayKetThuc : DATE&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;giaThueChot : DECIMAL&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;tienDatCoc : DECIMAL&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;tienHoanCoc : DECIMAL&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;trangThaiHD : ENUM" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;spacingLeft=10;spacingRight=10;spacingTop=8;spacingBottom=8;" vertex="1" parent="1">
-          <mxGeometry x="330" y="310" width="230" height="230" as="geometry" />
+          <mxGeometry x="330" y="330" width="240" height="230" as="geometry" />
         </mxCell>
 
         <!-- Bảng 6: ChiSoDienNuoc -->
         <mxCell id="tbl_ChiSoDienNuoc" value="&lt;center&gt;&lt;b&gt;ChiSoDienNuoc&lt;/b&gt;&lt;/center&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;b&gt;PK&lt;/b&gt; maChiSo : INT&lt;br/&gt;&lt;b&gt;FK&lt;/b&gt; maPhong : INT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;thangGhiNhan : DATE&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;chiSoDienCu : INT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;chiSoDienMoi : INT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;chiSoNuocCu : INT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;chiSoNuocMoi : INT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;soDienTieuThu : INT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;soNuocTieuThu : INT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ngayGhi : DATETIME" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;spacingLeft=10;spacingRight=10;spacingTop=8;spacingBottom=8;" vertex="1" parent="1">
-          <mxGeometry x="660" y="300" width="230" height="240" as="geometry" />
+          <mxGeometry x="660" y="320" width="240" height="240" as="geometry" />
         </mxCell>
 
         <!-- ================== HÀNG 3 ================== -->
         <!-- Bảng 7: HoaDon -->
         <mxCell id="tbl_HoaDon" value="&lt;center&gt;&lt;b&gt;HoaDon&lt;/b&gt;&lt;/center&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;b&gt;PK&lt;/b&gt; maHoaDon : INT&lt;br/&gt;&lt;b&gt;FK&lt;/b&gt; maHopDong : INT&lt;br/&gt;&lt;b&gt;FK&lt;/b&gt; maChiSo : INT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;thangNam : DATE&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ngayLap : DATE&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;hanThanhToan : DATE&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;tongTien : DECIMAL&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;trangThaiThanhToan : ENUM&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ngayThanhToan : DATE&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ghiChu : VARCHAR(255)" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;spacingLeft=10;spacingRight=10;spacingTop=8;spacingBottom=8;" vertex="1" parent="1">
-          <mxGeometry x="330" y="630" width="230" height="240" as="geometry" />
+          <mxGeometry x="330" y="630" width="240" height="240" as="geometry" />
         </mxCell>
 
         <!-- Bảng 8: ChiTietHoaDon -->
         <mxCell id="tbl_ChiTietHoaDon" value="&lt;center&gt;&lt;b&gt;ChiTietHoaDon&lt;/b&gt;&lt;/center&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;b&gt;PK&lt;/b&gt; maChiTiet : INT&lt;br/&gt;&lt;b&gt;FK&lt;/b&gt; maHoaDon : INT&lt;br/&gt;&lt;b&gt;FK&lt;/b&gt; maDichVu : INT&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;noiDung : VARCHAR(150)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;soLuong : DECIMAL&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;donGia : DECIMAL&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;thanhTien : DECIMAL" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;spacingLeft=10;spacingRight=10;spacingTop=8;spacingBottom=8;" vertex="1" parent="1">
-          <mxGeometry x="660" y="660" width="230" height="190" as="geometry" />
+          <mxGeometry x="660" y="660" width="240" height="190" as="geometry" />
         </mxCell>
 
         <!-- Bảng 9: DichVu -->
@@ -68,8 +68,8 @@
         <mxCell id="edge_pt_hd" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.85;entryY=0;entryDx=0;entryDy=0;startArrow=ERmandOne;endArrow=ERmany;strokeWidth=1.5;strokeColor=#000000;" edge="1" parent="1" source="tbl_PhongTro" target="tbl_HopDong">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="718" y="250" />
-              <mxPoint x="526" y="250" />
+              <mxPoint x="720" y="290" />
+              <mxPoint x="534" y="290" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -93,8 +93,8 @@
         <mxCell id="edge_cs_hd" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.35;exitY=1;exitDx=0;exitDy=0;entryX=0.85;entryY=0;entryDx=0;entryDy=0;startArrow=ERmandOne;endArrow=ERzeroToOne;strokeWidth=1.5;strokeColor=#000000;" edge="1" parent="1" source="tbl_ChiSoDienNuoc" target="tbl_HoaDon">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="741" y="580" />
-              <mxPoint x="526" y="580" />
+              <mxPoint x="744" y="590" />
+              <mxPoint x="534" y="590" />
             </Array>
           </mxGeometry>
         </mxCell>

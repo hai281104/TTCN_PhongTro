@@ -19,10 +19,22 @@ class CapNhatPhongTroRequest extends FormRequest
 
     protected function prepareForValidation()
     {
+        $duLieuGop = [];
+
         if ($this->has('donGiaMacDinh') && is_string($this->donGiaMacDinh)) {
-            $this->merge([
-                'donGiaMacDinh' => str_replace(['.', ','], '', $this->donGiaMacDinh),
-            ]);
+            $duLieuGop['donGiaMacDinh'] = str_replace(['.', ','], '', $this->donGiaMacDinh);
+        }
+
+        if ($this->has('tienCocMacDinh') && is_string($this->tienCocMacDinh)) {
+            $duLieuGop['tienCocMacDinh'] = str_replace(['.', ','], '', $this->tienCocMacDinh);
+        }
+
+        if ($this->has('tang') && $this->tang !== null) {
+            $duLieuGop['tang'] = (string) $this->tang;
+        }
+
+        if (!empty($duLieuGop)) {
+            $this->merge($duLieuGop);
         }
     }
 
@@ -46,6 +58,30 @@ class CapNhatPhongTroRequest extends FormRequest
                 'required',
                 'integer',
                 'exists:LoaiPhong,maLoaiPhong',
+            ],
+            'tang' => [
+                'nullable',
+                'string',
+                'max:20',
+            ],
+            'dienTich' => [
+                'nullable',
+                'numeric',
+                'min:1',
+                'max:999.99',
+            ],
+            'tienCocMacDinh' => [
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
+            'tienNghi' => [
+                'nullable',
+                'array',
+            ],
+            'tienNghi.*' => [
+                'string',
+                'max:50',
             ],
             'soNguoiToiDa' => [
                 'required',
@@ -81,6 +117,12 @@ class CapNhatPhongTroRequest extends FormRequest
             'maLoaiPhong.required' => 'Vui lòng chọn thể loại phòng trọ.',
             'maLoaiPhong.integer' => 'Thể loại phòng không hợp lệ.',
             'maLoaiPhong.exists' => 'Thể loại phòng được chọn không tồn tại trong hệ thống.',
+            'tang.max' => 'Tên tầng không được vượt quá 20 ký tự.',
+            'dienTich.numeric' => 'Diện tích phòng phải là một con số hợp lệ.',
+            'dienTich.min' => 'Diện tích phòng phải từ 1 m² trở lên.',
+            'dienTich.max' => 'Diện tích phòng không hợp lệ.',
+            'tienCocMacDinh.numeric' => 'Tiền cọc mặc định phải là số hợp lệ.',
+            'tienCocMacDinh.min' => 'Tiền cọc mặc định không được âm.',
             'soNguoiToiDa.required' => 'Vui lòng nhập số người ở tối đa của phòng.',
             'soNguoiToiDa.integer' => 'Sức chứa tối đa phải là số nguyên.',
             'soNguoiToiDa.min' => 'Sức chứa tối đa phải có ít nhất 1 người.',
