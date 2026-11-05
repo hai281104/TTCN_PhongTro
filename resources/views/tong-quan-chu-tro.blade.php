@@ -12,7 +12,7 @@
     <div class="min-h-full">
         <!-- HEADER -->
         <header class="bg-white border-b border-zinc-200 sticky top-0 z-20">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <div class="flex items-center gap-6">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-lg bg-zinc-900 text-white flex items-center justify-center font-bold text-sm shadow-xs">
@@ -69,7 +69,7 @@
         </header>
 
         <!-- NỘI DUNG CHÍNH -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        <main class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
             <!-- BANNER CHÀO MỪNG -->
             <div class="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>

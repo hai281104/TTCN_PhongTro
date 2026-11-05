@@ -12,7 +12,7 @@
     <div class="min-h-full">
         <!-- HEADER -->
         <header class="bg-white border-b border-zinc-200 sticky top-0 z-20">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <div class="flex items-center gap-6">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-lg bg-zinc-900 text-white flex items-center justify-center font-bold text-sm shadow-xs">
@@ -69,7 +69,7 @@
         </header>
 
         <!-- MAIN -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        <main class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
             <!-- THÔNG BÁO -->
             @if (session('thongBaoThanhCong'))
@@ -177,7 +177,7 @@
             <div class="bg-white border border-zinc-200 rounded-xl shadow-xs overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-zinc-200 text-xs">
-                        <thead class="bg-zinc-50 text-zinc-600 font-medium text-left">
+                        <thead class="bg-zinc-50 text-zinc-600 font-medium text-left sticky top-16 z-20 shadow-2xs">
                             <tr>
                                 <th scope="col" class="px-4 py-3">Mã HĐ</th>
                                 <th scope="col" class="px-4 py-3">Phòng & Thể loại</th>
@@ -187,12 +187,12 @@
                                 <th scope="col" class="px-4 py-3 text-right">Tiền đặt cọc</th>
                                 <th scope="col" class="px-4 py-3">Thời gian thuê</th>
                                 <th scope="col" class="px-4 py-3 text-center">Trạng thái</th>
-                                <th scope="col" class="px-4 py-3 text-right">Hành động</th>
+                                <th scope="col" class="px-4 py-3 text-right sticky right-0 bg-zinc-50 z-20 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">Hành động</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-zinc-200 bg-white">
                             @forelse ($danhSachHopDong as $hd)
-                                <tr class="hover:bg-zinc-50/70 transition-colors">
+                                <tr class="hover:bg-zinc-50/70 transition-colors group">
                                     <td class="px-4 py-3.5 font-bold text-zinc-900 whitespace-nowrap">
                                         #HD-{{ str_pad($hd->maHopDong, 4, '0', STR_PAD_LEFT) }}
                                     </td>
@@ -243,7 +243,7 @@
                                             </span>
                                         @endif
                                     </td>
-                                    <td class="px-4 py-3.5 text-right whitespace-nowrap space-x-1">
+                                    <td class="px-4 py-3.5 text-right whitespace-nowrap space-x-1 sticky right-0 bg-white group-hover:bg-zinc-50 z-10 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">
                                         <a href="{{ route('hop-dong.chi-tiet', $hd->maHopDong) }}"
                                             class="inline-block px-2.5 py-1 rounded border border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-100 transition-colors">
                                             Chi tiết

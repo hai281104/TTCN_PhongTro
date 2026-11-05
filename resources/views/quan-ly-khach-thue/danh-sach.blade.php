@@ -11,7 +11,7 @@
 <body class="h-full font-sans antialiased text-zinc-900 bg-zinc-50">
     <div class="min-h-full">
         <header class="bg-white border-b border-zinc-200 sticky top-0 z-20">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <div class="flex items-center gap-6">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-lg bg-zinc-900 text-white flex items-center justify-center font-bold text-sm shadow-xs">
@@ -67,7 +67,7 @@
             </div>
         </header>
 
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
             @if (session('thongBaoThanhCong'))
                 <div class="hop-thong-bao mb-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-emerald-800 shadow-xs flex items-center justify-between">
                     <div class="flex items-center gap-2">
@@ -472,6 +472,42 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- KHỐI 5: XẾP PHÒNG Ở CÙNG (TÙY CHỌN) -->
+                            <div class="bg-zinc-50 p-4 rounded-xl border border-zinc-200 space-y-3.5">
+                                <div class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider flex items-center justify-between">
+                                    <span class="flex items-center gap-1.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-zinc-900"></span>
+                                        <span>5. Xếp phòng ở cùng (Tùy chọn)</span>
+                                    </span>
+                                    <span class="text-[10px] text-zinc-500 font-normal">Liên kết vào hợp đồng đang thuê</span>
+                                </div>
+
+                                <div>
+                                    <label for="maHopDongOCungThem" class="block font-medium text-zinc-700 mb-1">Chọn phòng đang có người thuê</label>
+                                    <select name="maHopDongOCung" id="maHopDongOCungThem"
+                                        class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                                        <option value="">-- Chưa xếp phòng (Khách tự do / chưa thuê) --</option>
+                                        @foreach ($danhSachHopDongDangThue as $hd)
+                                            @php
+                                                $soNguoiHienTai = $hd->layTongSoNguoiHienTai();
+                                                $soNguoiToiDa = $hd->phongTro->soNguoiToiDa ?? 1;
+                                                $hetCho = $soNguoiHienTai >= $soNguoiToiDa;
+                                            @endphp
+                                            <option value="{{ $hd->maHopDong }}" {{ $hetCho ? 'disabled' : '' }}>
+                                                Phòng {{ $hd->phongTro->soPhong ?? '?' }} (Đại diện: {{ $hd->khachThue->hoTen ?? '?' }}) - Đang ở: {{ $soNguoiHienTai }}/{{ $soNguoiToiDa }} người {{ $hetCho ? '[HẾT CHỖ]' : '' }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <p class="text-[10px] text-zinc-500 mt-1">Hệ thống sẽ kiểm tra sức chứa phòng và tự động tăng số lượng người trong hợp đồng.</p>
+                                </div>
+
+                                <div>
+                                    <label for="quanHeVoiDaiDienThem" class="block font-medium text-zinc-700 mb-1">Quan hệ với người đại diện</label>
+                                    <input type="text" name="quanHeVoiDaiDien" id="quanHeVoiDaiDienThem" placeholder="Ví dụ: Bạn cùng phòng, Vợ/Chồng, Em trai..."
+                                        class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                                </div>
+                            </div>
                         </div>
 
                         <!-- CỘT PHẢI: GIẤY TỜ CCCD, TẠM TRÚ & LIÊN HỆ KHẨN CẤP -->
@@ -686,6 +722,42 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- KHỐI 5: XẾP PHÒNG Ở CÙNG (TÙY CHỌN) -->
+                            <div class="bg-zinc-50 p-4 rounded-xl border border-zinc-200 space-y-3.5">
+                                <div class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider flex items-center justify-between">
+                                    <span class="flex items-center gap-1.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-zinc-900"></span>
+                                        <span>5. Xếp phòng ở cùng (Tùy chọn)</span>
+                                    </span>
+                                    <span class="text-[10px] text-zinc-500 font-normal">Liên kết vào hợp đồng đang thuê</span>
+                                </div>
+
+                                <div>
+                                    <label for="maHopDongOCungThem" class="block font-medium text-zinc-700 mb-1">Chọn phòng đang có người thuê</label>
+                                    <select name="maHopDongOCung" id="maHopDongOCungThem"
+                                        class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                                        <option value="">-- Chưa xếp phòng (Khách tự do / chưa thuê) --</option>
+                                        @foreach ($danhSachHopDongDangThue as $hd)
+                                            @php
+                                                $soNguoiHienTai = $hd->layTongSoNguoiHienTai();
+                                                $soNguoiToiDa = $hd->phongTro->soNguoiToiDa ?? 1;
+                                                $hetCho = $soNguoiHienTai >= $soNguoiToiDa;
+                                            @endphp
+                                            <option value="{{ $hd->maHopDong }}" {{ $hetCho ? 'disabled' : '' }}>
+                                                Phòng {{ $hd->phongTro->soPhong ?? '?' }} (Đại diện: {{ $hd->khachThue->hoTen ?? '?' }}) - Đang ở: {{ $soNguoiHienTai }}/{{ $soNguoiToiDa }} người {{ $hetCho ? '[HẾT CHỖ]' : '' }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <p class="text-[10px] text-zinc-500 mt-1">Hệ thống sẽ kiểm tra sức chứa phòng và tự động tăng số lượng người trong hợp đồng.</p>
+                                </div>
+
+                                <div>
+                                    <label for="quanHeVoiDaiDienThem" class="block font-medium text-zinc-700 mb-1">Quan hệ với người đại diện</label>
+                                    <input type="text" name="quanHeVoiDaiDien" id="quanHeVoiDaiDienThem" placeholder="Ví dụ: Bạn cùng phòng, Vợ/Chồng, Em trai..."
+                                        class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                                </div>
+                            </div>
                         </div>
 
                         <!-- CỘT PHẢI: GIẤY TỜ CCCD, TẠM TRÚ & LIÊN HỆ KHẨN CẤP -->
@@ -811,6 +883,42 @@
                                         <input type="text" name="quanHeVoiDaiDien" id="quanHeVoiDaiDienSua" placeholder="Ví dụ: Bạn cùng phòng, Vợ/Chồng, Em trai..."
                                             class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
                                     </div>
+                                </div>
+                            </div>
+
+                            <!-- KHỐI 5: XẾP PHÒNG Ở CÙNG (TÙY CHỌN) -->
+                            <div class="bg-zinc-50 p-4 rounded-xl border border-zinc-200 space-y-3.5">
+                                <div class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider flex items-center justify-between">
+                                    <span class="flex items-center gap-1.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-zinc-900"></span>
+                                        <span>5. Xếp phòng ở cùng (Tùy chọn)</span>
+                                    </span>
+                                    <span class="text-[10px] text-zinc-500 font-normal">Liên kết vào hợp đồng đang thuê</span>
+                                </div>
+
+                                <div>
+                                    <label for="maHopDongOCungThem" class="block font-medium text-zinc-700 mb-1">Chọn phòng đang có người thuê</label>
+                                    <select name="maHopDongOCung" id="maHopDongOCungThem"
+                                        class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                                        <option value="">-- Chưa xếp phòng (Khách tự do / chưa thuê) --</option>
+                                        @foreach ($danhSachHopDongDangThue as $hd)
+                                            @php
+                                                $soNguoiHienTai = $hd->layTongSoNguoiHienTai();
+                                                $soNguoiToiDa = $hd->phongTro->soNguoiToiDa ?? 1;
+                                                $hetCho = $soNguoiHienTai >= $soNguoiToiDa;
+                                            @endphp
+                                            <option value="{{ $hd->maHopDong }}" {{ $hetCho ? 'disabled' : '' }}>
+                                                Phòng {{ $hd->phongTro->soPhong ?? '?' }} (Đại diện: {{ $hd->khachThue->hoTen ?? '?' }}) - Đang ở: {{ $soNguoiHienTai }}/{{ $soNguoiToiDa }} người {{ $hetCho ? '[HẾT CHỖ]' : '' }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <p class="text-[10px] text-zinc-500 mt-1">Hệ thống sẽ kiểm tra sức chứa phòng và tự động tăng số lượng người trong hợp đồng.</p>
+                                </div>
+
+                                <div>
+                                    <label for="quanHeVoiDaiDienThem" class="block font-medium text-zinc-700 mb-1">Quan hệ với người đại diện</label>
+                                    <input type="text" name="quanHeVoiDaiDien" id="quanHeVoiDaiDienThem" placeholder="Ví dụ: Bạn cùng phòng, Vợ/Chồng, Em trai..."
+                                        class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
                                 </div>
                             </div>
                         </div>

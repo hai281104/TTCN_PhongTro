@@ -11,7 +11,7 @@
 <body class="h-full font-sans antialiased text-zinc-900 bg-zinc-50">
     <div class="min-h-full">
         <header class="bg-white border-b border-zinc-200 sticky top-0 z-20">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <div class="flex items-center gap-6">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-lg bg-zinc-900 text-white flex items-center justify-center font-bold text-sm shadow-xs">
@@ -67,7 +67,7 @@
             </div>
         </header>
 
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
             @if (session('thongBaoThanhCong'))
                 <div class="hop-thong-bao mb-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-emerald-800 shadow-xs flex items-center justify-between">
                     <div class="flex items-center gap-2">
@@ -216,21 +216,21 @@
                 <div class="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-xs mb-6">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-zinc-200 text-xs">
-                            <thead class="bg-zinc-50 text-zinc-500 uppercase tracking-wider font-medium text-[11px]">
+                            <thead class="bg-zinc-50 text-zinc-500 uppercase tracking-wider font-medium text-[11px] sticky top-16 z-20 shadow-2xs">
                                 <tr>
-                                    <th scope="col" class="px-4 py-3 text-left">Phòng & Vị trí</th>
-                                    <th scope="col" class="px-4 py-3 text-left">Thể loại & Diện tích</th>
-                                    <th scope="col" class="px-4 py-3 text-left">Tiện nghi nội thất</th>
-                                    <th scope="col" class="px-4 py-3 text-center">Sức chứa / Ở</th>
-                                    <th scope="col" class="px-4 py-3 text-left">Trạng thái</th>
-                                    <th scope="col" class="px-4 py-3 text-right">Giá thuê & Tiền cọc</th>
-                                    <th scope="col" class="px-4 py-3 text-left">Người thuê</th>
-                                    <th scope="col" class="px-4 py-3 text-right">Thao tác</th>
+                                    <th scope="col" class="px-3.5 py-3 text-left">Phòng & Vị trí</th>
+                                    <th scope="col" class="px-3.5 py-3 text-left">Thể loại & Diện tích</th>
+                                    <th scope="col" class="px-3.5 py-3 text-left">Tiện nghi nội thất</th>
+                                    <th scope="col" class="px-3.5 py-3 text-center">Sức chứa / Ở</th>
+                                    <th scope="col" class="px-3.5 py-3 text-left">Trạng thái</th>
+                                    <th scope="col" class="px-3.5 py-3 text-right">Giá thuê & Tiền cọc</th>
+                                    <th scope="col" class="px-3.5 py-3 text-left">Người thuê</th>
+                                    <th scope="col" class="px-4 py-3 text-right sticky right-0 bg-zinc-50 z-20 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-zinc-200 bg-white">
                                 @foreach ($danhSachPhong as $phong)
-                                    <tr class="hover:bg-zinc-50/80 transition-colors">
+                                    <tr class="hover:bg-zinc-50/80 transition-colors group">
                                         <td class="px-4 py-3.5 whitespace-nowrap">
                                             <div class="flex items-center gap-3">
                                                 <div class="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center font-bold text-xs text-zinc-700 border border-zinc-200/80">
@@ -337,7 +337,7 @@
                                             @endif
                                         </td>
 
-                                        <td class="px-4 py-3.5 whitespace-nowrap text-right">
+                                        <td class="px-4 py-3 whitespace-nowrap text-right sticky right-0 bg-white group-hover:bg-zinc-50 z-10 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">
                                             <div class="inline-flex items-center justify-end gap-1.5">
                                                 @if ($phong->trangThaiPhong === 'TRONG')
                                                     <a href="{{ route('hop-dong.danh-sach', ['maPhongChon' => $phong->maPhong]) }}"

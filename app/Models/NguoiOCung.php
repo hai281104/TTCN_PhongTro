@@ -75,3 +75,4 @@ class NguoiOCung extends Model
         return $this->belongsTo(KhachThue::class, 'maKhach', 'maKhach');
     }
 }
+
