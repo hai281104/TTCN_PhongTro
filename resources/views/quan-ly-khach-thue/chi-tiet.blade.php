@@ -40,6 +40,10 @@
                             class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-colors">
                             Hợp đồng
                         </a>
+                        <a href="{{ route('khach-o-cung.danh-sach') }}"
+                            class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-colors">
+                            Khách ở cùng
+                        </a>
                     </nav>
                 </div>
 
@@ -351,8 +355,18 @@
                         </div>
                     </div>
                 @else
-                    <div class="p-6 text-center text-xs text-zinc-500 bg-zinc-50 rounded-lg border border-zinc-200">
-                        Khách hiện tại không có hợp đồng thuê phòng nào đang có hiệu lực (chưa xếp phòng).
+                    <div class="p-6 text-center text-xs text-zinc-600 bg-zinc-50 rounded-lg border border-zinc-200 space-y-3">
+                        <p>Khách hiện chưa đứng tên hợp đồng hoặc ở cùng phòng nào.</p>
+                        <div class="flex flex-wrap items-center justify-center gap-2">
+                            <a href="{{ route('hop-dong.danh-sach') }}"
+                                class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors">
+                                <span>Bước 3: Ký hợp đồng mới (Đại diện)</span>
+                            </a>
+                            <a href="{{ route('khach-o-cung.danh-sach') }}"
+                                class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-zinc-300 bg-white text-zinc-700 text-xs font-medium hover:bg-zinc-100 transition-colors">
+                                <span>Bước 4: Thêm vào ở cùng phòng đang thuê</span>
+                            </a>
+                        </div>
                     </div>
                 @endif
             </div>
@@ -543,50 +557,6 @@
                             <div>
                                 <label for="quanHeKhanCapSua" class="block font-medium text-zinc-700 mb-1">Mối quan hệ</label>
                                 <input type="text" name="quanHeKhanCap" id="quanHeKhanCapSua" placeholder="Bố/Mẹ/Anh..."
-                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- KHỐI 4: PHÒNG Ở & BẠN CÙNG PHÒNG -->
-                    <div class="bg-zinc-50 p-3 rounded-lg border border-zinc-200 space-y-3">
-                        <div class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider">4. Phòng ở & Bạn cùng phòng</div>
-
-                        <!-- Thông báo nếu là người đại diện hợp đồng -->
-                        <div id="vungCanhBaoDaiDienSua" class="hidden p-3 rounded-lg bg-sky-50 border border-sky-200 text-sky-800 space-y-1">
-                            <div class="font-semibold flex items-center gap-1.5">
-                                <svg class="w-4 h-4 text-sky-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                <span>Người đại diện hợp đồng (<span id="nhanPhongDaiDienSua"></span>)</span>
-                            </div>
-                            <p class="text-[11px] text-zinc-600">Khách này đang là người đứng tên ký hợp đồng chính thức. Để thay đổi phòng hoặc kết thúc thuê, vui lòng quản lý tại mục <strong>Hợp đồng</strong>.</p>
-                        </div>
-
-                        <!-- Vùng chọn phòng nếu là người ở cùng hoặc chưa gán phòng -->
-                        <div id="vungChonPhongOCungSua" class="space-y-3">
-                            <div>
-                                <label for="maHopDongOCungSua" class="block font-medium text-zinc-700 mb-1">Xếp phòng ở cùng (Chọn hợp đồng đang thuê)</label>
-                                <select name="maHopDongOCung" id="maHopDongOCungSua"
-                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-                                    <option value="">-- Không xếp phòng ở cùng (Rời phòng / Tự do) --</option>
-                                    @if (isset($danhSachHopDongDangThue))
-                                        @foreach ($danhSachHopDongDangThue as $hdOption)
-                                            @php
-                                                $soNguoiHienTai = $hdOption->layTongSoNguoiHienTai();
-                                                $soNguoiToiDa = $hdOption->phongTro->soNguoiToiDa ?? 1;
-                                            @endphp
-                                            <option value="{{ $hdOption->maHopDong }}">
-                                                Phòng {{ $hdOption->phongTro->soPhong ?? '?' }} (Đại diện: {{ $hdOption->khachThue->hoTen ?? '?' }}) - Đang ở: {{ $soNguoiHienTai }}/{{ $soNguoiToiDa }} người
-                                            </option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                            </div>
-
-                            <div>
-                                <label for="quanHeVoiDaiDienSua" class="block font-medium text-zinc-700 mb-1">Quan hệ với người đại diện</label>
-                                <input type="text" name="quanHeVoiDaiDien" id="quanHeVoiDaiDienSua" placeholder="Ví dụ: Bạn cùng phòng, Vợ/Chồng, Em trai..."
                                     class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
                             </div>
                         </div>

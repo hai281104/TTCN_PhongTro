@@ -93,16 +93,6 @@ class LuuKhachThueRequest extends FormRequest
                 'nullable',
                 'boolean',
             ],
-            'maHopDongOCung' => [
-                'nullable',
-                'integer',
-                'exists:HopDong,maHopDong',
-            ],
-            'quanHeVoiDaiDien' => [
-                'nullable',
-                'string',
-                'max:100',
-            ],
             'taoTaiKhoan' => [
                 'nullable',
             ],
@@ -150,8 +140,6 @@ class LuuKhachThueRequest extends FormRequest
             'nguoiLienHeKhanCap.max' => 'Tên người liên hệ khẩn cấp không được vượt quá 100 ký tự.',
             'sdtKhanCap.max' => 'Số điện thoại khẩn cấp không được vượt quá 15 ký tự.',
             'quanHeKhanCap.max' => 'Mối quan hệ khẩn cấp không được vượt quá 50 ký tự.',
-            'maHopDongOCung.exists' => 'Phòng / Hợp đồng được chọn không tồn tại.',
-            'quanHeVoiDaiDien.max' => 'Mối quan hệ với người đại diện không được vượt quá 100 ký tự.',
             'email.required_if' => 'Vui lòng nhập địa chỉ email để cấp tài khoản đăng nhập.',
             'email.email' => 'Địa chỉ email không đúng định dạng.',
             'email.unique' => 'Địa chỉ email này đã được sử dụng bởi một tài khoản khác.',

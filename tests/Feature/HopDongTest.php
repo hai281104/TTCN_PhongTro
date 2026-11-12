@@ -90,7 +90,6 @@ class HopDongTest extends TestCase
         $phanHoi = $this->actingAs($chuTro)->post('/hop-dong', [
             'maPhong' => $phong->maPhong,
             'maKhach' => $khach->maKhach,
-            'soLuongNguoi' => 2,
             'ngayBatDau' => '2026-11-01',
             'ngayKetThuc' => '2027-11-01',
             'giaThueChot' => 3000000,
@@ -101,7 +100,7 @@ class HopDongTest extends TestCase
         $this->assertDatabaseHas('HopDong', [
             'maPhong' => $phong->maPhong,
             'maKhach' => $khach->maKhach,
-            'soLuongNguoi' => 2,
+            'soLuongNguoi' => 1,
             'trangThaiHD' => 'HIEU_LUC',
         ]);
 
@@ -149,49 +148,40 @@ class HopDongTest extends TestCase
         $phanHoi = $this->actingAs($chuTro)->post('/hop-dong', [
             'maPhong' => '',
             'maKhach' => '',
-            'soLuongNguoi' => '',
             'ngayBatDau' => '',
             'giaThueChot' => '',
             'tienDatCoc' => '',
         ]);
 
-        $phanHoi->assertSessionHasErrors(['maPhong', 'maKhach', 'soLuongNguoi', 'ngayBatDau', 'giaThueChot', 'tienDatCoc']);
+        $phanHoi->assertSessionHasErrors(['maPhong', 'maKhach', 'ngayBatDau', 'giaThueChot', 'tienDatCoc']);
     }
 
-    public function test_lap_hop_dong_that_bai_khi_so_luong_nguoi_vuot_qua_suc_chua_phong()
+    public function test_lap_hop_dong_that_bai_khi_khach_dang_o_phong_khac()
     {
         $chuTro = $this->layTaiKhoanChuTro();
-        $phong = $this->taoPhongTroTrongMau(2); // Sức chứa tối đa 2 người
+        $phong1 = $this->taoPhongTroTrongMau(2);
+        $phong2 = $this->taoPhongTroTrongMau(2);
         $khach = $this->taoKhachThueMau();
 
-        $phanHoi = $this->actingAs($chuTro)->post('/hop-dong', [
-            'maPhong' => $phong->maPhong,
+        HopDong::create([
+            'maPhong' => $phong1->maPhong,
             'maKhach' => $khach->maKhach,
-            'soLuongNguoi' => 4, // Vượt quá sức chứa
+            'soLuongNguoi' => 1,
+            'ngayBatDau' => '2026-11-01',
+            'giaThueChot' => 3000000,
+            'tienDatCoc' => 3000000,
+            'trangThaiHD' => 'HIEU_LUC',
+        ]);
+
+        $phanHoi = $this->actingAs($chuTro)->post('/hop-dong', [
+            'maPhong' => $phong2->maPhong,
+            'maKhach' => $khach->maKhach,
             'ngayBatDau' => '2026-11-01',
             'giaThueChot' => 3000000,
             'tienDatCoc' => 3000000,
         ]);
 
-        $phanHoi->assertSessionHasErrors(['soLuongNguoi']);
-    }
-
-    public function test_lap_hop_dong_that_bai_khi_so_luong_nguoi_nho_hon_1()
-    {
-        $chuTro = $this->layTaiKhoanChuTro();
-        $phong = $this->taoPhongTroTrongMau(2);
-        $khach = $this->taoKhachThueMau();
-
-        $phanHoi = $this->actingAs($chuTro)->post('/hop-dong', [
-            'maPhong' => $phong->maPhong,
-            'maKhach' => $khach->maKhach,
-            'soLuongNguoi' => 0,
-            'ngayBatDau' => '2026-11-01',
-            'giaThueChot' => 3000000,
-            'tienDatCoc' => 3000000,
-        ]);
-
-        $phanHoi->assertSessionHasErrors(['soLuongNguoi']);
+        $phanHoi->assertSessionHasErrors(['maKhach']);
     }
 
     public function test_lap_hop_dong_that_bai_khi_phong_dang_co_nguoi_thue()

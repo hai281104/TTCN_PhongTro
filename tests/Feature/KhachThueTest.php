@@ -274,6 +274,7 @@ class KhachThueTest extends TestCase
     {
         $chuTro = $this->layTaiKhoanChuTro();
 
+        // Bước 1: Tạo phòng
         $phong = PhongTro::create([
             'soPhong' => 'P_OCUNG_' . substr(md5(uniqid()), 0, 5),
             'soNguoiToiDa' => 3,
@@ -281,6 +282,7 @@ class KhachThueTest extends TestCase
             'dangHoatDong' => 1,
         ]);
 
+        // Bước 2: Nhập hồ sơ khách đại diện và khách ở cùng trước
         $khachDaiDien = KhachThue::create([
             'hoTen' => 'Người Đại Diện ' . rand(100, 999),
             'soCCCD' => $this->taoSoCCCDNgauNhien(),
@@ -288,6 +290,17 @@ class KhachThueTest extends TestCase
             'dangHoatDong' => 1,
         ]);
 
+        $soCCCDMoi = $this->taoSoCCCDNgauNhien();
+        $this->actingAs($chuTro)->post('/khach-thue', [
+            'hoTen' => 'Khách Ở Cùng Test',
+            'soCCCD' => $soCCCDMoi,
+            'soDienThoai' => '0977222333',
+            'diaChi' => 'Hà Nội',
+        ])->assertRedirect('/khach-thue');
+
+        $khachMoi = KhachThue::where('soCCCD', $soCCCDMoi)->firstOrFail();
+
+        // Bước 3: Ký hợp đồng cho người đại diện (khởi tạo 1 người)
         $hopDong = HopDong::create([
             'maPhong' => $phong->maPhong,
             'maKhach' => $khachDaiDien->maKhach,
@@ -298,20 +311,14 @@ class KhachThueTest extends TestCase
             'trangThaiHD' => 'HIEU_LUC',
         ]);
 
-        $soCCCDMoi = $this->taoSoCCCDNgauNhien();
-
-        $phanHoi = $this->actingAs($chuTro)->post('/khach-thue', [
-            'hoTen' => 'Khách Ở Cùng Test',
-            'soCCCD' => $soCCCDMoi,
-            'soDienThoai' => '0977222333',
-            'diaChi' => 'Hà Nội',
-            'maHopDongOCung' => $hopDong->maHopDong,
-            'quanHeVoiDaiDien' => 'Bạn cùng lớp',
+        // Bước 4: Thêm khách ở cùng tại mục Quản lý khách ở cùng
+        $phanHoi = $this->actingAs($chuTro)->post('/khach-o-cung', [
+            'maHopDong' => $hopDong->maHopDong,
+            'maKhach' => $khachMoi->maKhach,
+            'ghiChu' => 'Bạn cùng lớp',
         ]);
 
-        $phanHoi->assertRedirect('/khach-thue');
-
-        $khachMoi = KhachThue::where('soCCCD', $soCCCDMoi)->firstOrFail();
+        $phanHoi->assertSessionHas('thongBaoThanhCong');
 
         $this->assertDatabaseHas('NguoiOCung', [
             'maHopDong' => $hopDong->maHopDong,
@@ -342,6 +349,13 @@ class KhachThueTest extends TestCase
             'dangHoatDong' => 1,
         ]);
 
+        $khachOCung = KhachThue::create([
+            'hoTen' => 'Khách Bị Chặn Vì Đủ Chỗ',
+            'soCCCD' => $this->taoSoCCCDNgauNhien(),
+            'soDienThoai' => '0977666777',
+            'dangHoatDong' => 1,
+        ]);
+
         $hopDong = HopDong::create([
             'maPhong' => $phong->maPhong,
             'maKhach' => $khachDaiDien->maKhach,
@@ -352,18 +366,15 @@ class KhachThueTest extends TestCase
             'trangThaiHD' => 'HIEU_LUC',
         ]);
 
-        $soCCCDMoi = $this->taoSoCCCDNgauNhien();
-
-        $phanHoi = $this->actingAs($chuTro)->post('/khach-thue', [
-            'hoTen' => 'Khách Bị Chặn Vì Đủ Chỗ',
-            'soCCCD' => $soCCCDMoi,
-            'soDienThoai' => '0977666777',
-            'maHopDongOCung' => $hopDong->maHopDong,
+        $phanHoi = $this->actingAs($chuTro)->post('/khach-o-cung', [
+            'maHopDong' => $hopDong->maHopDong,
+            'maKhach' => $khachOCung->maKhach,
         ]);
 
-        $phanHoi->assertSessionHas('thongBaoLoi');
-        $this->assertDatabaseMissing('KhachThue', [
-            'soCCCD' => $soCCCDMoi,
+        $phanHoi->assertSessionHasErrors(['maHopDong']);
+        $this->assertDatabaseMissing('NguoiOCung', [
+            'maHopDong' => $hopDong->maHopDong,
+            'maKhach' => $khachOCung->maKhach,
         ]);
     }
 
@@ -402,25 +413,19 @@ class KhachThueTest extends TestCase
             'dangHoatDong' => 1,
         ]);
 
-        \App\Models\NguoiOCung::create([
+        $banOCung = \App\Models\NguoiOCung::create([
             'maHopDong' => $hopDong->maHopDong,
             'maKhach' => $khachOCung->maKhach,
             'dangHoatDong' => 1,
         ]);
 
-        // Cập nhật không còn chọn hợp đồng ở cùng -> Rời phòng
-        $phanHoi = $this->actingAs($chuTro)->put("/khach-thue/{$khachOCung->maKhach}", [
-            'hoTen' => 'Khách Đã Rời Phòng',
-            'soCCCD' => $khachOCung->soCCCD,
-            'soDienThoai' => $khachOCung->soDienThoai,
-            'maHopDongOCung' => '',
-        ]);
+        // Cho khách ở cùng rời phòng tại mục Quản lý khách ở cùng
+        $phanHoi = $this->actingAs($chuTro)->patch("/khach-o-cung/{$banOCung->maNguoiOCung}/roi-phong");
 
-        $phanHoi->assertRedirect('/khach-thue');
+        $phanHoi->assertSessionHas('thongBaoThanhCong');
 
         $this->assertDatabaseHas('NguoiOCung', [
-            'maHopDong' => $hopDong->maHopDong,
-            'maKhach' => $khachOCung->maKhach,
+            'maNguoiOCung' => $banOCung->maNguoiOCung,
             'dangHoatDong' => 0,
         ]);
 
@@ -442,13 +447,11 @@ class KhachThueTest extends TestCase
         $hd2 = HopDong::create(['maPhong' => $phong2->maPhong, 'maKhach' => $khachDaiDien2->maKhach, 'soLuongNguoi' => 1, 'ngayBatDau' => now(), 'giaThueChot' => 3000000, 'tienDatCoc' => 3000000, 'trangThaiHD' => 'HIEU_LUC']);
 
         // Khách 1 đang là đại diện HĐ1, cố gán vào HĐ2 làm người ở cùng
-        $phanHoi = $this->actingAs($chuTro)->put("/khach-thue/{$khachDaiDien1->maKhach}", [
-            'hoTen' => 'Đại Diện Cố Chuyển Phòng',
-            'soCCCD' => $khachDaiDien1->soCCCD,
-            'soDienThoai' => $khachDaiDien1->soDienThoai,
-            'maHopDongOCung' => $hd2->maHopDong,
+        $phanHoi = $this->actingAs($chuTro)->post('/khach-o-cung', [
+            'maHopDong' => $hd2->maHopDong,
+            'maKhach' => $khachDaiDien1->maKhach,
         ]);
 
-        $phanHoi->assertSessionHas('thongBaoLoi');
+        $phanHoi->assertSessionHasErrors(['maKhach']);
     }
 }

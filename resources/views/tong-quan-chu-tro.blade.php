@@ -41,6 +41,10 @@
                             class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-colors">
                             Hợp đồng
                         </a>
+                        <a href="{{ route('khach-o-cung.danh-sach') }}"
+                            class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-colors">
+                            Khách ở cùng
+                        </a>
                     </nav>
                 </div>
 

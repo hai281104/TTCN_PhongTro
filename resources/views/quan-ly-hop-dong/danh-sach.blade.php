@@ -41,6 +41,10 @@
                             class="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-900 text-white">
                             Hợp đồng
                         </a>
+                        <a href="{{ route('khach-o-cung.danh-sach') }}"
+                            class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-colors">
+                            Khách ở cùng
+                        </a>
                     </nav>
                 </div>
 
@@ -391,20 +395,14 @@
                         </div>
                     </div>
 
-                    <!-- Số lượng người ở & Thông tin sức chứa -->
+                    <!-- Quy tắc số lượng người ở theo từng bước nghiệp vụ -->
                     <div class="p-3 bg-zinc-50 rounded-lg border border-zinc-200">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
                             <div>
-                                <label for="soLuongNguoi" class="block font-medium text-zinc-800 mb-1">
-                                    Số lượng người ở theo hợp đồng <span class="text-red-500">*</span>
-                                </label>
-                                <span class="text-[11px] text-zinc-500">Quy mô nhân khẩu thực tế trong phòng (do người đại diện đăng ký).</span>
+                                <div class="font-medium text-zinc-800">Số người khởi tạo hợp đồng: <strong>01 người (Người đại diện)</strong></div>
+                                <span class="text-[11px] text-zinc-500">Nếu phòng có thêm bạn ở cùng, sau khi ký hợp đồng hãy sang mục <strong>Khách ở cùng</strong> để thêm từng người.</span>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <input type="number" name="soLuongNguoi" id="soLuongNguoi" min="1" max="20" required value="{{ old('soLuongNguoi', 1) }}"
-                                    class="w-24 px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 font-semibold text-center focus:outline-none focus:ring-1 focus:ring-zinc-900 tabular-nums">
-                                <span id="nhanSucChuaPhong" class="text-xs text-zinc-500 font-medium">người</span>
-                            </div>
+                            <span id="nhanSucChuaPhong" class="text-xs text-zinc-600 font-medium shrink-0"></span>
                         </div>
                     </div>
 

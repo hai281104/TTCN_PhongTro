@@ -117,6 +117,35 @@ class KhachThue extends Model
     }
 
     /**
+     * Phạm vi truy vấn: khách đang hoạt động và CHƯA ở phòng nào
+     * (không đứng tên hợp đồng hiệu lực, không là người ở cùng của hợp đồng hiệu lực).
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $truyVan
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeChuaOPhongNao($truyVan)
+    {
+        return $truyVan->where('dangHoatDong', 1)
+            ->whereDoesntHave('hopDongHieuLuc')
+            ->whereDoesntHave('nguoiOCungHienTai.hopDong', function ($sub) {
+                $sub->where('trangThaiHD', 'HIEU_LUC');
+            });
+    }
+
+    /**
+     * Kiểm tra khách hiện có đang ở phòng nào không (đại diện hoặc ở cùng).
+     *
+     * @return bool
+     */
+    public function dangOPhong()
+    {
+        return $this->hopDongHieuLuc()->exists()
+            || $this->nguoiOCungHienTai()->whereHas('hopDong', function ($sub) {
+                $sub->where('trangThaiHD', 'HIEU_LUC');
+            })->exists();
+    }
+
+    /**
      * Lấy thông tin phòng trọ và hợp đồng đang ở hiện tại của khách (kể cả đại diện hoặc ở cùng).
      *
      * @return array|null

@@ -96,15 +96,6 @@ class CapNhatKhachThueRequest extends FormRequest
                 'nullable',
                 'boolean',
             ],
-            'maHopDongOCung' => [
-                'nullable',
-                'integer',
-            ],
-            'quanHeVoiDaiDien' => [
-                'nullable',
-                'string',
-                'max:100',
-            ],
         ];
     }
 
@@ -136,7 +127,6 @@ class CapNhatKhachThueRequest extends FormRequest
             'nguoiLienHeKhanCap.max' => 'Tên người liên hệ khẩn cấp không được vượt quá 100 ký tự.',
             'sdtKhanCap.max' => 'Số điện thoại khẩn cấp không được vượt quá 15 ký tự.',
             'quanHeKhanCap.max' => 'Mối quan hệ khẩn cấp không được vượt quá 50 ký tự.',
-            'quanHeVoiDaiDien.max' => 'Mối quan hệ với người đại diện không được vượt quá 100 ký tự.',
         ];
     }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\DangNhapController;
 use App\Http\Controllers\HopDongController;
 use App\Http\Controllers\KhachThueController;
+use App\Http\Controllers\NguoiOCungController;
 use App\Http\Controllers\PhongTroController;
 use App\Http\Controllers\TongQuanController;
 use Illuminate\Support\Facades\Route;
@@ -53,6 +54,12 @@ Route::middleware('auth')->group(function () {
             Route::post('/', [HopDongController::class, 'taoMoi'])->name('tao-moi');
             Route::get('/{maHopDong}', [HopDongController::class, 'chiTiet'])->name('chi-tiet');
             Route::patch('/{maHopDong}/ket-thuc', [HopDongController::class, 'ketThuc'])->name('ket-thuc');
+        });
+
+        Route::prefix('khach-o-cung')->name('khach-o-cung.')->where(['maNguoiOCung' => '[0-9]+'])->group(function () {
+            Route::get('/', [NguoiOCungController::class, 'danhSach'])->name('danh-sach');
+            Route::post('/', [NguoiOCungController::class, 'taoMoi'])->name('tao-moi');
+            Route::patch('/{maNguoiOCung}/roi-phong', [NguoiOCungController::class, 'roiPhong'])->name('roi-phong');
         });
     });
 });

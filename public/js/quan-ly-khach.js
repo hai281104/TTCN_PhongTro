@@ -75,11 +75,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const oSdtKhanCapSua = document.getElementById('sdtKhanCapSua');
     const oQuanHeKhanCapSua = document.getElementById('quanHeKhanCapSua');
     const oTamTruSua = document.getElementById('daDangKyTamTruSua');
-    const vungCanhBaoDaiDienSua = document.getElementById('vungCanhBaoDaiDienSua');
-    const nhanPhongDaiDienSua = document.getElementById('nhanPhongDaiDienSua');
-    const vungChonPhongOCungSua = document.getElementById('vungChonPhongOCungSua');
-    const oHopDongOCungSua = document.getElementById('maHopDongOCungSua');
-    const oQuanHeDaiDienSua = document.getElementById('quanHeVoiDaiDienSua');
 
     document.querySelectorAll('[data-hanh-dong="sua-khach"]').forEach(function (nut) {
         nut.addEventListener('click', function () {
@@ -98,10 +93,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const sdtKhanCap = this.getAttribute('data-sdt-khan-cap') || '';
             const quanHeKhanCap = this.getAttribute('data-quan-he-khan-cap') || '';
             const tamTru = this.getAttribute('data-tam-tru') === '1';
-            const laDaiDien = this.getAttribute('data-la-dai-dien') === '1';
-            const maHopDongOCung = this.getAttribute('data-ma-hop-dong-o-cung') || '';
-            const quanHeOCung = this.getAttribute('data-quan-he-o-cung') || '';
-            const tenPhong = this.getAttribute('data-ten-phong') || '';
 
             if (bieuMauSua && modalSua) {
                 bieuMauSua.action = '/khach-thue/' + maKhach;
@@ -119,19 +110,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (oSdtKhanCapSua) oSdtKhanCapSua.value = sdtKhanCap;
                 if (oQuanHeKhanCapSua) oQuanHeKhanCapSua.value = quanHeKhanCap;
                 if (oTamTruSua) oTamTruSua.checked = tamTru;
-
-                if (laDaiDien) {
-                    if (vungCanhBaoDaiDienSua) vungCanhBaoDaiDienSua.classList.remove('hidden');
-                    if (vungChonPhongOCungSua) vungChonPhongOCungSua.classList.add('hidden');
-                    if (nhanPhongDaiDienSua) nhanPhongDaiDienSua.textContent = 'Phòng ' + tenPhong;
-                    if (oHopDongOCungSua) oHopDongOCungSua.value = '';
-                    if (oQuanHeDaiDienSua) oQuanHeDaiDienSua.value = '';
-                } else {
-                    if (vungCanhBaoDaiDienSua) vungCanhBaoDaiDienSua.classList.add('hidden');
-                    if (vungChonPhongOCungSua) vungChonPhongOCungSua.classList.remove('hidden');
-                    if (oHopDongOCungSua) oHopDongOCungSua.value = maHopDongOCung;
-                    if (oQuanHeDaiDienSua) oQuanHeDaiDienSua.value = quanHeOCung;
-                }
 
                 modalSua.classList.remove('modal-an');
                 modalSua.classList.add('modal-hien');

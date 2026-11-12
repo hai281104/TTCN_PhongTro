@@ -6,6 +6,7 @@ use App\Http\Requests\KetThucHopDongRequest;
 use App\Http\Requests\LuuHopDongRequest;
 use App\Models\HopDong;
 use App\Models\KhachThue;
+use App\Models\NguoiOCung;
 use App\Models\PhongTro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -55,8 +56,8 @@ class HopDongController extends Controller
             ->orderBy('soPhong', 'asc')
             ->get();
 
-        // Lấy danh sách khách thuê đang hoạt động (người đại diện ký kết)
-        $danhSachKhachThue = KhachThue::where('dangHoatDong', 1)
+        // Bước 3 của quy trình: chỉ khách đã có hồ sơ và CHƯA ở phòng nào mới được đứng tên hợp đồng
+        $danhSachKhachThue = KhachThue::chuaOPhongNao()
             ->orderBy('hoTen', 'asc')
             ->get(['maKhach', 'hoTen', 'soCCCD', 'soDienThoai']);
 
@@ -71,16 +72,16 @@ class HopDongController extends Controller
         ));
     }
 
-    // Tạo và lưu hợp đồng thuê phòng mới (1 người đại diện ký hợp đồng, lưu số lượng người ở).
+    // Tạo và lưu hợp đồng thuê phòng mới. Hợp đồng bắt đầu với 1 người (người đại diện);
+    // người ở cùng được bổ sung ở bước sau (Quản lý khách ở cùng).
     public function taoMoi(LuuHopDongRequest $yeuCau)
     {
         DB::beginTransaction();
         try {
-            // Tạo bản ghi hợp đồng mới với 1 người đại diện ký hợp đồng
             $hopDong = HopDong::create([
                 'maPhong'      => $yeuCau->input('maPhong'),
                 'maKhach'      => $yeuCau->input('maKhach'),
-                'soLuongNguoi' => $yeuCau->input('soLuongNguoi', 1),
+                'soLuongNguoi' => 1,
                 'ngayBatDau'   => $yeuCau->input('ngayBatDau'),
                 'ngayKetThuc'  => $yeuCau->input('ngayKetThuc'),
                 'giaThueChot'  => $yeuCau->input('giaThueChot'),
@@ -92,7 +93,7 @@ class HopDongController extends Controller
             DB::commit();
 
             return redirect()->route('hop-dong.chi-tiet', $hopDong->maHopDong)
-                ->with('thongBaoThanhCong', 'Lập hợp đồng thuê phòng thành công. Trạng thái phòng đã chuyển sang Đang thuê.');
+                ->with('thongBaoThanhCong', 'Lập hợp đồng thuê phòng thành công. Bạn có thể bổ sung người ở cùng ở mục "Khách ở cùng" bên dưới.');
         } catch (\Throwable $loi) {
             DB::rollBack();
             return redirect()->back()
@@ -107,15 +108,21 @@ class HopDongController extends Controller
         $hopDong = HopDong::with([
             'phongTro.loaiPhong',
             'khachThue.nguoiDung',
+            'danhSachNguoiOCung.khachThue',
             'hoaDon' => function ($truyVan) {
                 $truyVan->with('chiTietHoaDon.dichVu')->orderByDesc('thangNam');
             }
         ])->findOrFail($maHopDong);
 
-        return view('quan-ly-hop-dong.chi-tiet', compact('hopDong'));
+        // Khách có thể bổ sung làm người ở cùng: đã có hồ sơ và chưa ở phòng nào
+        $danhSachKhachCoTheThem = $hopDong->trangThaiHD === 'HIEU_LUC'
+            ? KhachThue::chuaOPhongNao()->orderBy('hoTen')->get(['maKhach', 'hoTen', 'soCCCD', 'soDienThoai'])
+            : collect();
+
+        return view('quan-ly-hop-dong.chi-tiet', compact('hopDong', 'danhSachKhachCoTheThem'));
     }
 
-    // Kết thúc / Thanh lý hợp đồng thuê phòng.
+    // Kết thúc / Thanh lý hợp đồng thuê phòng (đồng thời cho toàn bộ người ở cùng rời phòng).
     public function ketThuc(KetThucHopDongRequest $yeuCau, $maHopDong)
     {
         $hopDong = HopDong::findOrFail($maHopDong);
@@ -124,11 +131,17 @@ class HopDongController extends Controller
             return redirect()->back()->with('thongBaoLoi', 'Hợp đồng này đã kết thúc trước đó.');
         }
 
-        $hopDong->update([
-            'trangThaiHD' => 'DA_KET_THUC',
-            'ngayKetThuc' => $yeuCau->input('ngayKetThuc'),
-            'tienHoanCoc' => $yeuCau->input('tienHoanCoc', 0),
-        ]);
+        DB::transaction(function () use ($hopDong, $yeuCau) {
+            NguoiOCung::where('maHopDong', $hopDong->maHopDong)
+                ->where('dangHoatDong', 1)
+                ->update(['dangHoatDong' => 0]);
+
+            $hopDong->update([
+                'trangThaiHD' => 'DA_KET_THUC',
+                'ngayKetThuc' => $yeuCau->input('ngayKetThuc'),
+                'tienHoanCoc' => $yeuCau->input('tienHoanCoc', 0),
+            ]);
+        });
 
         return redirect()->route('hop-dong.chi-tiet', $maHopDong)
             ->with('thongBaoThanhCong', 'Đã kết thúc hợp đồng thành công. Trạng thái phòng đã tự động hoàn về Trống.');

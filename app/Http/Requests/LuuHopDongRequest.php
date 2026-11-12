@@ -55,7 +55,6 @@ class LuuHopDongRequest extends FormRequest
                     $query->where('dangHoatDong', 1);
                 }),
             ],
-            'soLuongNguoi' => ['required', 'integer', 'min:1', 'max:20'],
             'ngayBatDau' => ['required', 'date'],
             'ngayKetThuc' => ['nullable', 'date', 'after_or_equal:ngayBatDau'],
             'giaThueChot' => ['required', 'numeric', 'min:0'],
@@ -78,11 +77,14 @@ class LuuHopDongRequest extends FormRequest
                     } elseif ($phong->trangThaiPhong === 'DANG_THUE' || $phong->hopDongHieuLuc) {
                         $validator->errors()->add('maPhong', 'Phòng này đang có người thuê, không thể lập hợp đồng mới.');
                     }
+                }
+            }
 
-                    // Kiểm tra số lượng người ở không vượt quá sức chứa tối đa của phòng
-                    if ($this->filled('soLuongNguoi') && (int)$this->input('soLuongNguoi') > $phong->soNguoiToiDa) {
-                        $validator->errors()->add('soLuongNguoi', "Số lượng người ở ({$this->input('soLuongNguoi')} người) vượt quá sức chứa tối đa của phòng ({$phong->soNguoiToiDa} người).");
-                    }
+            // Người đại diện phải là khách chưa ở phòng nào (không đứng tên HĐ khác, không là người ở cùng)
+            if ($this->filled('maKhach')) {
+                $khach = KhachThue::find($this->input('maKhach'));
+                if ($khach && $khach->dangOPhong()) {
+                    $validator->errors()->add('maKhach', "Khách {$khach->hoTen} hiện đang ở một phòng khác (đại diện hoặc ở cùng), không thể đứng tên hợp đồng mới.");
                 }
             }
         });
@@ -100,10 +102,6 @@ class LuuHopDongRequest extends FormRequest
             'maPhong.exists' => 'Phòng trọ được chọn không hợp lệ hoặc đã ngừng hoạt động.',
             'maKhach.required' => 'Vui lòng chọn người đại diện ký hợp đồng.',
             'maKhach.exists' => 'Khách thuê được chọn không tồn tại hoặc đã ngừng hoạt động.',
-            'soLuongNguoi.required' => 'Vui lòng nhập số lượng người ở theo hợp đồng.',
-            'soLuongNguoi.integer' => 'Số lượng người ở phải là một số nguyên.',
-            'soLuongNguoi.min' => 'Số lượng người ở phải có ít nhất 1 người.',
-            'soLuongNguoi.max' => 'Số lượng người ở không được vượt quá 20 người.',
             'ngayBatDau.required' => 'Vui lòng chọn ngày bắt đầu hợp đồng.',
             'ngayBatDau.date' => 'Ngày bắt đầu hợp đồng không đúng định dạng ngày tháng.',
             'ngayKetThuc.date' => 'Ngày kết thúc hợp đồng không đúng định dạng ngày tháng.',
