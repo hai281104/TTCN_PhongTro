@@ -252,8 +252,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             '</div>';
                     }
 
-                    htmlHopDong = '<div class="rounded-lg border border-sky-200 bg-sky-50/40 p-4 mb-4">' +
-                        '<div class="flex items-center justify-between mb-3">' +
+                    htmlHopDong = '<div class="rounded-xl border border-sky-200 bg-sky-50/40 p-4">' +
+                        '<div class="flex items-center justify-between mb-3 pb-2 border-b border-sky-200/60">' +
                         '<div>' +
                         '<div class="text-xs font-semibold text-sky-950 uppercase">Đang ở phòng ' + phong + '</div>' +
                         '<div class="text-[11px] text-zinc-500">Loại phòng: ' + loaiPhong + '</div>' +
@@ -262,20 +262,20 @@ document.addEventListener('DOMContentLoaded', function () {
                         '</div>' +
                         '<div class="grid grid-cols-2 gap-3 text-xs">' +
                         '<div><span class="text-zinc-500 block">Quy mô hiện tại:</span><strong class="text-zinc-900">' + soNguoiO + ' / ' + sucChua + ' người</strong></div>' +
-                        '<div><span class="text-zinc-500 block">Giá thuê chốt:</span><strong class="text-zinc-900">' + giaThueDinhDang + '/tháng</strong></div>' +
-                        '<div><span class="text-zinc-500 block">Tiền đặt cọc:</span><span class="text-zinc-800">' + tienCocDinhDang + '</span></div>' +
-                        '<div><span class="text-zinc-500 block">Thời gian thuê:</span><span class="text-zinc-800">' + (hd ? hd.ngayBatDau : '') + ' ~ ' + (hd && hd.ngayKetThuc ? hd.ngayKetThuc : 'Đang thuê') + '</span></div>' +
+                        '<div><span class="text-zinc-500 block">Giá thuê chốt:</span><strong class="text-zinc-900 tabular-nums">' + giaThueDinhDang + '/tháng</strong></div>' +
+                        '<div><span class="text-zinc-500 block">Tiền đặt cọc:</span><strong class="text-zinc-800 tabular-nums">' + tienCocDinhDang + '</strong></div>' +
+                        '<div><span class="text-zinc-500 block">Thời gian thuê:</span><span class="text-zinc-800 tabular-nums">' + (hd ? hd.ngayBatDau : '') + ' ~ ' + (hd && hd.ngayKetThuc ? hd.ngayKetThuc : 'Đang thuê') + '</span></div>' +
                         '</div>' +
                         thongTinPhu +
                         '</div>';
                 } else {
-                    htmlHopDong = '<div class="rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-center text-xs text-zinc-500 mb-4">Khách hiện không có hợp đồng thuê phòng nào đang hiệu lực (chưa xếp phòng).</div>';
+                    htmlHopDong = '<div class="rounded-xl border border-zinc-200 bg-zinc-50 p-5 text-center text-xs text-zinc-500">Khách hiện không có hợp đồng thuê phòng nào đang hiệu lực (chưa xếp phòng).</div>';
                 }
 
                 let htmlLichSu = '';
                 if (k.hop_dong && k.hop_dong.length > 0) {
-                    htmlLichSu = '<div class="mt-4"><div class="text-xs font-semibold text-zinc-900 uppercase mb-2">Lịch sử các hợp đồng thuê</div>' +
-                        '<div class="overflow-hidden rounded-lg border border-zinc-200">' +
+                    htmlLichSu = '<div><div class="text-xs font-semibold text-zinc-900 uppercase mb-2">Lịch sử các hợp đồng thuê</div>' +
+                        '<div class="overflow-hidden rounded-xl border border-zinc-200">' +
                         '<table class="min-w-full divide-y divide-zinc-200 text-xs">' +
                         '<thead class="bg-zinc-50 text-zinc-500 text-left font-medium"><tr><th class="px-3 py-2">Phòng</th><th class="px-3 py-2">Thời gian</th><th class="px-3 py-2 text-right">Giá chốt</th><th class="px-3 py-2 text-right">Trạng thái</th></tr></thead>' +
                         '<tbody class="divide-y divide-zinc-200 bg-white">';
@@ -285,24 +285,37 @@ document.addEventListener('DOMContentLoaded', function () {
                         const badgeHD = hd.trangThaiHD === 'HIEU_LUC'
                             ? '<span class="text-emerald-700 font-medium">Hiệu lực</span>'
                             : '<span class="text-zinc-500">Đã kết thúc</span>';
-                        htmlLichSu += '<tr><td class="px-3 py-2 font-medium text-zinc-900">' + tenPhong + '</td><td class="px-3 py-2 text-zinc-600">' + hd.ngayBatDau + ' ~ ' + (hd.ngayKetThuc || 'Hiện tại') + '</td><td class="px-3 py-2 text-right text-zinc-900 font-medium">' + giaDinhDang + '</td><td class="px-3 py-2 text-right">' + badgeHD + '</td></tr>';
+                        htmlLichSu += '<tr><td class="px-3 py-2 font-medium text-zinc-900">' + tenPhong + '</td><td class="px-3 py-2 text-zinc-600 tabular-nums">' + hd.ngayBatDau + ' ~ ' + (hd.ngayKetThuc || 'Hiện tại') + '</td><td class="px-3 py-2 text-right text-zinc-900 font-medium tabular-nums">' + giaDinhDang + '</td><td class="px-3 py-2 text-right">' + badgeHD + '</td></tr>';
                     });
                     htmlLichSu += '</tbody></table></div></div>';
+                } else {
+                    htmlLichSu = '<div class="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-center text-xs text-zinc-400 italic">Chưa từng đứng tên ký hợp đồng nào.</div>';
                 }
 
                 noiDungChiTiet.innerHTML =
-                    '<div class="grid grid-cols-2 gap-3 pb-4 border-b border-zinc-200 mb-4 text-xs">' +
-                    '<div><span class="text-zinc-500 block">Giới tính & Ngày sinh:</span><span class="font-semibold text-zinc-900">' + tenGioiTinh + ' - ' + ngaySinhHienThi + '</span></div>' +
-                    '<div><span class="text-zinc-500 block">Số điện thoại:</span><span class="font-semibold text-zinc-900">' + k.soDienThoai + '</span></div>' +
-                    '<div><span class="text-zinc-500 block">Số CCCD:</span><span class="font-semibold text-zinc-900">' + k.soCCCD + '</span></div>' +
-                    '<div><span class="text-zinc-500 block">Cấp ngày & Nơi cấp:</span><span class="text-zinc-800">' + ngayCapHienThi + ' (' + noiCapHienThi + ')</span></div>' +
-                    '<div><span class="text-zinc-500 block">Nghề nghiệp:</span><span class="text-zinc-800">' + (k.ngheNghiep || 'Chưa cập nhật') + '</span></div>' +
-                    '<div><span class="text-zinc-500 block">Tình trạng tạm trú:</span>' + badgeTamTru + '</div>' +
-                    '<div class="col-span-2"><span class="text-zinc-500 block">Địa chỉ thường trú / Quê quán:</span><span class="text-zinc-800">' + (k.diaChi || 'Chưa cập nhật') + '</span></div>' +
-                    '<div class="col-span-2 pt-1 border-t border-zinc-100"><span class="text-zinc-500 block mb-1">Tài khoản đăng nhập:</span>' + htmlTaiKhoan + '</div>' +
-                    '</div>' +
-                    htmlHopDong +
-                    htmlLichSu;
+                    '<div class="grid grid-cols-1 lg:grid-cols-2 gap-5 text-xs">' +
+                        '<div class="bg-zinc-50 p-4 rounded-xl border border-zinc-200 space-y-3.5">' +
+                            '<div class="flex items-center justify-between pb-2.5 border-b border-zinc-200">' +
+                                '<span class="font-semibold text-zinc-800 uppercase tracking-wider text-[11px]">1. Thông tin cá nhân & CCCD</span>' +
+                                badgeTamTru +
+                            '</div>' +
+                            '<div class="grid grid-cols-2 gap-3">' +
+                                '<div class="bg-white p-2.5 rounded-lg border border-zinc-200"><span class="text-zinc-500 block text-[11px]">Giới tính & Ngày sinh</span><strong class="text-zinc-900">' + tenGioiTinh + ' • ' + ngaySinhHienThi + '</strong></div>' +
+                                '<div class="bg-white p-2.5 rounded-lg border border-zinc-200"><span class="text-zinc-500 block text-[11px]">Số điện thoại</span><strong class="text-zinc-900 tabular-nums">' + k.soDienThoai + '</strong></div>' +
+                                '<div class="bg-white p-2.5 rounded-lg border border-zinc-200"><span class="text-zinc-500 block text-[11px]">Số CCCD (12 số)</span><strong class="text-zinc-900 tabular-nums">' + k.soCCCD + '</strong></div>' +
+                                '<div class="bg-white p-2.5 rounded-lg border border-zinc-200"><span class="text-zinc-500 block text-[11px]">Ngày cấp & Nơi cấp</span><strong class="text-zinc-800">' + ngayCapHienThi + ' (' + noiCapHienThi + ')</strong></div>' +
+                            '</div>' +
+                            '<div class="grid grid-cols-2 gap-3">' +
+                                '<div class="bg-white p-2.5 rounded-lg border border-zinc-200"><span class="text-zinc-500 block text-[11px]">Nghề nghiệp / Đơn vị</span><strong class="text-zinc-800">' + (k.ngheNghiep || 'Chưa cập nhật') + '</strong></div>' +
+                                '<div class="bg-white p-2.5 rounded-lg border border-zinc-200"><span class="text-zinc-500 block text-[11px]">Tài khoản Cổng khách thuê</span><div class="mt-0.5">' + htmlTaiKhoan + '</div></div>' +
+                            '</div>' +
+                            '<div class="bg-white p-2.5 rounded-lg border border-zinc-200"><span class="text-zinc-500 block text-[11px]">Địa chỉ thường trú / Quê quán</span><strong class="text-zinc-800">' + (k.diaChi || 'Chưa cập nhật') + '</strong></div>' +
+                        '</div>' +
+                        '<div class="space-y-4 flex flex-col justify-between">' +
+                            htmlHopDong +
+                            htmlLichSu +
+                        '</div>' +
+                    '</div>';
             })
             .catch(function () {
                 noiDungChiTiet.innerHTML = '<div class="py-6 text-center text-sm text-red-600">Lỗi kết nối khi tải hồ sơ khách.</div>';

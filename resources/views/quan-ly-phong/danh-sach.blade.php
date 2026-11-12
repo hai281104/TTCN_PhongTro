@@ -227,66 +227,66 @@
                 <div class="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-xs mb-6">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-zinc-200 text-xs">
-                            <thead class="bg-zinc-50 text-zinc-500 uppercase tracking-wider font-medium text-[11px] border-b border-zinc-200">
+                            <thead class="bg-zinc-50 text-zinc-500 font-medium text-[11px] border-b border-zinc-200">
                                 <tr>
-                                    <th scope="col" class="px-3.5 py-3 text-left">Phòng & Vị trí</th>
-                                    <th scope="col" class="px-3.5 py-3 text-left">Thể loại & Diện tích</th>
-                                    <th scope="col" class="px-3.5 py-3 text-left">Tiện nghi nội thất</th>
-                                    <th scope="col" class="px-3.5 py-3 text-center">Sức chứa / Ở</th>
-                                    <th scope="col" class="px-3.5 py-3 text-left">Trạng thái</th>
-                                    <th scope="col" class="px-3.5 py-3 text-right">Giá thuê & Tiền cọc</th>
-                                    <th scope="col" class="px-3.5 py-3 text-left">Người thuê</th>
-                                    <th scope="col" class="px-4 py-3 text-right sticky right-0 bg-zinc-50 z-10 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">Thao tác</th>
+                                    <th scope="col" class="px-3 py-2.5 text-left whitespace-nowrap">Phòng & Vị trí</th>
+                                    <th scope="col" class="px-3 py-2.5 text-left whitespace-nowrap">Thể loại & Diện tích</th>
+                                    <th scope="col" class="px-3 py-2.5 text-left whitespace-nowrap">Tiện nghi nội thất</th>
+                                    <th scope="col" class="px-3 py-2.5 text-center whitespace-nowrap">Sức chứa / Ở</th>
+                                    <th scope="col" class="px-3 py-2.5 text-left whitespace-nowrap">Trạng thái</th>
+                                    <th scope="col" class="px-3 py-2.5 text-right whitespace-nowrap">Giá thuê & Tiền cọc</th>
+                                    <th scope="col" class="px-3 py-2.5 text-left whitespace-nowrap">Người thuê</th>
+                                    <th scope="col" class="px-3.5 py-2.5 text-right whitespace-nowrap sticky right-0 bg-zinc-50 z-10 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-zinc-200 bg-white">
                                 @foreach ($danhSachPhong as $phong)
                                     <tr class="hover:bg-zinc-50/80 transition-colors group">
-                                        <td class="px-4 py-3.5 whitespace-nowrap">
-                                            <div class="flex items-center gap-3">
-                                                <div class="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center font-bold text-xs text-zinc-700 border border-zinc-200/80">
+                                        <td class="px-3 py-2 whitespace-nowrap">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-7 h-7 rounded-lg bg-zinc-100 flex items-center justify-center font-bold text-xs text-zinc-700 border border-zinc-200/80 shrink-0">
                                                     P
                                                 </div>
-                                                <div>
+                                                <div class="flex items-center gap-1.5">
                                                     <a href="{{ route('phong-tro.chi-tiet', $phong->maPhong) }}" class="font-semibold text-zinc-900 hover:text-zinc-600 hover:underline">
                                                         {{ $phong->soPhong }}
                                                     </a>
-                                                    <div class="flex items-center gap-1.5 mt-0.5">
-                                                        <span class="text-[10px] text-zinc-500 bg-zinc-100 px-1.5 py-0.2 rounded border border-zinc-200">
-                                                            {{ $phong->tang ?: 'Tầng 1' }}
-                                                        </span>
-                                                        <span class="text-[10px] text-zinc-400">#{{ $phong->maPhong }}</span>
-                                                    </div>
+                                                    <span class="text-[10px] text-zinc-500 bg-zinc-100 px-1.5 py-0.5 rounded border border-zinc-200">
+                                                        {{ $phong->tang ?: 'Tầng 1' }}
+                                                    </span>
+                                                    <span class="text-[10px] text-zinc-400">#{{ $phong->maPhong }}</span>
                                                 </div>
                                             </div>
                                         </td>
 
-                                        <td class="px-4 py-3.5 whitespace-nowrap">
-                                            <div class="font-medium text-zinc-800">
-                                                {{ $phong->loaiPhong->tenLoaiPhong ?? 'Chưa phân loại' }}
-                                            </div>
-                                            <div class="text-[11px] text-zinc-500">
-                                                {{ $phong->dienTich ? $phong->dienTich . ' m²' : (optional($phong->loaiPhong)->dienTich ? optional($phong->loaiPhong)->dienTich . ' m² (chuẩn)' : '—') }}
+                                        <td class="px-3 py-2 whitespace-nowrap">
+                                            <div class="flex items-baseline gap-1.5">
+                                                <span class="font-medium text-zinc-800">
+                                                    {{ $phong->loaiPhong->tenLoaiPhong ?? 'Chưa phân loại' }}
+                                                </span>
+                                                <span class="text-[11px] text-zinc-500 tabular-nums">
+                                                    ({{ $phong->dienTich ? $phong->dienTich . ' m²' : (optional($phong->loaiPhong)->dienTich ? optional($phong->loaiPhong)->dienTich . ' m²' : '—') }})
+                                                </span>
                                             </div>
                                         </td>
 
-                                        <td class="px-4 py-3.5">
+                                        <td class="px-3 py-2 whitespace-nowrap">
                                             @php
                                                 $tienNghiArr = is_array($phong->tienNghi) ? $phong->tienNghi : [];
                                             @endphp
                                             @if (!empty($tienNghiArr))
-                                                <div class="flex flex-wrap gap-1 max-w-[200px]">
-                                                    @foreach (array_slice($tienNghiArr, 0, 4) as $tnKey)
+                                                <div class="inline-flex items-center gap-1 flex-nowrap">
+                                                    @foreach (array_slice($tienNghiArr, 0, 3) as $tnKey)
                                                         @php
                                                             $tenTienNghi = $danhSachTienNghi[$tnKey]['ten'] ?? \App\Models\PhongTro::layTenTienNghi($tnKey);
                                                         @endphp
-                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-zinc-100 text-zinc-700 border border-zinc-200" title="{{ $tenTienNghi }}">
-                                                            <span class="truncate max-w-[90px]">{{ $tenTienNghi }}</span>
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-zinc-100 text-zinc-700 border border-zinc-200 whitespace-nowrap" title="{{ $tenTienNghi }}">
+                                                            {{ $tenTienNghi }}
                                                         </span>
                                                     @endforeach
-                                                    @if (count($tienNghiArr) > 4)
-                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-zinc-100 text-zinc-500 font-medium">
-                                                            +{{ count($tienNghiArr) - 4 }}
+                                                    @if (count($tienNghiArr) > 3)
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-zinc-100 text-zinc-500 font-medium whitespace-nowrap">
+                                                            +{{ count($tienNghiArr) - 3 }}
                                                         </span>
                                                     @endif
                                                 </div>
@@ -295,7 +295,7 @@
                                             @endif
                                         </td>
 
-                                        <td class="px-4 py-3.5 whitespace-nowrap text-center">
+                                        <td class="px-3 py-2 whitespace-nowrap text-center">
                                             @if ($phong->trangThaiPhong === 'DANG_THUE' && $phong->hopDongHieuLuc)
                                                 <span class="font-semibold text-sky-700 tabular-nums">
                                                     {{ $phong->hopDongHieuLuc->soLuongNguoi ?? 1 }}
@@ -308,7 +308,7 @@
                                             @endif
                                         </td>
 
-                                        <td class="px-4 py-3.5 whitespace-nowrap">
+                                        <td class="px-3 py-2 whitespace-nowrap">
                                             @if ($phong->trangThaiPhong === 'TRONG')
                                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                                                     Trống
@@ -324,23 +324,23 @@
                                             @endif
                                         </td>
 
-                                        <td class="px-4 py-3.5 whitespace-nowrap text-right">
-                                            <div class="font-semibold text-zinc-900 tabular-nums">
+                                        <td class="px-3 py-2 whitespace-nowrap text-right">
+                                            <span class="font-semibold text-zinc-900 tabular-nums">
                                                 {{ number_format($phong->donGiaMacDinh, 0, ',', '.') }} đ
-                                            </div>
-                                            <div class="text-[11px] text-zinc-500 tabular-nums">
-                                                Cọc: {{ number_format($phong->tienCocMacDinh ?: $phong->donGiaMacDinh, 0, ',', '.') }} đ
-                                            </div>
+                                            </span>
+                                            <span class="text-[11px] text-zinc-400 tabular-nums ml-1">
+                                                (Cọc: {{ number_format($phong->tienCocMacDinh ?: $phong->donGiaMacDinh, 0, ',', '.') }} đ)
+                                            </span>
                                         </td>
 
-                                        <td class="px-4 py-3.5 whitespace-nowrap">
+                                        <td class="px-3 py-2 whitespace-nowrap">
                                             @if ($phong->hopDongHieuLuc && $phong->hopDongHieuLuc->khachThue)
-                                                <div class="flex flex-col">
+                                                <div class="inline-flex items-baseline gap-1.5">
                                                     <span class="font-medium text-sky-700" title="{{ $phong->hopDongHieuLuc->khachThue->hoTen }}">
                                                         {{ $phong->hopDongHieuLuc->khachThue->hoTen }}
                                                     </span>
                                                     <span class="text-[11px] text-zinc-400 tabular-nums">
-                                                        {{ $phong->hopDongHieuLuc->khachThue->soDienThoai }}
+                                                        ({{ $phong->hopDongHieuLuc->khachThue->soDienThoai }})
                                                     </span>
                                                 </div>
                                             @else
@@ -348,19 +348,25 @@
                                             @endif
                                         </td>
 
-                                        <td class="px-4 py-3 whitespace-nowrap text-right sticky right-0 bg-white group-hover:bg-zinc-50 z-10 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">
-                                            <div class="inline-flex items-center justify-end gap-1.5">
+                                        <td class="px-3.5 py-2 whitespace-nowrap text-right sticky right-0 bg-white group-hover:bg-zinc-50 z-10 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">
+                                            <div class="nhom-thao-tac">
                                                 @if ($phong->trangThaiPhong === 'TRONG')
                                                     <a href="{{ route('hop-dong.danh-sach', ['maPhongChon' => $phong->maPhong]) }}"
-                                                        class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-medium transition-colors shadow-2xs"
+                                                        class="nut-thao-tac nut-thao-tac-chinh"
                                                         title="Lập hợp đồng cho thuê phòng này ngay">
-                                                        Cho thuê
+                                                        <span>+ Cho thuê</span>
+                                                    </a>
+                                                @elseif ($phong->hopDongHieuLuc)
+                                                    <a href="{{ route('hop-dong.chi-tiet', $phong->hopDongHieuLuc->maHopDong) }}"
+                                                        class="nut-thao-tac"
+                                                        title="Xem hợp đồng đang thuê của phòng {{ $phong->soPhong }}">
+                                                        <span>Hợp đồng</span>
                                                     </a>
                                                 @endif
 
                                                 <button type="button" data-hanh-dong="xem-chi-tiet" data-ma-phong="{{ $phong->maPhong }}"
-                                                    class="px-2.5 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-[11px] font-medium transition-colors">
-                                                    Chi tiết
+                                                    class="nut-thao-tac" title="Xem chi tiết phòng {{ $phong->soPhong }}">
+                                                    <span>Chi tiết</span>
                                                 </button>
 
                                                 <button type="button" data-hanh-dong="sua-phong"
@@ -374,28 +380,26 @@
                                                     data-so-nguoi-toi-da="{{ $phong->soNguoiToiDa }}"
                                                     data-don-gia="{{ $phong->donGiaMacDinh }}"
                                                     data-ghi-chu="{{ $phong->ghiChu }}"
-                                                    class="px-2.5 py-1.5 rounded-lg border border-zinc-200 hover:bg-zinc-50 text-zinc-700 text-[11px] font-medium transition-colors">
-                                                    Sửa
+                                                    class="nut-thao-tac nut-thao-tac-sua" title="Chỉnh sửa thông tin phòng {{ $phong->soPhong }}">
+                                                    <span>✎ Sửa</span>
                                                 </button>
 
-                                                @if ($phong->trangThaiPhong !== 'DANG_THUE')
-                                                    <form action="{{ route('phong-tro.doi-trang-thai', $phong->maPhong) }}" method="POST" class="inline">
-                                                        @csrf
-                                                        @method('PATCH')
-                                                        <button type="submit"
-                                                            class="px-2.5 py-1.5 rounded-lg border border-zinc-200 hover:bg-zinc-50 text-zinc-600 text-[11px] font-medium transition-colors"
-                                                            title="{{ $phong->trangThaiPhong === 'TRONG' ? 'Chuyển sang sửa chữa' : 'Chuyển sang sẵn sàng đón khách' }}">
-                                                            {{ $phong->trangThaiPhong === 'TRONG' ? 'Bảo trì' : 'Mở lại' }}
-                                                        </button>
-                                                    </form>
-
-                                                    <button type="button" data-hanh-dong="xoa-phong"
-                                                        data-ma-phong="{{ $phong->maPhong }}"
-                                                        data-so-phong="{{ $phong->soPhong }}"
-                                                        class="px-2.5 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 text-[11px] font-medium transition-colors">
-                                                        Xóa
+                                                <form action="{{ route('phong-tro.doi-trang-thai', $phong->maPhong) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit"
+                                                        class="nut-thao-tac nut-thao-tac-canh-bao"
+                                                        title="{{ $phong->trangThaiPhong === 'DANG_SUA_CHUA' ? 'Chuyển sang sẵn sàng đón khách' : 'Chuyển sang bảo trì / sửa chữa' }}">
+                                                        <span>{{ $phong->trangThaiPhong === 'DANG_SUA_CHUA' ? 'Mở lại' : 'Bảo trì' }}</span>
                                                     </button>
-                                                @endif
+                                                </form>
+
+                                                <button type="button" data-hanh-dong="xoa-phong"
+                                                    data-ma-phong="{{ $phong->maPhong }}"
+                                                    data-so-phong="{{ $phong->soPhong }}"
+                                                    class="nut-thao-tac nut-thao-tac-xoa" title="Ngưng hoạt động phòng {{ $phong->soPhong }}">
+                                                    <span>Xóa</span>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -405,8 +409,8 @@
                     </div>
                 </div>
 
-                <div class="mt-4">
-                    {{ $danhSachPhong->links() }}
+                <div class="mt-3">
+                    @include('partials.phan-trang-nhanh', ['paginator' => $danhSachPhong])
                 </div>
             @endif
         </main>
@@ -721,22 +725,32 @@
         </div>
     </div>
 
-    <!-- MODAL CHI TIẾT PHÒNG -->
-    <div id="modalChiTietPhong" class="hop-thoai-modal modal-an fixed inset-0 z-50 bg-zinc-900/50 backdrop-blur-xs items-center justify-center p-4">
-        <div class="chuyen-dong-modal bg-white rounded-xl border border-zinc-200 shadow-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-4">
-                <h3 id="chiTietSoPhong" class="text-sm font-semibold text-zinc-900">Chi tiết phòng</h3>
-                <button type="button" data-dong-modal class="text-zinc-400 hover:text-zinc-700 text-base">&times;</button>
+    <!-- MODAL CHI TIẾT PHÒNG (RỘNG RÃI 2 CỘT KHÔNG CẦN CUỘN) -->
+    <div id="modalChiTietPhong" class="hop-thoai-modal modal-an fixed inset-0 z-50 bg-zinc-900/60 backdrop-blur-xs items-center justify-center p-3 sm:p-5">
+        <div class="chuyen-dong-modal bg-white rounded-2xl border border-zinc-200 shadow-2xl max-w-5xl w-full p-6 max-h-[92vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3.5 border-b border-zinc-200 mb-5">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-zinc-900 text-white flex items-center justify-center font-bold text-xs">P</div>
+                    <div>
+                        <h3 id="chiTietSoPhong" class="text-sm font-semibold text-zinc-900">Chi tiết phòng</h3>
+                        <p class="text-[11px] text-zinc-500">Thông số kỹ thuật, tiện nghi nội thất, hợp đồng và chỉ số điện nước</p>
+                    </div>
+                </div>
+                <button type="button" data-dong-modal class="text-zinc-400 hover:text-zinc-700 p-1.5 rounded-lg hover:bg-zinc-100 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
 
             <div id="noiDungChiTietPhong">
                 <!-- Nội dung được nạp qua JavaScript -->
             </div>
 
-            <div class="mt-6 pt-4 border-t border-zinc-100 flex justify-end">
+            <div class="mt-5 pt-3.5 border-t border-zinc-200 flex justify-end">
                 <button type="button" data-dong-modal
-                    class="px-4 py-2 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors shadow-xs">
-                    Đóng
+                    class="px-5 py-2 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors shadow-xs">
+                    Đóng cửa sổ
                 </button>
             </div>
         </div>
@@ -773,12 +787,12 @@
     </div>
 
     <!-- MODAL QUẢN LÝ LOẠI PHÒNG -->
-    <div id="modalQuanLyLoaiPhong" class="hop-thoai-modal modal-an fixed inset-0 z-50 bg-zinc-900/60 backdrop-blur-xs items-center justify-center p-3 sm:p-5">
+    <div id="modalQuanLyLoaiPhong" class="hop-thoai-modal {{ session('moModalLoaiPhong') ? 'modal-hien' : 'modal-an' }} fixed inset-0 z-50 bg-zinc-900/60 backdrop-blur-xs items-center justify-center p-3 sm:p-5">
         <div class="chuyen-dong-modal bg-white rounded-2xl border border-zinc-200 shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden">
             <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-200 bg-zinc-50/70 shrink-0">
                 <div>
                     <h3 class="text-sm font-semibold text-zinc-900">Quản lý danh mục loại phòng</h3>
-                    <p class="text-[11px] text-zinc-500">Thiết lập đơn giá chuẩn, diện tích và sức chứa tối đa cho từng thể loại phòng</p>
+                    <p class="text-[11px] text-zinc-500">Thiết lập đơn giá chuẩn và diện tích gợi ý cho từng thể loại phòng</p>
                 </div>
                 <button type="button" data-dong-modal class="text-zinc-400 hover:text-zinc-700 p-1.5 rounded-lg hover:bg-zinc-100 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -789,15 +803,15 @@
 
             <div class="p-6 overflow-y-auto flex-1 text-xs space-y-5">
                 <!-- FORM THÊM / CẬP NHẬT LOẠI PHÒNG -->
-                <form id="bieuMauLoaiPhong" action="{{ route('phong-tro.loai-phong.tao-moi') }}" method="POST" class="bg-zinc-50 p-4 rounded-xl border border-zinc-200 space-y-3">
+                <form id="bieuMauLoaiPhong" action="{{ route('phong-tro.loai-phong.tao-moi') }}" method="POST" class="bg-zinc-50 p-4 rounded-xl border border-zinc-200 space-y-3 transition-colors">
                     @csrf
                     <input type="hidden" name="_method" id="phuongThucLoaiPhong" value="POST">
                     <div class="flex items-center justify-between">
                         <span id="tieuDeFormLoaiPhong" class="text-[11px] font-semibold text-zinc-800 uppercase tracking-wider">
                             + Thêm loại phòng mới
                         </span>
-                        <button type="button" id="nutHuySuaLoaiPhong" class="hidden text-[11px] text-red-600 hover:underline font-medium">
-                            Hủy chế độ sửa
+                        <button type="button" id="nutHuySuaLoaiPhong" class="hidden nut-thao-tac nut-thao-tac-xoa">
+                            ✕ Hủy chế độ sửa
                         </button>
                     </div>
 
@@ -836,64 +850,58 @@
                 <!-- DANH SÁCH LOẠI PHÒNG HIỆN CÓ -->
                 <div class="border border-zinc-200 rounded-xl overflow-hidden">
                     <table class="min-w-full divide-y divide-zinc-200 text-xs">
-                        <thead class="bg-zinc-50 text-zinc-500 uppercase tracking-wider font-medium text-[11px]">
+                        <thead class="bg-zinc-50 text-zinc-500 font-medium text-[11px]">
                             <tr>
                                 <th class="px-4 py-2.5 text-left">Tên thể loại phòng</th>
                                 <th class="px-4 py-2.5 text-center">Diện tích chuẩn</th>
                                 <th class="px-4 py-2.5 text-right">Đơn giá gợi ý</th>
-                                <th class="px-4 py-2.5 text-center">Số phòng</th>
                                 <th class="px-4 py-2.5 text-right">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-zinc-200 bg-white">
                             @forelse ($danhSachLoaiPhong as $lp)
-                                <tr class="hover:bg-zinc-50/70">
-                                    <td class="px-4 py-3">
+                                <tr class="hover:bg-zinc-50/70 dong-loai-phong transition-colors" data-dong-ma-loai="{{ $lp->maLoaiPhong }}">
+                                    <td class="px-4 py-2.5">
                                         <div class="font-semibold text-zinc-900">{{ $lp->tenLoaiPhong }}</div>
                                         @if ($lp->moTa)
                                             <div class="text-[11px] text-zinc-500">{{ $lp->moTa }}</div>
                                         @endif
                                     </td>
-                                    <td class="px-4 py-3 text-center tabular-nums text-zinc-700">
+                                    <td class="px-4 py-2.5 text-center tabular-nums text-zinc-700">
                                         {{ $lp->dienTich ? $lp->dienTich . ' m²' : '—' }}
                                     </td>
-                                    <td class="px-4 py-3 text-right font-semibold text-zinc-900 tabular-nums">
+                                    <td class="px-4 py-2.5 text-right font-semibold text-zinc-900 tabular-nums">
                                         {{ number_format($lp->donGiaGoiY, 0, ',', '.') }} đ
                                     </td>
-                                    <td class="px-4 py-3 text-center">
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-zinc-100 text-zinc-700 border border-zinc-200">
-                                            {{ $lp->phong_tro_count ?? 0 }} phòng
-                                        </span>
-                                    </td>
-                                    <td class="px-4 py-3 text-right whitespace-nowrap">
-                                        <div class="inline-flex items-center gap-1.5">
+                                    <td class="px-4 py-2.5 text-right whitespace-nowrap">
+                                        <div class="nhom-thao-tac">
                                             <button type="button" data-hanh-dong="sua-loai-phong"
                                                 data-ma-loai="{{ $lp->maLoaiPhong }}"
                                                 data-ten-loai="{{ $lp->tenLoaiPhong }}"
                                                 data-don-gia="{{ $lp->donGiaGoiY }}"
                                                 data-dien-tich="{{ $lp->dienTich }}"
                                                 data-mo-ta="{{ $lp->moTa }}"
-                                                class="px-2.5 py-1 rounded border border-zinc-200 hover:bg-zinc-100 text-zinc-700 text-[11px] font-medium transition-colors">
-                                                Sửa
+                                                class="nut-thao-tac nut-thao-tac-sua"
+                                                title="Chỉnh sửa loại phòng {{ $lp->tenLoaiPhong }}">
+                                                <span>✎ Sửa</span>
                                             </button>
 
-                                            @if (($lp->phong_tro_count ?? 0) == 0)
-                                                <form action="{{ route('phong-tro.loai-phong.xoa', $lp->maLoaiPhong) }}" method="POST" class="inline"
-                                                    onsubmit="return confirm('Xác nhận xóa loại phòng {{ $lp->tenLoaiPhong }}?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit"
-                                                        class="px-2.5 py-1 rounded border border-red-200 text-red-600 hover:bg-red-50 text-[11px] font-medium transition-colors">
-                                                        Xóa
-                                                    </button>
-                                                </form>
-                                            @endif
+                                            <form action="{{ route('phong-tro.loai-phong.xoa', $lp->maLoaiPhong) }}" method="POST" class="inline"
+                                                onsubmit="return confirm('Xác nhận xóa loại phòng \'{{ $lp->tenLoaiPhong }}\' khỏi danh mục?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="nut-thao-tac nut-thao-tac-xoa"
+                                                    title="Xóa loại phòng {{ $lp->tenLoaiPhong }}">
+                                                    <span>Xóa</span>
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-4 py-8 text-center text-zinc-500">
+                                    <td colspan="4" class="px-4 py-8 text-center text-zinc-500">
                                         Chưa có loại phòng nào. Hãy thêm loại phòng đầu tiên ở biểu mẫu bên trên.
                                     </td>
                                 </tr>

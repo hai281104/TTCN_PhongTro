@@ -142,124 +142,126 @@
                 </form>
             </div>
 
-            <!-- DANH SÁCH CÁC HỢP ĐỒNG ĐANG THUÊ & NGƯỜI Ở CÙNG -->
+            <!-- DANH SÁCH DẠNG BẢNG HÀNG NGANG: PHÒNG / HỢP ĐỒNG & KHÁCH Ở CÙNG -->
             @if ($danhSachHopDong->isEmpty())
                 <div class="bg-white border border-zinc-200 rounded-xl p-12 text-center shadow-xs space-y-2">
                     <div class="text-sm font-semibold text-zinc-900">Chưa có hợp đồng đang hiệu lực phù hợp</div>
                     <p class="text-xs text-zinc-500">Hãy ký hợp đồng tại mục <strong>Hợp đồng</strong> trước khi thêm người ở cùng.</p>
                 </div>
             @else
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                    @foreach ($danhSachHopDong as $hd)
-                        @php
-                            $soNguoiHienTai = 1 + $hd->danhSachNguoiOCung->count();
-                            $soNguoiToiDa = optional($hd->phongTro)->soNguoiToiDa ?? 1;
-                            $conCho = $soNguoiHienTai < $soNguoiToiDa;
-                        @endphp
-                        <div class="bg-white border border-zinc-200 rounded-xl p-5 shadow-xs flex flex-col justify-between space-y-4">
-                            <div class="space-y-3">
-                                <!-- Header thẻ hợp đồng -->
-                                <div class="flex items-start justify-between gap-3 pb-3 border-b border-zinc-100">
-                                    <div>
-                                        <div class="flex items-center gap-2">
-                                            <a href="{{ route('phong-tro.chi-tiet', $hd->maPhong) }}" class="text-base font-bold text-zinc-900 hover:underline">
-                                                Phòng {{ optional($hd->phongTro)->soPhong }}
-                                            </a>
-                                            <span class="text-xs text-zinc-400">&bull;</span>
-                                            <a href="{{ route('hop-dong.chi-tiet', $hd->maHopDong) }}" class="text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:underline">
-                                                #HD-{{ str_pad($hd->maHopDong, 4, '0', STR_PAD_LEFT) }}
-                                            </a>
-                                        </div>
-                                        <div class="text-xs text-zinc-500 mt-0.5">
-                                            {{ optional(optional($hd->phongTro)->loaiPhong)->tenLoaiPhong ?? 'Phòng trọ' }} &bull;
-                                            Đại diện ký HĐ:
+                <div class="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-xs">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-zinc-200 text-xs">
+                            <thead class="bg-zinc-50 text-zinc-500 font-medium text-[11px] border-b border-zinc-200">
+                                <tr>
+                                    <th scope="col" class="px-3 py-2.5 text-left whitespace-nowrap">Phòng & Hợp đồng</th>
+                                    <th scope="col" class="px-3 py-2.5 text-left whitespace-nowrap">Đại diện ký HĐ</th>
+                                    <th scope="col" class="px-3 py-2.5 text-center whitespace-nowrap">Sức chứa</th>
+                                    <th scope="col" class="px-3 py-2.5 text-left whitespace-nowrap">Danh sách khách đang ở cùng</th>
+                                    <th scope="col" class="px-3.5 py-2.5 text-right whitespace-nowrap sticky right-0 bg-zinc-50 z-10 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-zinc-200 bg-white">
+                                @foreach ($danhSachHopDong as $hd)
+                                    @php
+                                        $soNguoiHienTai = 1 + $hd->danhSachNguoiOCung->count();
+                                        $soNguoiToiDa = optional($hd->phongTro)->soNguoiToiDa ?? 1;
+                                        $conCho = $soNguoiHienTai < $soNguoiToiDa;
+                                    @endphp
+                                    <tr class="hover:bg-zinc-50/80 transition-colors group">
+                                        <td class="px-3 py-2 whitespace-nowrap">
+                                            <div class="inline-flex items-baseline gap-1.5">
+                                                <a href="{{ route('phong-tro.chi-tiet', $hd->maPhong) }}" class="font-bold text-zinc-900 hover:underline">
+                                                    P.{{ optional($hd->phongTro)->soPhong }}
+                                                </a>
+                                                <a href="{{ route('hop-dong.chi-tiet', $hd->maHopDong) }}" class="text-[11px] text-zinc-500 hover:text-zinc-900 hover:underline">
+                                                    (#HD-{{ str_pad($hd->maHopDong, 4, '0', STR_PAD_LEFT) }})
+                                                </a>
+                                            </div>
+                                        </td>
+
+                                        <td class="px-3 py-2 whitespace-nowrap">
                                             @if ($hd->khachThue)
-                                                <a href="{{ route('khach-thue.chi-tiet', $hd->maKhach) }}" class="font-semibold text-zinc-900 hover:underline">
+                                                <a href="{{ route('khach-thue.chi-tiet', $hd->maKhach) }}" class="font-medium text-zinc-900 hover:underline">
                                                     {{ $hd->khachThue->hoTen }}
                                                 </a>
-                                                ({{ $hd->khachThue->soDienThoai }})
+                                                <span class="text-[11px] text-zinc-400 tabular-nums ml-1">({{ $hd->khachThue->soDienThoai }})</span>
+                                            @else
+                                                <span class="text-zinc-400 italic">—</span>
                                             @endif
-                                        </div>
-                                    </div>
+                                        </td>
 
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold tabular-nums {{ $conCho ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-zinc-100 text-zinc-700 border border-zinc-200' }}">
-                                        {{ $soNguoiHienTai }} / {{ $soNguoiToiDa }} người
-                                    </span>
-                                </div>
+                                        <td class="px-3 py-2 whitespace-nowrap text-center">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold tabular-nums {{ $conCho ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-zinc-100 text-zinc-700 border border-zinc-200' }}">
+                                                {{ $soNguoiHienTai }} / {{ $soNguoiToiDa }} người
+                                            </span>
+                                        </td>
 
-                                <!-- Danh sách bạn cùng phòng -->
-                                @if ($hd->danhSachNguoiOCung->isNotEmpty())
-                                    <div class="space-y-2">
-                                        <div class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">
-                                            Danh sách người ở cùng ({{ $hd->danhSachNguoiOCung->count() }})
-                                        </div>
-                                        <div class="divide-y divide-zinc-100 border border-zinc-200 rounded-lg overflow-hidden">
-                                            @foreach ($hd->danhSachNguoiOCung as $noc)
-                                                <div class="p-3 bg-white flex items-center justify-between gap-3 text-xs">
-                                                    <div>
-                                                        <div class="font-semibold text-zinc-900">
-                                                            {{ $noc->tenHienThi }}
-                                                            <span class="ml-1.5 px-2 py-0.5 rounded bg-zinc-100 text-zinc-600 text-[11px] font-normal">
-                                                                {{ $noc->ghiChu ?: 'Bạn cùng phòng' }}
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-[11px] text-zinc-500 mt-0.5 tabular-nums">
-                                                            SĐT: {{ $noc->sdtHienThi ?: 'Chưa có' }} &bull;
-                                                            CCCD: {{ $noc->cccdHienThi ?: 'Chưa có' }} &bull;
-                                                            Vào ở: {{ $noc->ngayVaoO ? \Carbon\Carbon::parse($noc->ngayVaoO)->format('d/m/Y') : '—' }}
-                                                        </div>
-                                                    </div>
+                                        <td class="px-3 py-2 whitespace-nowrap">
+                                            @if ($hd->danhSachNguoiOCung->isNotEmpty())
+                                                <div class="inline-flex items-center gap-2 flex-nowrap">
+                                                    @foreach ($hd->danhSachNguoiOCung as $noc)
+                                                        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-50 border border-zinc-200">
+                                                            <span class="font-semibold text-zinc-900">{{ $noc->tenHienThi }}</span>
+                                                            @if ($noc->sdtHienThi)
+                                                                <span class="text-[11px] text-zinc-500 tabular-nums">({{ $noc->sdtHienThi }})</span>
+                                                            @endif
+                                                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-zinc-200/70 text-zinc-700">{{ $noc->ghiChu ?: 'Ở cùng' }}</span>
 
-                                                    <div class="inline-flex items-center gap-1.5 shrink-0">
-                                                        <button type="button" data-hanh-dong="sua-o-cung"
-                                                            data-ma-o-cung="{{ $noc->maNguoiOCung }}"
-                                                            data-ho-ten="{{ $noc->tenHienThi }}"
-                                                            data-sdt="{{ $noc->sdtHienThi }}"
-                                                            data-cccd="{{ $noc->cccdHienThi }}"
-                                                            data-quan-he="{{ $noc->ghiChu }}"
-                                                            data-ngay-vao="{{ $noc->ngayVaoO ? \Carbon\Carbon::parse($noc->ngayVaoO)->format('Y-m-d') : '' }}"
-                                                            class="px-2.5 py-1 rounded border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-100 text-[11px] font-medium transition-colors">
-                                                            Sửa
-                                                        </button>
-
-                                                        <form action="{{ route('khach-o-cung.roi-phong', $noc->maNguoiOCung) }}" method="POST" class="inline">
-                                                            @csrf
-                                                            @method('PATCH')
-                                                            <button type="submit"
-                                                                class="px-2.5 py-1 rounded border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 text-[11px] font-medium transition-colors">
-                                                                Rời phòng
+                                                            <button type="button" data-hanh-dong="sua-o-cung"
+                                                                data-ma-o-cung="{{ $noc->maNguoiOCung }}"
+                                                                data-ho-ten="{{ $noc->tenHienThi }}"
+                                                                data-sdt="{{ $noc->sdtHienThi }}"
+                                                                data-cccd="{{ $noc->cccdHienThi }}"
+                                                                data-quan-he="{{ $noc->ghiChu }}"
+                                                                data-ngay-vao="{{ $noc->ngayVaoO ? \Carbon\Carbon::parse($noc->ngayVaoO)->format('Y-m-d') : '' }}"
+                                                                class="nut-thao-tac nut-thao-tac-sua">
+                                                                <span>✎ Sửa</span>
                                                             </button>
-                                                        </form>
-                                                    </div>
+
+                                                            <form action="{{ route('khach-o-cung.roi-phong', $noc->maNguoiOCung) }}" method="POST" class="inline">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <button type="submit"
+                                                                    class="nut-thao-tac nut-thao-tac-xoa">
+                                                                    <span>Rời phòng</span>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    @endforeach
                                                 </div>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                @else
-                                    <div class="p-3 rounded-lg bg-zinc-50 border border-zinc-200 text-xs text-zinc-500">
-                                        Chưa có người ở cùng (hiện chỉ có người đại diện ở).
-                                    </div>
-                                @endif
-                            </div>
+                                            @else
+                                                <span class="text-zinc-400 italic text-[11px]">Chỉ có người đại diện</span>
+                                            @endif
+                                        </td>
 
-                            <!-- Footer thao tác của thẻ -->
-                            <div class="pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
-                                <a href="{{ route('hop-dong.chi-tiet', $hd->maHopDong) }}" class="text-zinc-600 hover:text-zinc-900 hover:underline">
-                                    Xem hợp đồng &rarr;
-                                </a>
+                                        <td class="px-3.5 py-2 whitespace-nowrap text-right sticky right-0 bg-white group-hover:bg-zinc-50 z-10 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">
+                                            <div class="nhom-thao-tac">
+                                                @if ($conCho)
+                                                    <button type="button"
+                                                        data-them-o-cung-hop-dong="{{ $hd->maHopDong }}"
+                                                        class="nut-thao-tac nut-thao-tac-chinh">
+                                                        <span>+ Thêm ở cùng</span>
+                                                    </button>
+                                                @else
+                                                    <span class="px-2 py-1 rounded bg-zinc-100 text-zinc-400 text-[11px]">Đủ người</span>
+                                                @endif
 
-                                @if ($conCho)
-                                    <button type="button"
-                                        data-them-o-cung-hop-dong="{{ $hd->maHopDong }}"
-                                        class="px-3 py-1.5 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors">
-                                        + Thêm người ở cùng vào P.{{ optional($hd->phongTro)->soPhong }}
-                                    </button>
-                                @else
-                                    <span class="text-[11px] text-zinc-400 italic">Phòng đã đủ sức chứa tối đa</span>
-                                @endif
-                            </div>
-                        </div>
-                    @endforeach
+                                                <a href="{{ route('hop-dong.chi-tiet', $hd->maHopDong) }}"
+                                                    class="nut-thao-tac">
+                                                    <span>Hợp đồng</span>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    @include('partials.phan-trang-nhanh', ['paginator' => $danhSachHopDong])
                 </div>
             @endif
         </main>
@@ -267,7 +269,7 @@
 
     <!-- MODAL THÊM KHÁCH Ở CÙNG (NHẬP THỦ CÔNG) -->
     <div id="modalThemNguoiOCung" class="hop-thoai-modal modal-an fixed inset-0 z-50 bg-zinc-900/60 backdrop-blur-xs items-center justify-center p-4">
-        <div class="chuyen-dong-modal bg-white rounded-xl border border-zinc-200 shadow-2xl max-w-lg w-full p-6">
+        <div class="chuyen-dong-modal bg-white rounded-xl border border-zinc-200 shadow-2xl max-w-2xl w-full p-6">
             <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-4">
                 <div>
                     <h3 class="text-sm font-semibold text-zinc-900">Thêm khách ở cùng vào phòng</h3>
@@ -285,7 +287,7 @@
                     <select name="maHopDong" id="maHopDongOCung" required
                         class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
                         <option value="">-- Chọn hợp đồng đang thuê --</option>
-                        @foreach ($danhSachHopDong as $hd)
+                        @foreach (($danhSachHopDongChon ?? $danhSachHopDong) as $hd)
                             @php
                                 $soNguoiHienTai = 1 + $hd->danhSachNguoiOCung->count();
                                 $soNguoiToiDa = optional($hd->phongTro)->soNguoiToiDa ?? 1;
@@ -348,7 +350,7 @@
 
     <!-- MODAL SỬA KHÁCH Ở CÙNG -->
     <div id="modalSuaNguoiOCung" class="hop-thoai-modal modal-an fixed inset-0 z-50 bg-zinc-900/60 backdrop-blur-xs items-center justify-center p-4">
-        <div class="chuyen-dong-modal bg-white rounded-xl border border-zinc-200 shadow-2xl max-w-lg w-full p-6">
+        <div class="chuyen-dong-modal bg-white rounded-xl border border-zinc-200 shadow-2xl max-w-2xl w-full p-6">
             <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-4">
                 <div>
                     <h3 class="text-sm font-semibold text-zinc-900">Cập nhật thông tin khách ở cùng</h3>

@@ -44,7 +44,7 @@ class PhongTroController extends Controller
 
         $danhSachPhong = $truyVan->with(['loaiPhong', 'hopDongHieuLuc.khachThue'])
             ->orderBy('soPhong', 'asc')
-            ->paginate(12)
+            ->paginate(15)
             ->withQueryString();
 
         $danhSachLoaiPhong = LoaiPhong::where('dangHoatDong', 1)
@@ -288,6 +288,7 @@ class PhongTroController extends Controller
         ]);
 
         return redirect()->route('phong-tro.danh-sach')
+            ->with('moModalLoaiPhong', true)
             ->with('thongBaoThanhCong', "Đã thêm loại phòng '{$loaiPhong->tenLoaiPhong}' thành công.");
     }
 
@@ -320,25 +321,19 @@ class PhongTroController extends Controller
         ]);
 
         return redirect()->route('phong-tro.danh-sach')
+            ->with('moModalLoaiPhong', true)
             ->with('thongBaoThanhCong', "Đã cập nhật loại phòng '{$loaiPhong->tenLoaiPhong}' thành công.");
     }
 
-    // Xóa mềm loại phòng nếu chưa có phòng đang hoạt động gắn vào.
+    // Xóa mềm loại phòng khỏi danh mục hoạt động.
     public function xoaLoaiPhong($maLoaiPhong)
     {
         $loaiPhong = LoaiPhong::findOrFail($maLoaiPhong);
 
-        $soPhongDangDung = PhongTro::where('maLoaiPhong', $maLoaiPhong)
-            ->where('dangHoatDong', 1)
-            ->count();
-
-        if ($soPhongDangDung > 0) {
-            return back()->with('thongBaoLoi', "Không thể xóa loại phòng '{$loaiPhong->tenLoaiPhong}' vì đang có {$soPhongDangDung} phòng thuộc loại này.");
-        }
-
         $loaiPhong->update(['dangHoatDong' => 0]);
 
         return redirect()->route('phong-tro.danh-sach')
-            ->with('thongBaoThanhCong', "Đã xóa loại phòng '{$loaiPhong->tenLoaiPhong}'.");
+            ->with('moModalLoaiPhong', true)
+            ->with('thongBaoThanhCong', "Đã xóa loại phòng '{$loaiPhong->tenLoaiPhong}' khỏi danh mục.");
     }
 }

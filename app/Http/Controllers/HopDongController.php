@@ -40,7 +40,7 @@ class HopDongController extends Controller
         // Sắp xếp mặc định: hợp đồng đang hiệu lực lên trước, mã giảm dần
         $danhSachHopDong = $truyVan->orderByRaw("FIELD(trangThaiHD, 'HIEU_LUC', 'DA_KET_THUC')")
             ->orderBy('maHopDong', 'desc')
-            ->paginate(10)
+            ->paginate(15)
             ->withQueryString();
 
         // Thống kê số liệu KPI

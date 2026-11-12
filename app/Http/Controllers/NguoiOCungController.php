@@ -35,19 +35,24 @@ class NguoiOCungController extends Controller
             });
         }
 
-        $danhSachHopDong = $truyVan->get()->sortBy(fn ($hd) => optional($hd->phongTro)->soPhong)->values();
+        $danhSachHopDong = $truyVan->orderBy('maHopDong', 'desc')->paginate(15)->withQueryString();
+        $danhSachHopDongChon = HopDong::with(['phongTro', 'khachThue', 'danhSachNguoiOCung'])
+            ->where('trangThaiHD', 'HIEU_LUC')
+            ->get()
+            ->sortBy(fn ($hd) => optional($hd->phongTro)->soPhong)
+            ->values();
 
         $tongNguoiOCung = NguoiOCung::where('dangHoatDong', 1)
             ->whereHas('hopDong', fn ($q) => $q->where('trangThaiHD', 'HIEU_LUC'))
             ->count();
         $soHopDongHieuLuc = HopDong::where('trangThaiHD', 'HIEU_LUC')->count();
-        $soPhongConCho = HopDong::with(['phongTro', 'danhSachNguoiOCung'])
-            ->where('trangThaiHD', 'HIEU_LUC')->get()
+        $soPhongConCho = $danhSachHopDongChon
             ->filter(fn ($hd) => (1 + $hd->danhSachNguoiOCung->count()) < (optional($hd->phongTro)->soNguoiToiDa ?? 1))
             ->count();
 
         return view('quan-ly-khach-o-cung.danh-sach', compact(
             'danhSachHopDong',
+            'danhSachHopDongChon',
             'tongNguoiOCung',
             'soHopDongHieuLuc',
             'soPhongConCho'

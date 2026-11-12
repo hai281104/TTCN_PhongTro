@@ -183,60 +183,61 @@
                     <table class="min-w-full divide-y divide-zinc-200 text-xs">
                         <thead class="bg-zinc-50 text-zinc-600 font-medium text-left border-b border-zinc-200">
                             <tr>
-                                <th scope="col" class="px-4 py-3">Mã HĐ</th>
-                                <th scope="col" class="px-4 py-3">Phòng & Thể loại</th>
-                                <th scope="col" class="px-4 py-3">Khách thuê đại diện</th>
-                                <th scope="col" class="px-4 py-3 text-center">Số người ở</th>
-                                <th scope="col" class="px-4 py-3 text-right">Giá thuê chốt</th>
-                                <th scope="col" class="px-4 py-3 text-right">Tiền đặt cọc</th>
-                                <th scope="col" class="px-4 py-3">Thời gian thuê</th>
-                                <th scope="col" class="px-4 py-3 text-center">Trạng thái</th>
-                                <th scope="col" class="px-4 py-3 text-right sticky right-0 bg-zinc-50 z-10 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">Hành động</th>
+                                <th scope="col" class="px-3 py-2.5 whitespace-nowrap">Mã HĐ</th>
+                                <th scope="col" class="px-3 py-2.5 whitespace-nowrap">Phòng & Thể loại</th>
+                                <th scope="col" class="px-3 py-2.5 whitespace-nowrap">Khách thuê đại diện</th>
+                                <th scope="col" class="px-3 py-2.5 text-center whitespace-nowrap">Số người ở</th>
+                                <th scope="col" class="px-3 py-2.5 text-right whitespace-nowrap">Giá thuê chốt</th>
+                                <th scope="col" class="px-3 py-2.5 text-right whitespace-nowrap">Tiền đặt cọc</th>
+                                <th scope="col" class="px-3 py-2.5 whitespace-nowrap">Thời gian thuê</th>
+                                <th scope="col" class="px-3 py-2.5 text-center whitespace-nowrap">Trạng thái</th>
+                                <th scope="col" class="px-3.5 py-2.5 text-right whitespace-nowrap sticky right-0 bg-zinc-50 z-10 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">Hành động</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-zinc-200 bg-white">
                             @forelse ($danhSachHopDong as $hd)
                                 <tr class="hover:bg-zinc-50/70 transition-colors group">
-                                    <td class="px-4 py-3.5 font-bold text-zinc-900 whitespace-nowrap">
+                                    <td class="px-3 py-2 font-bold text-zinc-900 whitespace-nowrap">
                                         #HD-{{ str_pad($hd->maHopDong, 4, '0', STR_PAD_LEFT) }}
                                     </td>
-                                    <td class="px-4 py-3.5 whitespace-nowrap">
-                                        <a href="{{ route('phong-tro.chi-tiet', $hd->maPhong) }}" class="font-bold text-zinc-900 hover:underline">
-                                            Phòng {{ optional($hd->phongTro)->soPhong ?? 'N/A' }}
-                                        </a>
-                                        <div class="text-[11px] text-zinc-500">
-                                            {{ optional(optional($hd->phongTro)->loaiPhong)->tenLoaiPhong ?? 'Chưa phân loại' }}
+                                    <td class="px-3 py-2 whitespace-nowrap">
+                                        <div class="inline-flex items-baseline gap-1.5">
+                                            <a href="{{ route('phong-tro.chi-tiet', $hd->maPhong) }}" class="font-bold text-zinc-900 hover:underline">
+                                                P.{{ optional($hd->phongTro)->soPhong ?? 'N/A' }}
+                                            </a>
+                                            <span class="text-[11px] text-zinc-500">
+                                                ({{ optional(optional($hd->phongTro)->loaiPhong)->tenLoaiPhong ?? 'Chưa phân loại' }})
+                                            </span>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-3.5">
+                                    <td class="px-3 py-2 whitespace-nowrap">
                                         @if ($hd->khachThue)
-                                            <a href="{{ route('khach-thue.chi-tiet', $hd->maKhach) }}" class="font-medium text-zinc-900 hover:underline block">
-                                                {{ $hd->khachThue->hoTen }}
-                                            </a>
-                                            <span class="text-zinc-500 text-[11px] block">{{ $hd->khachThue->soDienThoai }}</span>
+                                            <div class="inline-flex items-baseline gap-1.5">
+                                                <a href="{{ route('khach-thue.chi-tiet', $hd->maKhach) }}" class="font-medium text-zinc-900 hover:underline">
+                                                    {{ $hd->khachThue->hoTen }}
+                                                </a>
+                                                <span class="text-zinc-400 text-[11px] tabular-nums">({{ $hd->khachThue->soDienThoai }})</span>
+                                            </div>
                                         @else
                                             <span class="text-zinc-400 italic">Không tìm thấy</span>
                                         @endif
                                     </td>
-                                    <td class="px-4 py-3.5 text-center whitespace-nowrap text-zinc-700 font-medium">
-                                        <span class="font-bold text-sky-700">{{ $hd->soLuongNguoi ?? 1 }}</span> người
-                                        @if ($hd->phongTro)
-                                            <span class="text-zinc-400 text-[11px] font-normal block">(Tối đa {{ $hd->phongTro->soNguoiToiDa }} người)</span>
-                                        @endif
+                                    <td class="px-3 py-2 text-center whitespace-nowrap text-zinc-700 font-medium tabular-nums">
+                                        <span class="font-bold text-sky-700">{{ $hd->soLuongNguoi ?? 1 }}</span>/{{ optional($hd->phongTro)->soNguoiToiDa ?? 1 }} người
                                     </td>
-                                    <td class="px-4 py-3.5 text-right font-medium text-zinc-900 tabular-nums whitespace-nowrap">
+                                    <td class="px-3 py-2 text-right font-medium text-zinc-900 tabular-nums whitespace-nowrap">
                                         {{ number_format($hd->giaThueChot, 0, ',', '.') }} đ
                                     </td>
-                                    <td class="px-4 py-3.5 text-right tabular-nums text-emerald-700 font-medium whitespace-nowrap">
+                                    <td class="px-3 py-2 text-right tabular-nums text-emerald-700 font-medium whitespace-nowrap">
                                         {{ number_format($hd->tienDatCoc, 0, ',', '.') }} đ
                                     </td>
-                                    <td class="px-4 py-3.5 text-zinc-600 whitespace-nowrap">
-                                        <div>{{ \Carbon\Carbon::parse($hd->ngayBatDau)->format('d/m/Y') }}</div>
-                                        <div class="text-[11px] text-zinc-400">
-                                            {{ $hd->ngayKetThuc ? '&rarr; ' . \Carbon\Carbon::parse($hd->ngayKetThuc)->format('d/m/Y') : '(Vô thời hạn)' }}
-                                        </div>
+                                    <td class="px-3 py-2 text-zinc-600 whitespace-nowrap tabular-nums">
+                                        <span>{{ \Carbon\Carbon::parse($hd->ngayBatDau)->format('d/m/Y') }}</span>
+                                        <span class="text-[11px] text-zinc-400 ml-1">
+                                            {{ $hd->ngayKetThuc ? '~ ' . \Carbon\Carbon::parse($hd->ngayKetThuc)->format('d/m/Y') : '(Vô thời hạn)' }}
+                                        </span>
                                     </td>
-                                    <td class="px-4 py-3.5 text-center whitespace-nowrap">
+                                    <td class="px-3 py-2 text-center whitespace-nowrap">
                                         @if ($hd->trangThaiHD === 'HIEU_LUC')
                                             <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                                                 Hiệu lực
@@ -247,22 +248,24 @@
                                             </span>
                                         @endif
                                     </td>
-                                    <td class="px-4 py-3.5 text-right whitespace-nowrap space-x-1 sticky right-0 bg-white group-hover:bg-zinc-50 z-10 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">
-                                        <a href="{{ route('hop-dong.chi-tiet', $hd->maHopDong) }}"
-                                            class="inline-block px-2.5 py-1 rounded border border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-100 transition-colors">
-                                            Chi tiết
-                                        </a>
+                                    <td class="px-3.5 py-2 text-right whitespace-nowrap sticky right-0 bg-white group-hover:bg-zinc-50 z-10 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">
+                                        <div class="nhom-thao-tac">
+                                            <a href="{{ route('hop-dong.chi-tiet', $hd->maHopDong) }}"
+                                                class="nut-thao-tac" title="Xem chi tiết hợp đồng">
+                                                <span>Chi tiết</span>
+                                            </a>
 
-                                        @if ($hd->trangThaiHD === 'HIEU_LUC')
-                                            <button type="button"
-                                                data-hanh-dong="mo-modal-ket-thuc"
-                                                data-ma-hop-dong="{{ $hd->maHopDong }}"
-                                                data-so-phong="{{ optional($hd->phongTro)->soPhong }}"
-                                                data-tien-coc="{{ $hd->tienDatCoc }}"
-                                                class="px-2.5 py-1 rounded border border-red-200 bg-white text-red-600 hover:bg-red-50 transition-colors">
-                                                Thanh lý
-                                            </button>
-                                        @endif
+                                            @if ($hd->trangThaiHD === 'HIEU_LUC')
+                                                <button type="button"
+                                                    data-hanh-dong="mo-modal-ket-thuc"
+                                                    data-ma-hop-dong="{{ $hd->maHopDong }}"
+                                                    data-so-phong="{{ optional($hd->phongTro)->soPhong }}"
+                                                    data-tien-coc="{{ $hd->tienDatCoc }}"
+                                                    class="nut-thao-tac nut-thao-tac-xoa" title="Thanh lý hợp đồng phòng {{ optional($hd->phongTro)->soPhong }}">
+                                                    <span>Thanh lý</span>
+                                                </button>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -275,12 +278,10 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
 
-                @if ($danhSachHopDong->hasPages())
-                    <div class="px-4 py-3 border-t border-zinc-200 bg-zinc-50">
-                        {{ $danhSachHopDong->links() }}
-                    </div>
-                @endif
+            <div class="mt-3">
+                @include('partials.phan-trang-nhanh', ['paginator' => $danhSachHopDong])
             </div>
 
         </main>
@@ -288,7 +289,7 @@
 
     <!-- MODAL LẬP HỢP ĐỒNG MỚI (1 người đại diện ký, xác định số người ở) -->
     <div id="modalTaoHopDong" class="hop-thoai-modal modal-an fixed inset-0 z-50 bg-zinc-900/50 backdrop-blur-xs items-center justify-center p-4">
-        <div class="chuyen-dong-modal bg-white rounded-xl border border-zinc-200 shadow-xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
+        <div class="chuyen-dong-modal bg-white rounded-xl border border-zinc-200 shadow-xl max-w-4xl w-full p-6 max-h-[92vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-4">
                 <div>
                     <h3 class="text-sm font-semibold text-zinc-900">Lập Hợp Đồng Thuê Phòng Mới</h3>
@@ -406,8 +407,8 @@
                         </div>
                     </div>
 
-                    <!-- Thời gian thuê -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Thời gian thuê & Giá thuê/tiền cọc trên 1 hàng 4 cột -->
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
                         <div>
                             <label for="ngayBatDau" class="block font-medium text-zinc-700 mb-1">
                                 Ngày bắt đầu tính tiền <span class="text-red-500">*</span>
@@ -418,15 +419,12 @@
 
                         <div>
                             <label for="ngayKetThuc" class="block font-medium text-zinc-700 mb-1">
-                                Ngày hết hạn hợp đồng (tùy chọn)
+                                Ngày hết hạn (tùy chọn)
                             </label>
                             <input type="date" name="ngayKetThuc" id="ngayKetThuc"
                                 class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
                         </div>
-                    </div>
 
-                    <!-- Giá thuê và tiền cọc -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label for="inputGiaThueChot" class="block font-medium text-zinc-700 mb-1">
                                 Giá thuê chốt (đ/tháng) <span class="text-red-500">*</span>

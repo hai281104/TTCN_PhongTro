@@ -219,141 +219,148 @@
                     <p class="text-xs text-zinc-500 mb-4">Thử thay đổi bộ lọc tìm kiếm hoặc thêm hồ sơ khách thuê mới.</p>
                 </div>
             @else
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
-                    @foreach ($danhSachKhach as $khach)
-                        <div class="bg-white border border-zinc-200 rounded-xl p-4 shadow-xs flex flex-col justify-between hover:border-zinc-300 transition-all">
-                            <div>
-                                <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-3">
-                                    <div class="flex items-center gap-2.5">
-                                        <div class="w-8 h-8 rounded-full bg-zinc-900 text-white flex items-center justify-center font-bold text-xs">
-                                            {{ mb_substr($khach->hoTen, 0, 1) }}
-                                        </div>
-                                        <div>
-                                            <div class="text-sm font-semibold text-zinc-900 leading-tight flex items-center gap-1.5">
-                                                <span>{{ $khach->hoTen }}</span>
-                                                <span class="text-[10px] text-zinc-500 font-normal">
-                                                    ({{ $khach->gioiTinh === 'NU' ? 'Nữ' : ($khach->gioiTinh === 'KHAC' ? 'Khác' : 'Nam') }}{{ $khach->ngaySinh ? ', ' . \Carbon\Carbon::parse($khach->ngaySinh)->format('Y') : '' }})
-                                                </span>
-                                            </div>
-                                            <div class="text-[11px] text-zinc-500 tabular-nums">{{ $khach->soDienThoai }}</div>
-                                        </div>
-                                    </div>
-
+                <div class="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-xs mb-4">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-zinc-200 text-xs">
+                            <thead class="bg-zinc-50 text-zinc-500 font-medium text-[11px] border-b border-zinc-200">
+                                <tr>
+                                    <th scope="col" class="px-3 py-2.5 text-left whitespace-nowrap">Khách thuê & Giới tính</th>
+                                    <th scope="col" class="px-3 py-2.5 text-left whitespace-nowrap">Số ĐT & CCCD</th>
+                                    <th scope="col" class="px-3 py-2.5 text-left whitespace-nowrap">Phòng đang ở</th>
+                                    <th scope="col" class="px-3 py-2.5 text-center whitespace-nowrap">Tạm trú</th>
+                                    <th scope="col" class="px-3 py-2.5 text-left whitespace-nowrap">Tài khoản</th>
+                                    <th scope="col" class="px-3 py-2.5 text-left whitespace-nowrap">Quê quán / Nghề nghiệp</th>
+                                    <th scope="col" class="px-3.5 py-2.5 text-right whitespace-nowrap sticky right-0 bg-zinc-50 z-10 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-zinc-200 bg-white">
+                                @foreach ($danhSachKhach as $khach)
                                     @php
                                         $thongTinPhong = $khach->layThongTinPhongHienTai();
                                     @endphp
-                                    @if ($thongTinPhong && $thongTinPhong['phongTro'])
-                                        <div class="flex items-center gap-1">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-sky-50 text-sky-800 border border-sky-200" title="Phòng {{ $thongTinPhong['phongTro']->soPhong }}">
-                                                {{ $thongTinPhong['phongTro']->soPhong }}
-                                            </span>
-                                            @if ($thongTinPhong['laDaiDien'])
-                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-200" title="Đại diện hợp đồng">
-                                                    Đại diện
+                                    <tr class="hover:bg-zinc-50/80 transition-colors group">
+                                        <td class="px-3 py-2 whitespace-nowrap">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-6 h-6 rounded-full bg-zinc-900 text-white flex items-center justify-center font-bold text-[10px] shrink-0">
+                                                    {{ mb_substr($khach->hoTen, 0, 1) }}
+                                                </div>
+                                                <a href="{{ route('khach-thue.chi-tiet', $khach->maKhach) }}" class="font-semibold text-zinc-900 hover:underline">
+                                                    {{ $khach->hoTen }}
+                                                </a>
+                                                <span class="text-[11px] text-zinc-400">
+                                                    ({{ $khach->gioiTinh === 'NU' ? 'Nữ' : ($khach->gioiTinh === 'KHAC' ? 'Khác' : 'Nam') }}{{ $khach->ngaySinh ? ', ' . \Carbon\Carbon::parse($khach->ngaySinh)->format('Y') : '' }})
                                                 </span>
+                                            </div>
+                                        </td>
+
+                                        <td class="px-3 py-2 whitespace-nowrap tabular-nums">
+                                            <span class="font-medium text-zinc-900">{{ $khach->soDienThoai }}</span>
+                                            <span class="text-zinc-300 mx-1">|</span>
+                                            <span class="text-zinc-600 text-[11px]">CCCD: {{ $khach->soCCCD }}</span>
+                                        </td>
+
+                                        <td class="px-3 py-2 whitespace-nowrap">
+                                            @if ($thongTinPhong && $thongTinPhong['phongTro'])
+                                                <div class="inline-flex items-center gap-1.5">
+                                                    <a href="{{ route('phong-tro.chi-tiet', $thongTinPhong['phongTro']->maPhong) }}"
+                                                        class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-sky-50 text-sky-800 border border-sky-200 hover:bg-sky-100">
+                                                        P.{{ $thongTinPhong['phongTro']->soPhong }}
+                                                    </a>
+                                                    @if ($thongTinPhong['laDaiDien'])
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                                            Đại diện
+                                                        </span>
+                                                    @else
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                                                            Ở cùng
+                                                        </span>
+                                                    @endif
+                                                </div>
                                             @else
-                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200" title="Người ở cùng phòng">
-                                                    Ở cùng
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-zinc-100 text-zinc-600 border border-zinc-200">
+                                                    Chưa thuê
                                                 </span>
                                             @endif
-                                        </div>
-                                    @else
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-zinc-100 text-zinc-600 border border-zinc-200">
-                                            Chưa thuê
-                                        </span>
-                                    @endif
-                                </div>
+                                        </td>
 
-                                <div class="space-y-1.5 mb-3 text-xs">
-                                    <div class="flex items-baseline justify-between">
-                                        <span class="text-zinc-500 text-[11px]">CCCD:</span>
-                                        <span class="font-medium text-zinc-900 tabular-nums text-[11px]">{{ $khach->soCCCD }}</span>
-                                    </div>
+                                        <td class="px-3 py-2 whitespace-nowrap text-center">
+                                            <form action="{{ route('khach-thue.doi-trang-thai-tam-tru', $khach->maKhach) }}" method="POST" class="inline">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" title="Nhấp để đổi trạng thái tạm trú"
+                                                    class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium transition-colors {{ $khach->daDangKyTamTru ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100' : 'bg-red-50 text-red-700 border border-red-200 hover:bg-red-100' }}">
+                                                    {{ $khach->daDangKyTamTru ? 'Đã ĐK' : 'Chưa ĐK' }}
+                                                </button>
+                                            </form>
+                                        </td>
 
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-zinc-500 text-[11px]">Tạm trú:</span>
-                                        <form action="{{ route('khach-thue.doi-trang-thai-tam-tru', $khach->maKhach) }}" method="POST" class="inline">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button type="submit" title="Nhấp để đổi trạng thái tạm trú"
-                                                class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors {{ $khach->daDangKyTamTru ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100' : 'bg-red-50 text-red-700 border border-red-200 hover:bg-red-100' }}">
-                                                <span>{{ $khach->daDangKyTamTru ? '✓ Đã ĐK' : '! Chưa ĐK' }}</span>
-                                            </button>
-                                        </form>
-                                    </div>
+                                        <td class="px-3 py-2 whitespace-nowrap">
+                                            @if ($khach->nguoiDung)
+                                                <span class="font-medium text-emerald-700 text-[11px]" title="{{ $khach->nguoiDung->email }}">
+                                                    {{ $khach->nguoiDung->email }}
+                                                </span>
+                                            @else
+                                                <span class="text-amber-700 text-[11px]">Chưa cấp</span>
+                                            @endif
+                                        </td>
 
-                                    <div class="flex items-baseline justify-between pt-1">
-                                        <span class="text-zinc-500 text-[11px]">Tài khoản:</span>
-                                        @if ($khach->nguoiDung)
-                                            <span class="font-medium text-emerald-700 truncate max-w-[120px] text-right text-[11px]" title="{{ $khach->nguoiDung->email }}">
-                                                {{ $khach->nguoiDung->email }}
-                                            </span>
-                                        @else
-                                            <span class="text-amber-700 text-[10px]">Chưa cấp</span>
-                                        @endif
-                                    </div>
+                                        <td class="px-3 py-2 whitespace-nowrap text-zinc-600 max-w-[220px] truncate" title="{{ $khach->diaChi ?: 'Chưa cập nhật' }}">
+                                            <span>{{ $khach->diaChi ?: '—' }}</span>
+                                            @if ($khach->ngheNghiep)
+                                                <span class="text-zinc-400 text-[11px]">({{ $khach->ngheNghiep }})</span>
+                                            @endif
+                                        </td>
 
-                                    <div class="pt-1 text-[11px] text-zinc-500 truncate" title="{{ $khach->diaChi ?: 'Chưa cập nhật quê quán' }}">
-                                        📍 {{ $khach->diaChi ?: 'Chưa cập nhật quê quán' }}
-                                    </div>
-                                </div>
-                            </div>
+                                        <td class="px-3.5 py-2 whitespace-nowrap text-right sticky right-0 bg-white group-hover:bg-zinc-50 z-10 shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)]">
+                                            <div class="nhom-thao-tac">
+                                                <button type="button" data-hanh-dong="xem-chi-tiet" data-ma-khach="{{ $khach->maKhach }}"
+                                                    class="nut-thao-tac" title="Xem chi tiết hồ sơ {{ $khach->hoTen }}">
+                                                    <span>Chi tiết</span>
+                                                </button>
 
-                            <div class="pt-3 border-t border-zinc-100 flex items-center justify-between gap-1">
-                                <button type="button" data-hanh-dong="xem-chi-tiet" data-ma-khach="{{ $khach->maKhach }}"
-                                    class="px-2 py-1 rounded bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-[11px] font-medium transition-colors">
-                                    Chi tiết
-                                </button>
+                                                <button type="button" data-hanh-dong="sua-khach"
+                                                    data-ma-khach="{{ $khach->maKhach }}"
+                                                    data-ho-ten="{{ $khach->hoTen }}"
+                                                    data-ngay-sinh="{{ $khach->ngaySinh ? \Carbon\Carbon::parse($khach->ngaySinh)->format('Y-m-d') : '' }}"
+                                                    data-gioi-tinh="{{ $khach->gioiTinh }}"
+                                                    data-so-cccd="{{ $khach->soCCCD }}"
+                                                    data-ngay-cap-cccd="{{ $khach->ngayCapCCCD ? \Carbon\Carbon::parse($khach->ngayCapCCCD)->format('Y-m-d') : '' }}"
+                                                    data-noi-cap-cccd="{{ $khach->noiCapCCCD }}"
+                                                    data-so-dien-thoai="{{ $khach->soDienThoai }}"
+                                                    data-dia-chi="{{ $khach->diaChi }}"
+                                                    data-nghe-nghiep="{{ $khach->ngheNghiep }}"
+                                                    data-tam-tru="{{ $khach->daDangKyTamTru ? '1' : '0' }}"
+                                                    class="nut-thao-tac nut-thao-tac-sua" title="Sửa thông tin {{ $khach->hoTen }}">
+                                                    <span>✎ Sửa</span>
+                                                </button>
 
-                                <button type="button" data-hanh-dong="sua-khach"
-                                    data-ma-khach="{{ $khach->maKhach }}"
-                                    data-ho-ten="{{ $khach->hoTen }}"
-                                    data-ngay-sinh="{{ $khach->ngaySinh ? \Carbon\Carbon::parse($khach->ngaySinh)->format('Y-m-d') : '' }}"
-                                    data-gioi-tinh="{{ $khach->gioiTinh }}"
-                                    data-so-cccd="{{ $khach->soCCCD }}"
-                                    data-ngay-cap-cccd="{{ $khach->ngayCapCCCD ? \Carbon\Carbon::parse($khach->ngayCapCCCD)->format('Y-m-d') : '' }}"
-                                    data-noi-cap-cccd="{{ $khach->noiCapCCCD }}"
-                                    data-so-dien-thoai="{{ $khach->soDienThoai }}"
-                                    data-dia-chi="{{ $khach->diaChi }}"
-                                    data-nghe-nghiep="{{ $khach->ngheNghiep }}"
-                                    data-bien-so-xe="{{ $khach->bienSoXe }}"
-                                    data-nguoi-khan-cap="{{ $khach->nguoiLienHeKhanCap }}"
-                                    data-sdt-khan-cap="{{ $khach->sdtKhanCap }}"
-                                    data-quan-he-khan-cap="{{ $khach->quanHeKhanCap }}"
-                                    data-tam-tru="{{ $khach->daDangKyTamTru ? '1' : '0' }}"
-                                    data-la-dai-dien="{{ $thongTinPhong && $thongTinPhong['laDaiDien'] ? '1' : '0' }}"
-                                    data-ma-hop-dong-o-cung="{{ $thongTinPhong && !$thongTinPhong['laDaiDien'] && $thongTinPhong['hopDong'] ? $thongTinPhong['hopDong']->maHopDong : '' }}"
-                                    data-quan-he-o-cung="{{ $thongTinPhong && !$thongTinPhong['laDaiDien'] ? ($thongTinPhong['quanHe'] ?? '') : '' }}"
-                                    data-ten-phong="{{ $thongTinPhong && $thongTinPhong['phongTro'] ? $thongTinPhong['phongTro']->soPhong : '' }}"
-                                    class="px-2 py-1 rounded border border-zinc-200 hover:bg-zinc-50 text-zinc-700 text-[11px] font-medium transition-colors">
-                                    Sửa
-                                </button>
+                                                @if (!$khach->maNguoiDung)
+                                                    <button type="button" data-hanh-dong="cap-tai-khoan"
+                                                        data-ma-khach="{{ $khach->maKhach }}"
+                                                        data-ho-ten="{{ $khach->hoTen }}"
+                                                        class="nut-thao-tac nut-thao-tac-chinh"
+                                                        title="Cấp tài khoản đăng nhập cho khách này">
+                                                        <span>+ Cấp TK</span>
+                                                    </button>
+                                                @endif
 
-                                @if (!$khach->maNguoiDung)
-                                    <button type="button" data-hanh-dong="cap-tai-khoan"
-                                        data-ma-khach="{{ $khach->maKhach }}"
-                                        data-ho-ten="{{ $khach->hoTen }}"
-                                        class="px-2 py-1 rounded border border-emerald-200 text-emerald-700 hover:bg-emerald-50 text-[11px] font-medium transition-colors"
-                                        title="Cấp tài khoản đăng nhập cho khách này">
-                                        Cấp TK
-                                    </button>
-                                @endif
-
-                                @if (!$khach->hopDongHieuLuc)
-                                    <button type="button" data-hanh-dong="xoa-khach"
-                                        data-ma-khach="{{ $khach->maKhach }}"
-                                        data-ho-ten="{{ $khach->hoTen }}"
-                                        class="px-2 py-1 rounded border border-red-200 text-red-600 hover:bg-red-50 text-[11px] font-medium transition-colors">
-                                        Xóa
-                                    </button>
-                                @endif
-                            </div>
-                        </div>
-                    @endforeach
+                                                <button type="button" data-hanh-dong="xoa-khach"
+                                                    data-ma-khach="{{ $khach->maKhach }}"
+                                                    data-ho-ten="{{ $khach->hoTen }}"
+                                                    class="nut-thao-tac nut-thao-tac-xoa" title="Ngưng lưu trữ {{ $khach->hoTen }}">
+                                                    <span>Xóa</span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <div class="mt-4">
-                    {{ $danhSachKhach->links() }}
+                <div class="mt-3">
+                    @include('partials.phan-trang-nhanh', ['paginator' => $danhSachKhach])
                 </div>
             @endif
         </main>
@@ -361,7 +368,7 @@
 
     <!-- MODAL THÊM KHÁCH THUÊ -->
     <div id="modalThemKhach" class="hop-thoai-modal modal-an fixed inset-0 z-50 bg-zinc-900/60 backdrop-blur-xs items-center justify-center p-3 sm:p-5">
-        <div class="chuyen-dong-modal bg-white rounded-2xl border border-zinc-200 shadow-2xl max-w-2xl w-full max-h-[94vh] flex flex-col overflow-hidden">
+        <div class="chuyen-dong-modal bg-white rounded-2xl border border-zinc-200 shadow-2xl max-w-4xl w-full max-h-[94vh] flex flex-col overflow-hidden">
             <!-- Header Modal -->
             <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-200 bg-zinc-50/70 shrink-0">
                 <div class="flex items-center gap-3">
@@ -515,7 +522,7 @@
 
     <!-- MODAL SỬA KHÁCH THUÊ -->
     <div id="modalSuaKhach" class="hop-thoai-modal modal-an fixed inset-0 z-50 bg-zinc-900/60 backdrop-blur-xs items-center justify-center p-3 sm:p-5">
-        <div class="chuyen-dong-modal bg-white rounded-2xl border border-zinc-200 shadow-2xl max-w-2xl w-full max-h-[94vh] flex flex-col overflow-hidden">
+        <div class="chuyen-dong-modal bg-white rounded-2xl border border-zinc-200 shadow-2xl max-w-4xl w-full max-h-[94vh] flex flex-col overflow-hidden">
             <!-- Header Modal -->
             <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-200 bg-zinc-50/70 shrink-0">
                 <div class="flex items-center gap-3">
@@ -639,7 +646,7 @@
 
     <!-- MODAL CẤP TÀI KHOẢN -->
     <div id="modalCapTaiKhoan" class="hop-thoai-modal modal-an fixed inset-0 z-50 bg-zinc-900/50 backdrop-blur-xs items-center justify-center p-4">
-        <div class="chuyen-dong-modal bg-white rounded-xl border border-zinc-200 shadow-xl max-w-sm w-full p-6">
+        <div class="chuyen-dong-modal bg-white rounded-xl border border-zinc-200 shadow-xl max-w-lg w-full p-6">
             <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-4">
                 <h3 class="text-sm font-semibold text-zinc-900">Cấp tài khoản đăng nhập</h3>
                 <button type="button" data-dong-modal class="text-zinc-400 hover:text-zinc-700 text-base">&times;</button>
@@ -652,16 +659,18 @@
                         Cấp quyền đăng nhập cho khách <strong id="nhanTenKhachCapTK" class="text-zinc-900">...</strong> vào cổng tự phục vụ của khách thuê.
                     </p>
 
-                    <div>
-                        <label for="emailCapMoi" class="block font-medium text-zinc-700 mb-1">Email đăng nhập <span class="text-red-500">*</span></label>
-                        <input type="email" name="email" id="emailCapMoi" required placeholder="khach@example.com"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
-                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label for="emailCapMoi" class="block font-medium text-zinc-700 mb-1">Email đăng nhập <span class="text-red-500">*</span></label>
+                            <input type="email" name="email" id="emailCapMoi" required placeholder="khach@example.com"
+                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
+                        </div>
 
-                    <div>
-                        <label for="matKhauCapMoi" class="block font-medium text-zinc-700 mb-1">Mật khẩu khởi tạo <span class="text-red-500">*</span></label>
-                        <input type="password" name="matKhau" id="matKhauCapMoi" required placeholder="Tối thiểu 6 ký tự"
-                            class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
+                        <div>
+                            <label for="matKhauCapMoi" class="block font-medium text-zinc-700 mb-1">Mật khẩu khởi tạo <span class="text-red-500">*</span></label>
+                            <input type="password" name="matKhau" id="matKhauCapMoi" required placeholder="Tối thiểu 6 ký tự"
+                                class="w-full px-3 py-2 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:bg-white">
+                        </div>
                     </div>
                 </div>
 
@@ -679,22 +688,32 @@
         </div>
     </div>
 
-    <!-- MODAL CHI TIẾT KHÁCH THUÊ -->
-    <div id="modalChiTietKhach" class="hop-thoai-modal modal-an fixed inset-0 z-50 bg-zinc-900/50 backdrop-blur-xs items-center justify-center p-4">
-        <div class="chuyen-dong-modal bg-white rounded-xl border border-zinc-200 shadow-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between pb-3 border-b border-zinc-100 mb-4">
-                <h3 id="chiTietTenKhach" class="text-sm font-semibold text-zinc-900">Chi tiết khách thuê</h3>
-                <button type="button" data-dong-modal class="text-zinc-400 hover:text-zinc-700 text-base">&times;</button>
+    <!-- MODAL CHI TIẾT KHÁCH THUÊ (RỘNG RÃI 2 CỘT KHÔNG CẦN CUỘN) -->
+    <div id="modalChiTietKhach" class="hop-thoai-modal modal-an fixed inset-0 z-50 bg-zinc-900/60 backdrop-blur-xs items-center justify-center p-3 sm:p-5">
+        <div class="chuyen-dong-modal bg-white rounded-2xl border border-zinc-200 shadow-2xl max-w-5xl w-full p-6 max-h-[92vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3.5 border-b border-zinc-200 mb-5">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-zinc-900 text-white flex items-center justify-center font-bold text-xs">KT</div>
+                    <div>
+                        <h3 id="chiTietTenKhach" class="text-sm font-semibold text-zinc-900">Chi tiết khách thuê</h3>
+                        <p class="text-[11px] text-zinc-500">Hồ sơ nhân thân, CCCD, tình trạng tạm trú và hợp đồng thuê phòng</p>
+                    </div>
+                </div>
+                <button type="button" data-dong-modal class="text-zinc-400 hover:text-zinc-700 p-1.5 rounded-lg hover:bg-zinc-100 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
 
             <div id="noiDungChiTietKhach">
                 <!-- Nội dung được nạp qua JavaScript -->
             </div>
 
-            <div class="mt-6 pt-4 border-t border-zinc-100 flex justify-end">
+            <div class="mt-5 pt-3.5 border-t border-zinc-200 flex justify-end">
                 <button type="button" data-dong-modal
-                    class="px-4 py-2 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors shadow-xs">
-                    Đóng
+                    class="px-5 py-2 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors shadow-xs">
+                    Đóng cửa sổ
                 </button>
             </div>
         </div>

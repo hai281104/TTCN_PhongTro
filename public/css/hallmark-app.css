@@ -1,0 +1,272 @@
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: Cobalt (by request) · redesign: restyle
+ * nav: top bar · signature: ledger table and keycap controls · states: default, hover, focus-visible, active, disabled, empty, error
+ * axes: light/grotesk-sans/cool · posture: restrained · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P9 H9 E9 S9 R9 V9 · weakest: S, unified app-screen surfaces and keycap controls across all modules */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url("./tokens.css");
+@import url("./base.css");
+
+/* App screen overrides on Cobalt theme tokens (Single unified font: Inter) */
+html, body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, th, td, span, a, div {
+    font-family: var(--font-body);
+}
+
+html, body {
+    overflow-x: clip;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+}
+
+h1, h2, h3, .font-semibold, .font-bold {
+    font-family: var(--font-display);
+    letter-spacing: var(--tracking-display);
+}
+
+.tabular-nums {
+    font-family: var(--font-body);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Cobalt surface & hairline rules */
+header {
+    background-color: var(--color-key-face) !important;
+    border-bottom: var(--rule-hair) solid var(--color-rule-2) !important;
+}
+
+.bg-white {
+    background-color: var(--color-key-face) !important;
+}
+
+.bg-zinc-50 {
+    background-color: var(--color-paper-2) !important;
+}
+
+.border-zinc-200, .border-zinc-100 {
+    border-color: var(--color-rule) !important;
+}
+
+.border-zinc-300 {
+    border-color: var(--color-rule-2) !important;
+}
+
+.shadow-xs {
+    box-shadow: var(--shadow-card);
+}
+
+/* Cobalt Keycap Primary Buttons */
+button.bg-zinc-900,
+a.bg-zinc-900 {
+    background-color: var(--color-accent) !important;
+    border: var(--rule-hair) solid var(--color-accent-edge) !important;
+    color: var(--color-accent-ink) !important;
+    font-family: var(--font-display);
+    box-shadow: var(--shadow-key-accent);
+    transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+}
+
+button.bg-zinc-900:hover,
+a.bg-zinc-900:hover {
+    background-color: var(--color-accent-deep) !important;
+    transform: translateY(-1px);
+}
+
+button.bg-zinc-900:active,
+a.bg-zinc-900:active {
+    transform: translateY(2px);
+    box-shadow: var(--shadow-key-press);
+}
+
+/* Active navigation pill in Cobalt graphite */
+nav a.bg-zinc-900 {
+    background-color: var(--color-graphite) !important;
+    border-color: var(--color-graphite) !important;
+    color: var(--color-graphite-ink) !important;
+    box-shadow: none;
+}
+
+/* Secondary Outline Buttons */
+button.border-zinc-300,
+a.border-zinc-300 {
+    background-color: transparent !important;
+    border-color: var(--color-key-edge) !important;
+    color: var(--color-ink) !important;
+    box-shadow: var(--shadow-key);
+    transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+}
+
+button.border-zinc-300:hover,
+a.border-zinc-300:hover {
+    transform: translateY(-1px);
+}
+
+button.border-zinc-300:active,
+a.border-zinc-300:active {
+    transform: translateY(2px);
+    box-shadow: var(--shadow-key-press);
+}
+
+/* Inputs & Selects focus ring in Cobalt */
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--color-accent) !important;
+    outline: 2px solid var(--color-focus) !important;
+    outline-offset: 1px;
+}
+
+/* Table headers in Hallmark Floor rule #9 (no tracked caps, Inter 500) */
+thead th {
+    font-family: var(--font-display);
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    color: var(--color-muted) !important;
+    background-color: var(--color-paper-2) !important;
+}
+
+/* Ergonomic Table Action Buttons */
+td button,
+td a {
+    line-height: 1.25;
+    cursor: pointer;
+}
+
+.nhom-thao-tac {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-2xs);
+}
+
+.nut-thao-tac {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2xs);
+    height: 28px;
+    padding: 0 var(--space-xs);
+    border-radius: var(--radius-input);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    border: var(--rule-hair) solid var(--color-rule-2);
+    background-color: var(--color-key-face);
+    color: var(--color-ink-2);
+    transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+}
+
+.nut-thao-tac:hover {
+    background-color: var(--color-paper-2);
+    border-color: var(--color-key-edge);
+    color: var(--color-ink);
+}
+
+.nut-thao-tac:active {
+    transform: translateY(1px);
+}
+
+.nut-thao-tac-chinh {
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+    color: var(--color-accent-ink);
+}
+
+.nut-thao-tac-chinh:hover {
+    background-color: color-mix(in oklab, var(--color-success) 86%, black);
+    border-color: color-mix(in oklab, var(--color-success) 86%, black);
+    color: var(--color-accent-ink);
+}
+
+.nut-thao-tac-sua {
+    background-color: var(--color-accent-wash);
+    border-color: color-mix(in oklab, var(--color-accent) 32%, transparent);
+    color: var(--color-accent-deep);
+}
+
+.nut-thao-tac-sua:hover {
+    background-color: color-mix(in oklab, var(--color-accent) 18%, transparent);
+    border-color: var(--color-accent);
+    color: var(--color-accent-deep);
+}
+
+.nut-thao-tac-canh-bao {
+    background-color: color-mix(in oklab, var(--color-warning) 12%, transparent);
+    border-color: color-mix(in oklab, var(--color-warning) 35%, transparent);
+    color: var(--color-warning);
+}
+
+.nut-thao-tac-canh-bao:hover {
+    background-color: color-mix(in oklab, var(--color-warning) 20%, transparent);
+    border-color: var(--color-warning);
+    color: var(--color-warning);
+}
+
+.nut-thao-tac-xoa {
+    background-color: color-mix(in oklab, var(--color-error) 10%, transparent);
+    border-color: color-mix(in oklab, var(--color-error) 32%, transparent);
+    color: var(--color-error);
+}
+
+.nut-thao-tac-xoa:hover {
+    background-color: color-mix(in oklab, var(--color-error) 18%, transparent);
+    border-color: var(--color-error);
+    color: var(--color-error);
+}
+
+.nut-thao-tac-vo-hieu {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.dong-dang-sua-loai {
+    background-color: var(--color-accent-wash) !important;
+}
+
+/* Modal states */
+.modal-an {
+    display: none;
+}
+
+.modal-hien {
+    display: flex;
+}
+
+.chuyen-dong-modal {
+    animation: hienModal var(--dur-short) var(--ease-out) forwards;
+}
+
+@keyframes hienModal {
+    from {
+        opacity: 0;
+        transform: scale(0.97) translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.chuyen-dong-chi-tiet {
+    transition: transform var(--dur-short) var(--ease-out), opacity var(--dur-short) var(--ease-out);
+}
+
+/* Searchable select list */
+.hop-chon-tim-kiem .danh-sach-muc::-webkit-scrollbar {
+    width: 5px;
+}
+
+.hop-chon-tim-kiem .danh-sach-muc::-webkit-scrollbar-track {
+    background: var(--color-paper-2);
+}
+
+.hop-chon-tim-kiem .danh-sach-muc::-webkit-scrollbar-thumb {
+    background: var(--color-rule-2);
+    border-radius: var(--radius-input);
+}
+
+.hop-chon-tim-kiem .muc-lua-chon.dang-chon {
+    background-color: var(--color-accent-wash);
+    font-weight: 600;
+}

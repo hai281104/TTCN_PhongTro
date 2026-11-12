@@ -99,7 +99,7 @@ class KhachThueController extends Controller
             'nguoiOCungHienTai.hopDong.khachThue',
         ])
             ->orderBy('hoTen', 'asc')
-            ->paginate(12)
+            ->paginate(15)
             ->withQueryString();
 
         // Danh sách phòng trọ phục vụ bộ lọc
