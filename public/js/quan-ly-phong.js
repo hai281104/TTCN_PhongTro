@@ -63,6 +63,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const modalThem = document.getElementById('modalThemPhong');
     const nutMoThem = document.getElementById('nutMoThemPhong');
+    const modalLoaiPhong = document.getElementById('modalQuanLyLoaiPhong');
+    const nutMoLoaiPhong = document.getElementById('nutMoQuanLyLoaiPhong');
     const cacNutDongModal = document.querySelectorAll('[data-dong-modal]');
 
     function dongTatCaModal() {
@@ -78,6 +80,69 @@ document.addEventListener('DOMContentLoaded', function () {
             modalThem.classList.add('modal-hien');
             const oSoPhong = document.getElementById('soPhongThem');
             if (oSoPhong) oSoPhong.focus();
+        });
+    }
+
+    if (nutMoLoaiPhong && modalLoaiPhong) {
+        nutMoLoaiPhong.addEventListener('click', function () {
+            modalLoaiPhong.classList.remove('modal-an');
+            modalLoaiPhong.classList.add('modal-hien');
+            const oTenLoai = document.getElementById('tenLoaiPhongNhap');
+            if (oTenLoai) oTenLoai.focus();
+        });
+    }
+
+    // Xử lý chế độ Sửa loại phòng ngay trong modal Quản lý loại phòng
+    const bieuMauLoaiPhong = document.getElementById('bieuMauLoaiPhong');
+    const phuongThucLoaiPhong = document.getElementById('phuongThucLoaiPhong');
+    const tieuDeFormLoaiPhong = document.getElementById('tieuDeFormLoaiPhong');
+    const nutLuuLoaiPhong = document.getElementById('nutLuuLoaiPhong');
+    const nutHuySuaLoaiPhong = document.getElementById('nutHuySuaLoaiPhong');
+    const oTenLoaiNhap = document.getElementById('tenLoaiPhongNhap');
+    const oDonGiaLoaiNhap = document.getElementById('donGiaGoiYNhap');
+    const oDienTichLoaiNhap = document.getElementById('dienTichLoaiNhap');
+    const oSoNguoiLoaiNhap = document.getElementById('soNguoiLoaiNhap');
+    const oMoTaLoaiNhap = document.getElementById('moTaLoaiNhap');
+
+    document.querySelectorAll('[data-hanh-dong="sua-loai-phong"]').forEach(function (nut) {
+        nut.addEventListener('click', function () {
+            const maLoai = this.getAttribute('data-ma-loai');
+            const tenLoai = this.getAttribute('data-ten-loai') || '';
+            const donGia = this.getAttribute('data-don-gia') || '';
+            const dienTich = this.getAttribute('data-dien-tich') || '';
+            const soNguoi = this.getAttribute('data-so-nguoi') || '2';
+            const moTa = this.getAttribute('data-mo-ta') || '';
+
+            if (bieuMauLoaiPhong) {
+                bieuMauLoaiPhong.action = '/phong-tro/loai-phong/' + maLoai;
+                if (phuongThucLoaiPhong) phuongThucLoaiPhong.value = 'PUT';
+                if (tieuDeFormLoaiPhong) tieuDeFormLoaiPhong.textContent = '✎ Cập nhật loại phòng: ' + tenLoai;
+                if (nutLuuLoaiPhong) nutLuuLoaiPhong.textContent = 'Cập nhật loại phòng';
+                if (nutHuySuaLoaiPhong) nutHuySuaLoaiPhong.classList.remove('hidden');
+
+                if (oTenLoaiNhap) oTenLoaiNhap.value = tenLoai;
+                if (oDonGiaLoaiNhap) oDonGiaLoaiNhap.value = dinhDangTien(donGia);
+                if (oDienTichLoaiNhap) oDienTichLoaiNhap.value = dienTich;
+                if (oSoNguoiLoaiNhap) oSoNguoiLoaiNhap.value = soNguoi;
+                if (oMoTaLoaiNhap) oMoTaLoaiNhap.value = moTa;
+                if (oTenLoaiNhap) oTenLoaiNhap.focus();
+            }
+        });
+    });
+
+    if (nutHuySuaLoaiPhong && bieuMauLoaiPhong) {
+        nutHuySuaLoaiPhong.addEventListener('click', function () {
+            bieuMauLoaiPhong.action = '/phong-tro/loai-phong';
+            if (phuongThucLoaiPhong) phuongThucLoaiPhong.value = 'POST';
+            if (tieuDeFormLoaiPhong) tieuDeFormLoaiPhong.textContent = '+ Thêm loại phòng mới';
+            if (nutLuuLoaiPhong) nutLuuLoaiPhong.textContent = 'Lưu loại phòng';
+            nutHuySuaLoaiPhong.classList.add('hidden');
+
+            if (oTenLoaiNhap) oTenLoaiNhap.value = '';
+            if (oDonGiaLoaiNhap) oDonGiaLoaiNhap.value = '';
+            if (oDienTichLoaiNhap) oDienTichLoaiNhap.value = '';
+            if (oSoNguoiLoaiNhap) oSoNguoiLoaiNhap.value = '2';
+            if (oMoTaLoaiNhap) oMoTaLoaiNhap.value = '';
         });
     }
 

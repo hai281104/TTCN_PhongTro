@@ -198,13 +198,20 @@
                         @endif
                     </form>
 
-                    <button type="button" id="nutMoThemPhong"
-                        class="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors shadow-xs">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                        </svg>
-                        <span>Thêm phòng mới</span>
-                    </button>
+                    <div class="flex items-center gap-2.5">
+                        <button type="button" id="nutMoQuanLyLoaiPhong"
+                            class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg border border-zinc-300 bg-white text-zinc-800 text-xs font-medium hover:bg-zinc-100 transition-colors shadow-xs">
+                            <span>Quản lý loại phòng ({{ $danhSachLoaiPhong->count() }})</span>
+                        </button>
+
+                        <button type="button" id="nutMoThemPhong"
+                            class="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors shadow-xs">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            <span>Thêm phòng mới</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -762,6 +769,146 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL QUẢN LÝ LOẠI PHÒNG -->
+    <div id="modalQuanLyLoaiPhong" class="hop-thoai-modal modal-an fixed inset-0 z-50 bg-zinc-900/60 backdrop-blur-xs items-center justify-center p-3 sm:p-5">
+        <div class="chuyen-dong-modal bg-white rounded-2xl border border-zinc-200 shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-200 bg-zinc-50/70 shrink-0">
+                <div>
+                    <h3 class="text-sm font-semibold text-zinc-900">Quản lý danh mục loại phòng</h3>
+                    <p class="text-[11px] text-zinc-500">Thiết lập đơn giá chuẩn, diện tích và sức chứa tối đa cho từng thể loại phòng</p>
+                </div>
+                <button type="button" data-dong-modal class="text-zinc-400 hover:text-zinc-700 p-1.5 rounded-lg hover:bg-zinc-100 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto flex-1 text-xs space-y-5">
+                <!-- FORM THÊM / CẬP NHẬT LOẠI PHÒNG -->
+                <form id="bieuMauLoaiPhong" action="{{ route('phong-tro.loai-phong.tao-moi') }}" method="POST" class="bg-zinc-50 p-4 rounded-xl border border-zinc-200 space-y-3">
+                    @csrf
+                    <input type="hidden" name="_method" id="phuongThucLoaiPhong" value="POST">
+                    <div class="flex items-center justify-between">
+                        <span id="tieuDeFormLoaiPhong" class="text-[11px] font-semibold text-zinc-800 uppercase tracking-wider">
+                            + Thêm loại phòng mới
+                        </span>
+                        <button type="button" id="nutHuySuaLoaiPhong" class="hidden text-[11px] text-red-600 hover:underline font-medium">
+                            Hủy chế độ sửa
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                        <div class="sm:col-span-2">
+                            <label for="tenLoaiPhongNhap" class="block font-medium text-zinc-700 mb-1">Tên loại phòng <span class="text-red-500">*</span></label>
+                            <input type="text" name="tenLoaiPhong" id="tenLoaiPhongNhap" required placeholder="Ví dụ: Phòng đơn tiêu chuẩn, Phòng có gác lửng..."
+                                class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                        </div>
+
+                        <div>
+                            <label for="donGiaGoiYNhap" class="block font-medium text-zinc-700 mb-1">Đơn giá chuẩn (đ) <span class="text-red-500">*</span></label>
+                            <input type="text" inputmode="numeric" name="donGiaGoiY" id="donGiaGoiYNhap" required placeholder="2.500.000"
+                                class="dinh-dang-tien w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 tabular-nums">
+                        </div>
+
+                        <div>
+                            <label for="dienTichLoaiNhap" class="block font-medium text-zinc-700 mb-1">Diện tích chuẩn (m²)</label>
+                            <input type="number" step="0.1" name="dienTich" id="dienTichLoaiNhap" placeholder="20"
+                                class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 tabular-nums">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                        <div class="flex-1">
+                            <input type="text" name="moTa" id="moTaLoaiNhap" placeholder="Mô tả ngắn (Tùy chọn: Phù hợp sinh viên, đầy đủ nội thất...)"
+                                class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                        </div>
+                        <button type="submit" id="nutLuuLoaiPhong"
+                            class="px-4 py-2 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors shrink-0">
+                            Lưu loại phòng
+                        </button>
+                    </div>
+                </form>
+
+                <!-- DANH SÁCH LOẠI PHÒNG HIỆN CÓ -->
+                <div class="border border-zinc-200 rounded-xl overflow-hidden">
+                    <table class="min-w-full divide-y divide-zinc-200 text-xs">
+                        <thead class="bg-zinc-50 text-zinc-500 uppercase tracking-wider font-medium text-[11px]">
+                            <tr>
+                                <th class="px-4 py-2.5 text-left">Tên thể loại phòng</th>
+                                <th class="px-4 py-2.5 text-center">Diện tích chuẩn</th>
+                                <th class="px-4 py-2.5 text-right">Đơn giá gợi ý</th>
+                                <th class="px-4 py-2.5 text-center">Số phòng</th>
+                                <th class="px-4 py-2.5 text-right">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-zinc-200 bg-white">
+                            @forelse ($danhSachLoaiPhong as $lp)
+                                <tr class="hover:bg-zinc-50/70">
+                                    <td class="px-4 py-3">
+                                        <div class="font-semibold text-zinc-900">{{ $lp->tenLoaiPhong }}</div>
+                                        @if ($lp->moTa)
+                                            <div class="text-[11px] text-zinc-500">{{ $lp->moTa }}</div>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 text-center tabular-nums text-zinc-700">
+                                        {{ $lp->dienTich ? $lp->dienTich . ' m²' : '—' }}
+                                    </td>
+                                    <td class="px-4 py-3 text-right font-semibold text-zinc-900 tabular-nums">
+                                        {{ number_format($lp->donGiaGoiY, 0, ',', '.') }} đ
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-zinc-100 text-zinc-700 border border-zinc-200">
+                                            {{ $lp->phong_tro_count ?? 0 }} phòng
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right whitespace-nowrap">
+                                        <div class="inline-flex items-center gap-1.5">
+                                            <button type="button" data-hanh-dong="sua-loai-phong"
+                                                data-ma-loai="{{ $lp->maLoaiPhong }}"
+                                                data-ten-loai="{{ $lp->tenLoaiPhong }}"
+                                                data-don-gia="{{ $lp->donGiaGoiY }}"
+                                                data-dien-tich="{{ $lp->dienTich }}"
+                                                data-mo-ta="{{ $lp->moTa }}"
+                                                class="px-2.5 py-1 rounded border border-zinc-200 hover:bg-zinc-100 text-zinc-700 text-[11px] font-medium transition-colors">
+                                                Sửa
+                                            </button>
+
+                                            @if (($lp->phong_tro_count ?? 0) == 0)
+                                                <form action="{{ route('phong-tro.loai-phong.xoa', $lp->maLoaiPhong) }}" method="POST" class="inline"
+                                                    onsubmit="return confirm('Xác nhận xóa loại phòng {{ $lp->tenLoaiPhong }}?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="px-2.5 py-1 rounded border border-red-200 text-red-600 hover:bg-red-50 text-[11px] font-medium transition-colors">
+                                                        Xóa
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="px-4 py-8 text-center text-zinc-500">
+                                        Chưa có loại phòng nào. Hãy thêm loại phòng đầu tiên ở biểu mẫu bên trên.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="px-6 py-3.5 bg-zinc-50 border-t border-zinc-200 flex justify-end shrink-0">
+                <button type="button" data-dong-modal
+                    class="px-4 py-2 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors">
+                    Đóng
+                </button>
+            </div>
         </div>
     </div>
 </body>

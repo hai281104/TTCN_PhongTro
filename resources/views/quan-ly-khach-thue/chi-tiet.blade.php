@@ -183,9 +183,9 @@
                 </div>
 
                 <!-- CÁC KHỐI THÔNG TIN CHI TIẾT -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs mb-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                     <div class="p-3 bg-zinc-50 rounded-lg border border-zinc-200">
-                        <span class="font-semibold text-zinc-700 block mb-2 uppercase text-[11px] tracking-wider">Giấy tờ tùy thân</span>
+                        <span class="font-semibold text-zinc-700 block mb-2 uppercase text-[11px] tracking-wider">Giấy tờ tùy thân (CCCD)</span>
                         <div class="space-y-1 text-zinc-600">
                             <div>Số CCCD: <strong class="text-zinc-900 tabular-nums">{{ $khachThue->soCCCD }}</strong></div>
                             <div>Ngày cấp: <span class="text-zinc-800">{{ $khachThue->ngayCapCCCD ? \Carbon\Carbon::parse($khachThue->ngayCapCCCD)->format('d/m/Y') : 'Chưa rõ' }}</span></div>
@@ -194,28 +194,12 @@
                     </div>
 
                     <div class="p-3 bg-zinc-50 rounded-lg border border-zinc-200">
-                        <span class="font-semibold text-zinc-700 block mb-2 uppercase text-[11px] tracking-wider">Phương tiện & Công việc</span>
+                        <span class="font-semibold text-zinc-700 block mb-2 uppercase text-[11px] tracking-wider">Nghề nghiệp & Quê quán</span>
                         <div class="space-y-1 text-zinc-600">
-                            <div>Biển số xe: <strong class="text-zinc-900">{{ $khachThue->bienSoXe ?: 'Chưa đăng ký xe' }}</strong></div>
-                            <div>Nghề nghiệp: <span class="text-zinc-800">{{ $khachThue->ngheNghiep ?: 'Chưa cập nhật' }}</span></div>
+                            <div>Nghề nghiệp: <strong class="text-zinc-900">{{ $khachThue->ngheNghiep ?: 'Chưa cập nhật' }}</strong></div>
+                            <div>Thường trú: <span class="text-zinc-800">{{ $khachThue->diaChi ?: 'Chưa cập nhật thông tin địa chỉ thường trú.' }}</span></div>
                         </div>
                     </div>
-
-                    <div class="p-3 bg-zinc-50 rounded-lg border border-zinc-200">
-                        <span class="font-semibold text-zinc-700 block mb-2 uppercase text-[11px] tracking-wider">Liên hệ khi khẩn cấp</span>
-                        <div class="space-y-1 text-zinc-600">
-                            <div>Người thân: <strong class="text-zinc-900">{{ $khachThue->nguoiLienHeKhanCap ?: 'Chưa có' }}</strong></div>
-                            <div>Số ĐT: <span class="text-zinc-800 tabular-nums">{{ $khachThue->sdtKhanCap ?: 'Chưa có' }}</span></div>
-                            <div>Mối quan hệ: <span class="text-zinc-800">{{ $khachThue->quanHeKhanCap ?: 'Chưa có' }}</span></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="text-xs text-zinc-700">
-                    <span class="font-medium text-zinc-500 block mb-1">Địa chỉ thường trú / Quê quán:</span>
-                    <p class="p-3 bg-zinc-50 rounded-lg border border-zinc-200 text-zinc-800">
-                        {{ $khachThue->diaChi ?: 'Chưa cập nhật thông tin địa chỉ thường trú.' }}
-                    </p>
                 </div>
             </div>
 
@@ -288,30 +272,22 @@
                                 @if ($hd->danhSachNguoiOCung && $hd->danhSachNguoiOCung->isNotEmpty())
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                         @foreach ($hd->danhSachNguoiOCung as $noc)
-                                            @php $ban = $noc->khachThue; @endphp
-                                            @if ($ban)
-                                                <div class="p-2.5 bg-white rounded-lg border border-zinc-200 flex items-center justify-between shadow-2xs">
-                                                    <div class="flex items-center gap-2.5">
-                                                        <div class="w-7 h-7 rounded-full bg-zinc-800 text-white flex items-center justify-center font-bold text-xs">
-                                                            {{ mb_substr($ban->hoTen, 0, 1) }}
+                                            <div class="p-2.5 bg-white rounded-lg border border-zinc-200 flex items-center justify-between shadow-2xs">
+                                                <div class="flex items-center gap-2.5">
+                                                    <div class="w-7 h-7 rounded-full bg-zinc-800 text-white flex items-center justify-center font-bold text-xs">
+                                                        {{ mb_substr($noc->tenHienThi, 0, 1) }}
+                                                    </div>
+                                                    <div>
+                                                        <div class="font-semibold text-zinc-900 flex items-center gap-1.5">
+                                                            <span>{{ $noc->tenHienThi }}</span>
+                                                            <span class="text-[10px] text-zinc-500 font-normal">({{ $noc->ghiChu ?: 'Ở cùng' }})</span>
                                                         </div>
-                                                        <div>
-                                                            <div class="font-semibold text-zinc-900 flex items-center gap-1.5">
-                                                                <a href="{{ route('khach-thue.chi-tiet', $ban->maKhach) }}" class="hover:underline hover:text-sky-700">
-                                                                    {{ $ban->hoTen }}
-                                                                </a>
-                                                                <span class="text-[10px] text-zinc-500 font-normal">({{ $noc->ghiChu ?: 'Ở cùng' }})</span>
-                                                            </div>
-                                                            <div class="text-[11px] text-zinc-500 tabular-nums">
-                                                                SĐT: {{ $ban->soDienThoai }} | CCCD: {{ $ban->soCCCD }}
-                                                            </div>
+                                                        <div class="text-[11px] text-zinc-500 tabular-nums">
+                                                            SĐT: {{ $noc->sdtHienThi ?: '—' }} | CCCD: {{ $noc->cccdHienThi ?: '—' }}
                                                         </div>
                                                     </div>
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium {{ $ban->daDangKyTamTru ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200' }}">
-                                                        {{ $ban->daDangKyTamTru ? 'Đã tạm trú' : 'Chưa tạm trú' }}
-                                                    </span>
                                                 </div>
-                                            @endif
+                                            </div>
                                         @endforeach
                                     </div>
                                 @else
@@ -445,9 +421,9 @@
                 @csrf
                 @method('PUT')
                 <div class="space-y-4 text-xs">
-                    <!-- KHỐI 1: THÔNG TIN NHÂN THÂN -->
-                    <div class="bg-zinc-50 p-3 rounded-lg border border-zinc-200 space-y-3">
-                        <div class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider">1. Thông tin cá nhân</div>
+                    <!-- KHỐI THÔNG TIN CÁ NHÂN & CCCD (GỘP CHUNG) -->
+                    <div class="bg-zinc-50 p-3.5 rounded-lg border border-zinc-200 space-y-3">
+                        <div class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider">Thông tin cá nhân & CCCD</div>
 
                         <div class="grid grid-cols-2 gap-3">
                             <div class="col-span-2 sm:col-span-1">
@@ -481,18 +457,21 @@
                             </div>
                         </div>
 
-                        <div>
-                            <label for="diaChiSua" class="block font-medium text-zinc-700 mb-1">Địa chỉ thường trú / Quê quán</label>
-                            <input type="text" name="diaChi" id="diaChiSua"
-                                class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-                        </div>
-                    </div>
-
-                    <!-- KHỐI 2: GIẤY TỜ & CƯ TRÚ -->
-                    <div class="bg-zinc-50 p-3 rounded-lg border border-zinc-200 space-y-3">
-                        <div class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider">2. Giấy tờ tùy thân & Tạm trú</div>
-
                         <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="ngheNghiepSua" class="block font-medium text-zinc-700 mb-1">Nghề nghiệp / Đơn vị</label>
+                                <input type="text" name="ngheNghiep" id="ngheNghiepSua" placeholder="Ví dụ: Kỹ sư, Sinh viên..."
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+
+                            <div>
+                                <label for="diaChiSua" class="block font-medium text-zinc-700 mb-1">Địa chỉ thường trú / Quê quán</label>
+                                <input type="text" name="diaChi" id="diaChiSua"
+                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 pt-2 border-t border-zinc-200">
                             <div>
                                 <label for="soCCCDSua" class="block font-medium text-zinc-700 mb-1">Số CCCD (12 số) <span class="text-red-500">*</span></label>
                                 <input type="text" name="soCCCD" id="soCCCDSua" required maxlength="12"
@@ -517,47 +496,8 @@
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" name="daDangKyTamTru" id="daDangKyTamTruSua" value="1"
                                         class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
-                                    <span class="font-medium text-zinc-800">Đã đăng ký tạm trú với Công an</span>
+                                    <span class="font-medium text-zinc-800">Đã đăng ký tạm trú</span>
                                 </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- KHỐI 3: PHƯƠNG TIỆN & LIÊN HỆ KHẨN CẤP -->
-                    <div class="bg-zinc-50 p-3 rounded-lg border border-zinc-200 space-y-3">
-                        <div class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider">3. Phương tiện & Liên hệ khẩn cấp</div>
-
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label for="bienSoXeSua" class="block font-medium text-zinc-700 mb-1">Biển số xe máy (nhà xe)</label>
-                                <input type="text" name="bienSoXe" id="bienSoXeSua" placeholder="Ví dụ: 59-X1 123.45"
-                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-                            </div>
-
-                            <div>
-                                <label for="ngheNghiepSua" class="block font-medium text-zinc-700 mb-1">Nghề nghiệp / Đơn vị</label>
-                                <input type="text" name="ngheNghiep" id="ngheNghiepSua" placeholder="Ví dụ: Sinh viên, NV văn phòng..."
-                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <label for="nguoiLienHeKhanCapSua" class="block font-medium text-zinc-700 mb-1">Người thân khẩn cấp</label>
-                                <input type="text" name="nguoiLienHeKhanCap" id="nguoiLienHeKhanCapSua" placeholder="Họ tên người thân"
-                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-                            </div>
-
-                            <div>
-                                <label for="sdtKhanCapSua" class="block font-medium text-zinc-700 mb-1">SĐT người thân</label>
-                                <input type="text" name="sdtKhanCap" id="sdtKhanCapSua" placeholder="0912..."
-                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 tabular-nums">
-                            </div>
-
-                            <div>
-                                <label for="quanHeKhanCapSua" class="block font-medium text-zinc-700 mb-1">Mối quan hệ</label>
-                                <input type="text" name="quanHeKhanCap" id="quanHeKhanCapSua" placeholder="Bố/Mẹ/Anh..."
-                                    class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
                             </div>
                         </div>
                     </div>

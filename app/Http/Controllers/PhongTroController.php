@@ -47,7 +47,12 @@ class PhongTroController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        $danhSachLoaiPhong = LoaiPhong::where('dangHoatDong', 1)->orderBy('tenLoaiPhong', 'asc')->get();
+        $danhSachLoaiPhong = LoaiPhong::where('dangHoatDong', 1)
+            ->withCount(['phongTro' => function ($query) {
+                $query->where('dangHoatDong', 1);
+            }])
+            ->orderBy('tenLoaiPhong', 'asc')
+            ->get();
         $danhSachTienNghi = PhongTro::layDanhSachTienNghiHeThong();
 
         // Danh sách các tầng hiện có trong hệ thống để phục vụ bộ lọc
@@ -119,7 +124,12 @@ class PhongTroController extends Controller
             },
         ])->findOrFail($maPhong);
 
-        $danhSachLoaiPhong = LoaiPhong::where('dangHoatDong', 1)->orderBy('tenLoaiPhong', 'asc')->get();
+        $danhSachLoaiPhong = LoaiPhong::where('dangHoatDong', 1)
+            ->withCount(['phongTro' => function ($query) {
+                $query->where('dangHoatDong', 1);
+            }])
+            ->orderBy('tenLoaiPhong', 'asc')
+            ->get();
         $danhSachTienNghi = PhongTro::layDanhSachTienNghiHeThong();
 
         if ($yeuCau->wantsJson() || $yeuCau->ajax()) {
@@ -247,5 +257,88 @@ class PhongTroController extends Controller
 
         return redirect()->route('phong-tro.danh-sach')
             ->with('thongBaoThanhCong', $thongDiep);
+    }
+
+    // Thêm mới loại phòng (thể loại phòng) ngay trong trang Quản lý phòng.
+    public function taoLoaiPhong(Request $yeuCau)
+    {
+        if ($yeuCau->has('donGiaGoiY') && is_string($yeuCau->input('donGiaGoiY'))) {
+            $yeuCau->merge([
+                'donGiaGoiY' => str_replace(['.', ','], '', $yeuCau->input('donGiaGoiY')),
+            ]);
+        }
+
+        $duLieu = $yeuCau->validate([
+            'tenLoaiPhong' => ['required', 'string', 'max:100'],
+            'dienTich' => ['nullable', 'numeric', 'min:1', 'max:500'],
+            'donGiaGoiY' => ['required', 'numeric', 'min:0'],
+            'moTa' => ['nullable', 'string', 'max:255'],
+        ], [
+            'tenLoaiPhong.required' => 'Vui lòng nhập tên loại phòng.',
+            'donGiaGoiY.required' => 'Vui lòng nhập đơn giá gợi ý.',
+        ]);
+
+        $loaiPhong = LoaiPhong::create([
+            'tenLoaiPhong' => trim($duLieu['tenLoaiPhong']),
+            'soNguoiToiDa' => $yeuCau->input('soNguoiToiDa', 2),
+            'dienTich' => $duLieu['dienTich'] ?? null,
+            'donGiaGoiY' => $duLieu['donGiaGoiY'],
+            'moTa' => $duLieu['moTa'] ?? null,
+            'dangHoatDong' => 1,
+        ]);
+
+        return redirect()->route('phong-tro.danh-sach')
+            ->with('thongBaoThanhCong', "Đã thêm loại phòng '{$loaiPhong->tenLoaiPhong}' thành công.");
+    }
+
+    // Cập nhật thông tin loại phòng.
+    public function capNhatLoaiPhong(Request $yeuCau, $maLoaiPhong)
+    {
+        $loaiPhong = LoaiPhong::findOrFail($maLoaiPhong);
+
+        if ($yeuCau->has('donGiaGoiY') && is_string($yeuCau->input('donGiaGoiY'))) {
+            $yeuCau->merge([
+                'donGiaGoiY' => str_replace(['.', ','], '', $yeuCau->input('donGiaGoiY')),
+            ]);
+        }
+
+        $duLieu = $yeuCau->validate([
+            'tenLoaiPhong' => ['required', 'string', 'max:100'],
+            'dienTich' => ['nullable', 'numeric', 'min:1', 'max:500'],
+            'donGiaGoiY' => ['required', 'numeric', 'min:0'],
+            'moTa' => ['nullable', 'string', 'max:255'],
+        ], [
+            'tenLoaiPhong.required' => 'Vui lòng nhập tên loại phòng.',
+            'donGiaGoiY.required' => 'Vui lòng nhập đơn giá gợi ý.',
+        ]);
+
+        $loaiPhong->update([
+            'tenLoaiPhong' => trim($duLieu['tenLoaiPhong']),
+            'dienTich' => $duLieu['dienTich'] ?? null,
+            'donGiaGoiY' => $duLieu['donGiaGoiY'],
+            'moTa' => $duLieu['moTa'] ?? null,
+        ]);
+
+        return redirect()->route('phong-tro.danh-sach')
+            ->with('thongBaoThanhCong', "Đã cập nhật loại phòng '{$loaiPhong->tenLoaiPhong}' thành công.");
+    }
+
+    // Xóa mềm loại phòng nếu chưa có phòng đang hoạt động gắn vào.
+    public function xoaLoaiPhong($maLoaiPhong)
+    {
+        $loaiPhong = LoaiPhong::findOrFail($maLoaiPhong);
+
+        $soPhongDangDung = PhongTro::where('maLoaiPhong', $maLoaiPhong)
+            ->where('dangHoatDong', 1)
+            ->count();
+
+        if ($soPhongDangDung > 0) {
+            return back()->with('thongBaoLoi', "Không thể xóa loại phòng '{$loaiPhong->tenLoaiPhong}' vì đang có {$soPhongDangDung} phòng thuộc loại này.");
+        }
+
+        $loaiPhong->update(['dangHoatDong' => 0]);
+
+        return redirect()->route('phong-tro.danh-sach')
+            ->with('thongBaoThanhCong', "Đã xóa loại phòng '{$loaiPhong->tenLoaiPhong}'.");
     }
 }

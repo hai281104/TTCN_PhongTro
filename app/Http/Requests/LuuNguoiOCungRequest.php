@@ -15,7 +15,7 @@ class LuuNguoiOCungRequest extends FormRequest
     }
 
     /**
-     * Thêm người ở cùng: chọn hợp đồng đang hiệu lực + khách đã có hồ sơ.
+     * Thêm người ở cùng: nhập trực tiếp thông tin người ở cùng (hoặc truyền maKhach tương thích ngược).
      *
      * @return array
      */
@@ -27,8 +27,16 @@ class LuuNguoiOCungRequest extends FormRequest
                 'integer',
                 Rule::exists('HopDong', 'maHopDong')->where('trangThaiHD', 'HIEU_LUC'),
             ],
+            'hoTen' => [
+                'required_without:maKhach',
+                'nullable',
+                'string',
+                'max:100',
+            ],
+            'soDienThoai' => ['nullable', 'string', 'max:20'],
+            'soCCCD' => ['nullable', 'string', 'max:20'],
             'maKhach' => [
-                'required',
+                'nullable',
                 'integer',
                 Rule::exists('KhachThue', 'maKhach')->where('dangHoatDong', 1),
             ],
@@ -38,7 +46,7 @@ class LuuNguoiOCungRequest extends FormRequest
     }
 
     /**
-     * Kiểm tra nghiệp vụ: phòng còn chỗ và khách chưa ở phòng nào.
+     * Kiểm tra nghiệp vụ: phòng còn chỗ trống.
      */
     public function withValidator($validator)
     {
@@ -48,10 +56,12 @@ class LuuNguoiOCungRequest extends FormRequest
             }
 
             $hopDong = HopDong::with('phongTro')->find($this->input('maHopDong'));
-            $khach = KhachThue::find($this->input('maKhach'));
 
-            if ($khach && $khach->dangOPhong()) {
-                $validator->errors()->add('maKhach', "Khách {$khach->hoTen} hiện đang ở một phòng khác, không thể thêm làm người ở cùng.");
+            if ($this->filled('maKhach')) {
+                $khach = KhachThue::find($this->input('maKhach'));
+                if ($khach && $khach->dangOPhong()) {
+                    $validator->errors()->add('maKhach', "Khách {$khach->hoTen} hiện đang ở một phòng khác, không thể thêm làm người ở cùng.");
+                }
             }
 
             if ($hopDong && !$hopDong->conChoTrong()) {
@@ -67,11 +77,10 @@ class LuuNguoiOCungRequest extends FormRequest
         return [
             'maHopDong.required' => 'Vui lòng chọn hợp đồng / phòng đang thuê.',
             'maHopDong.exists' => 'Hợp đồng được chọn không tồn tại hoặc đã kết thúc.',
-            'maKhach.required' => 'Vui lòng chọn khách thuê ở cùng.',
-            'maKhach.exists' => 'Khách thuê được chọn không tồn tại hoặc đã ngừng hoạt động.',
+            'hoTen.required_without' => 'Vui lòng nhập họ và tên người ở cùng.',
+            'hoTen.max' => 'Họ và tên không được vượt quá 100 ký tự.',
             'ngayVaoO.date' => 'Ngày vào ở không đúng định dạng.',
             'ghiChu.max' => 'Quan hệ với người đại diện không được vượt quá 100 ký tự.',
         ];
     }
 }
-

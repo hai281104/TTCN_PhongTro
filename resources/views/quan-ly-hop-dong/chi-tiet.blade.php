@@ -311,18 +311,12 @@
                                 @foreach ($hopDong->danhSachNguoiOCung as $noc)
                                     <tr class="hover:bg-zinc-50">
                                         <td class="px-4 py-2.5 font-semibold text-zinc-900">
-                                            @if ($noc->khachThue)
-                                                <a href="{{ route('khach-thue.chi-tiet', $noc->maKhach) }}" class="hover:underline">
-                                                    {{ $noc->khachThue->hoTen }}
-                                                </a>
-                                            @else
-                                                —
-                                            @endif
+                                            {{ $noc->tenHienThi }}
                                         </td>
                                         <td class="px-4 py-2.5 text-zinc-600 tabular-nums">
-                                            {{ optional($noc->khachThue)->soCCCD }} &bull; {{ optional($noc->khachThue)->soDienThoai }}
+                                            {{ $noc->cccdHienThi ?: '—' }} &bull; {{ $noc->sdtHienThi ?: '—' }}
                                         </td>
-                                        <td class="px-4 py-2.5 text-zinc-700">{{ $noc->ghiChu ?: 'Ở cùng' }}</td>
+                                        <td class="px-4 py-2.5 text-zinc-700">{{ $noc->ghiChu ?: 'Bạn cùng phòng' }}</td>
                                         <td class="px-4 py-2.5 text-zinc-600">{{ $noc->ngayVaoO ? \Carbon\Carbon::parse($noc->ngayVaoO)->format('d/m/Y') : '—' }}</td>
                                         @if ($hopDong->trangThaiHD === 'HIEU_LUC')
                                             <td class="px-4 py-2.5 text-right">
@@ -352,37 +346,31 @@
                         <form action="{{ route('khach-o-cung.tao-moi') }}" method="POST" class="p-4 bg-zinc-50 rounded-lg border border-zinc-200 space-y-3 text-xs">
                             @csrf
                             <input type="hidden" name="maHopDong" value="{{ $hopDong->maHopDong }}">
-                            <div class="font-semibold text-zinc-800">Thêm khách ở cùng vào phòng {{ optional($hopDong->phongTro)->soPhong }}</div>
+                            <div class="font-semibold text-zinc-800">Thêm khách ở cùng vào phòng {{ optional($hopDong->phongTro)->soPhong }} (Nhập trực tiếp)</div>
 
-                            @if (isset($danhSachKhachCoTheThem) && $danhSachKhachCoTheThem->isNotEmpty())
-                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                    <div>
-                                        <label for="maKhachOCungCT" class="block font-medium text-zinc-700 mb-1">Chọn khách (đã có hồ sơ) <span class="text-red-500">*</span></label>
-                                        <select name="maKhach" id="maKhachOCungCT" required
-                                            class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-                                            <option value="">-- Chọn khách thuê --</option>
-                                            @foreach ($danhSachKhachCoTheThem as $k)
-                                                <option value="{{ $k->maKhach }}">{{ $k->hoTen }} ({{ $k->soDienThoai }} - {{ $k->soCCCD }})</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label for="ghiChuOCungCT" class="block font-medium text-zinc-700 mb-1">Quan hệ với đại diện</label>
-                                        <input type="text" name="ghiChu" id="ghiChuOCungCT" placeholder="Bạn cùng phòng, Vợ/Chồng..."
-                                            class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-                                    </div>
-                                    <div class="flex items-end">
-                                        <button type="submit"
-                                            class="w-full px-4 py-2 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors shadow-xs">
-                                            + Thêm vào ở cùng
-                                        </button>
-                                    </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                                <div class="sm:col-span-2">
+                                    <label for="hoTenOCungCT" class="block font-medium text-zinc-700 mb-1">Họ và tên <span class="text-red-500">*</span></label>
+                                    <input type="text" name="hoTen" id="hoTenOCungCT" required placeholder="Họ tên người ở cùng..."
+                                        class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
                                 </div>
-                            @else
-                                <p class="text-zinc-500">
-                                    Hiện không có hồ sơ khách tự do nào. Vui lòng <a href="{{ route('khach-thue.danh-sach') }}" class="font-semibold text-zinc-900 underline">nhập hồ sơ khách mới ở mục Khách thuê</a> trước khi thêm vào ở cùng.
-                                </p>
-                            @endif
+                                <div>
+                                    <label for="soDienThoaiOCungCT" class="block font-medium text-zinc-700 mb-1">Số điện thoại</label>
+                                    <input type="text" name="soDienThoai" id="soDienThoaiOCungCT" placeholder="0901..."
+                                        class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 tabular-nums">
+                                </div>
+                                <div>
+                                    <label for="ghiChuOCungCT" class="block font-medium text-zinc-700 mb-1">Quan hệ</label>
+                                    <input type="text" name="ghiChu" id="ghiChuOCungCT" placeholder="Bạn cùng phòng..."
+                                        class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                                </div>
+                                <div class="flex items-end">
+                                    <button type="submit"
+                                        class="w-full px-4 py-2 rounded-lg bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors shadow-xs">
+                                        + Thêm vào ở cùng
+                                    </button>
+                                </div>
+                            </div>
                         </form>
                     @else
                         <div class="p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs">

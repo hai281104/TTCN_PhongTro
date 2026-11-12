@@ -38,10 +38,71 @@ class NguoiOCung extends Model
     protected $fillable = [
         'maHopDong',
         'maKhach',
+        'hoTen',
+        'soDienThoai',
+        'soCCCD',
         'ngayVaoO',
         'ghiChu',
         'dangHoatDong',
     ];
+
+    /**
+     * Đảm bảo bảng NguoiOCung hỗ trợ nhập thủ công (hoTen, soDienThoai, soCCCD, maKhach nullable).
+     */
+    public static function damBaoCauTrucBang(): void
+    {
+        static $daKiemTra = false;
+        if ($daKiemTra) {
+            return;
+        }
+        $daKiemTra = true;
+
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('NguoiOCung') && !\Illuminate\Support\Facades\Schema::hasColumn('NguoiOCung', 'hoTen')) {
+                \Illuminate\Support\Facades\Schema::table('NguoiOCung', function (\Illuminate\Database\Schema\Blueprint $table) {
+                    $table->string('hoTen', 100)->nullable()->after('maKhach');
+                    $table->string('soDienThoai', 20)->nullable()->after('hoTen');
+                    $table->string('soCCCD', 20)->nullable()->after('soDienThoai');
+                });
+
+                \Illuminate\Support\Facades\DB::statement('ALTER TABLE NguoiOCung MODIFY maKhach INT UNSIGNED NULL');
+
+                \Illuminate\Support\Facades\DB::statement('
+                    UPDATE NguoiOCung noc
+                    INNER JOIN KhachThue kt ON noc.maKhach = kt.maKhach
+                    SET noc.hoTen = COALESCE(noc.hoTen, kt.hoTen),
+                        noc.soDienThoai = COALESCE(noc.soDienThoai, kt.soDienThoai),
+                        noc.soCCCD = COALESCE(noc.soCCCD, kt.soCCCD)
+                ');
+            }
+        } catch (\Throwable $e) {
+            // Bỏ qua nếu không thể alter
+        }
+    }
+
+    /**
+     * Lấy họ tên hiển thị của người ở cùng (ưu tiên hoTen nhập thủ công, fallback sang khachThue).
+     */
+    public function getTenHienThiAttribute(): string
+    {
+        return $this->hoTen ?: (optional($this->khachThue)->hoTen ?: 'Khách ở cùng');
+    }
+
+    /**
+     * Lấy SĐT hiển thị của người ở cùng.
+     */
+    public function getSdtHienThiAttribute(): ?string
+    {
+        return $this->soDienThoai ?: optional($this->khachThue)->soDienThoai;
+    }
+
+    /**
+     * Lấy CCCD hiển thị của người ở cùng.
+     */
+    public function getCccdHienThiAttribute(): ?string
+    {
+        return $this->soCCCD ?: optional($this->khachThue)->soCCCD;
+    }
 
     /**
      * Ép kiểu dữ liệu.

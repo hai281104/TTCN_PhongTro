@@ -28,9 +28,12 @@ Route::middleware('auth')->group(function () {
     Route::middleware('vaiTro:CHU_TRO')->group(function () {
         Route::get('/tong-quan', [TongQuanController::class, 'tongQuanChuTro'])->name('tong-quan.chu-tro');
 
-        Route::prefix('phong-tro')->name('phong-tro.')->where(['maPhong' => '[0-9]+'])->group(function () {
+        Route::prefix('phong-tro')->name('phong-tro.')->where(['maPhong' => '[0-9]+', 'maLoaiPhong' => '[0-9]+'])->group(function () {
             Route::get('/', [PhongTroController::class, 'danhSach'])->name('danh-sach');
             Route::post('/', [PhongTroController::class, 'taoMoi'])->name('tao-moi');
+            Route::post('/loai-phong', [PhongTroController::class, 'taoLoaiPhong'])->name('loai-phong.tao-moi');
+            Route::put('/loai-phong/{maLoaiPhong}', [PhongTroController::class, 'capNhatLoaiPhong'])->name('loai-phong.cap-nhat');
+            Route::delete('/loai-phong/{maLoaiPhong}', [PhongTroController::class, 'xoaLoaiPhong'])->name('loai-phong.xoa');
             Route::get('/{maPhong}', [PhongTroController::class, 'chiTiet'])->name('chi-tiet');
             Route::put('/{maPhong}', [PhongTroController::class, 'capNhat'])->name('cap-nhat');
             Route::patch('/{maPhong}/trang-thai', [PhongTroController::class, 'doiTrangThai'])->name('doi-trang-thai');
@@ -59,6 +62,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('khach-o-cung')->name('khach-o-cung.')->where(['maNguoiOCung' => '[0-9]+'])->group(function () {
             Route::get('/', [NguoiOCungController::class, 'danhSach'])->name('danh-sach');
             Route::post('/', [NguoiOCungController::class, 'taoMoi'])->name('tao-moi');
+            Route::put('/{maNguoiOCung}', [NguoiOCungController::class, 'capNhat'])->name('cap-nhat');
             Route::patch('/{maNguoiOCung}/roi-phong', [NguoiOCungController::class, 'roiPhong'])->name('roi-phong');
         });
     });

@@ -230,12 +230,14 @@ document.addEventListener('DOMContentLoaded', function () {
                                 '<div class="space-y-1.5">';
                             hd.danh_sach_nguoi_o_cung.forEach(function (noc) {
                                 const ban = noc.khach_thue || {};
+                                const tenBan = noc.hoTen || ban.hoTen || 'Chưa rõ';
+                                const sdtBan = noc.soDienThoai || ban.soDienThoai || '';
                                 thongTinPhu += '<div class="flex items-center justify-between p-2 rounded bg-white/70 border border-zinc-200 text-xs">' +
                                     '<div class="flex items-center gap-2">' +
-                                    '<span class="w-6 h-6 rounded-full bg-zinc-800 text-white flex items-center justify-center font-bold text-[10px]">' + (ban.hoTen ? ban.hoTen.charAt(0) : '?') + '</span>' +
-                                    '<div><span class="font-medium text-zinc-900">' + (ban.hoTen || 'Chưa rõ') + '</span> <span class="text-zinc-500 text-[11px]">(' + (noc.ghiChu || 'Bạn cùng phòng') + ')</span></div>' +
+                                    '<span class="w-6 h-6 rounded-full bg-zinc-800 text-white flex items-center justify-center font-bold text-[10px]">' + (tenBan ? tenBan.charAt(0) : '?') + '</span>' +
+                                    '<div><span class="font-medium text-zinc-900">' + tenBan + '</span> <span class="text-zinc-500 text-[11px]">(' + (noc.ghiChu || 'Bạn cùng phòng') + ')</span></div>' +
                                     '</div>' +
-                                    '<div class="text-zinc-600 text-[11px]">' + (ban.soDienThoai || '') + '</div>' +
+                                    '<div class="text-zinc-600 text-[11px]">' + sdtBan + '</div>' +
                                     '</div>';
                             });
                             thongTinPhu += '</div></div>';
@@ -294,10 +296,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     '<div><span class="text-zinc-500 block">Số điện thoại:</span><span class="font-semibold text-zinc-900">' + k.soDienThoai + '</span></div>' +
                     '<div><span class="text-zinc-500 block">Số CCCD:</span><span class="font-semibold text-zinc-900">' + k.soCCCD + '</span></div>' +
                     '<div><span class="text-zinc-500 block">Cấp ngày & Nơi cấp:</span><span class="text-zinc-800">' + ngayCapHienThi + ' (' + noiCapHienThi + ')</span></div>' +
-                    '<div><span class="text-zinc-500 block">Biển số xe máy:</span><strong class="text-zinc-900">' + (k.bienSoXe || 'Chưa đăng ký') + '</strong></div>' +
                     '<div><span class="text-zinc-500 block">Nghề nghiệp:</span><span class="text-zinc-800">' + (k.ngheNghiep || 'Chưa cập nhật') + '</span></div>' +
-                    '<div class="col-span-2"><span class="text-zinc-500 block">Tình trạng tạm trú:</span>' + badgeTamTru + '</div>' +
-                    (k.nguoiLienHeKhanCap ? '<div class="col-span-2 p-2 bg-zinc-50 rounded border border-zinc-200"><span class="text-zinc-500 block mb-0.5">Liên hệ khẩn cấp:</span><strong>' + k.nguoiLienHeKhanCap + '</strong> (' + (k.quanHeKhanCap || 'Người thân') + ') - SĐT: ' + (k.sdtKhanCap || 'Không có') + '</div>' : '') +
+                    '<div><span class="text-zinc-500 block">Tình trạng tạm trú:</span>' + badgeTamTru + '</div>' +
                     '<div class="col-span-2"><span class="text-zinc-500 block">Địa chỉ thường trú / Quê quán:</span><span class="text-zinc-800">' + (k.diaChi || 'Chưa cập nhật') + '</span></div>' +
                     '<div class="col-span-2 pt-1 border-t border-zinc-100"><span class="text-zinc-500 block mb-1">Tài khoản đăng nhập:</span>' + htmlTaiKhoan + '</div>' +
                     '</div>' +
